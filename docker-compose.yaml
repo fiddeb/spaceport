@@ -1,0 +1,67 @@
+services:
+  frontend:
+    image: ghcr.io/fiddeb/spaceport-frontend:${OTEL_SERVICE_VERSION:-latest}
+    build:
+      context: ./frontend
+    ports:
+      - "${SPACEPORT_FRONTEND_PORT:-3000}:3000"
+    environment:
+      OTEL_SERVICE_NAME: spaceport-frontend
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
+      OTEL_SERVICE_VERSION: ${OTEL_SERVICE_VERSION:-0.1.0}
+      SPACEPORT_ENV: ${SPACEPORT_ENV:-local}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    depends_on:
+      api:
+        condition: service_healthy
+
+  api:
+    image: ghcr.io/fiddeb/spaceport-api:${OTEL_SERVICE_VERSION:-latest}
+    build:
+      context: ./api
+    ports:
+      - "${SPACEPORT_API_PORT:-8080}:8080"
+    environment:
+      OTEL_SERVICE_NAME: spaceport-api
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
+      OTEL_SERVICE_VERSION: ${OTEL_SERVICE_VERSION:-0.1.0}
+      SPACEPORT_ENV: ${SPACEPORT_ENV:-local}
+      DATABASE_PATH: /data/spaceport.db
+    volumes:
+      - spaceport-sqlite:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    depends_on:
+      pricing-service:
+        condition: service_healthy
+
+  pricing-service:
+    image: ghcr.io/fiddeb/spaceport-pricing-service:${OTEL_SERVICE_VERSION:-latest}
+    build:
+      context: ./pricing-service
+    ports:
+      - "${SPACEPORT_PRICING_SERVICE_PORT:-8000}:8000"
+    environment:
+      OTEL_SERVICE_NAME: spaceport-pricing-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
+      OTEL_SERVICE_VERSION: ${OTEL_SERVICE_VERSION:-0.1.0}
+      SPACEPORT_ENV: ${SPACEPORT_ENV:-local}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+volumes:
+  spaceport-sqlite:
+    name: spaceport-sqlite

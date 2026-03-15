@@ -1,0 +1,37 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "spaceport.fullname" . }}-pricing-service
+  labels:
+    {{- include "spaceport.labels" . | nindent 4 }}
+    app.kubernetes.io/component: pricing-service
+spec:
+  replicas: {{ .Values.pricingService.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "spaceport.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: pricing-service
+  template:
+    metadata:
+      labels:
+        {{- include "spaceport.labels" . | nindent 8 }}
+        app.kubernetes.io/component: pricing-service
+    spec:
+      containers:
+        - name: pricing-service
+          image: "{{ .Values.pricingService.image.repository }}:{{ .Values.pricingService.image.tag }}"
+          imagePullPolicy: {{ .Values.pricingService.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "spaceport.fullname" . }}-config
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: spaceport-pricing-service
+          resources:
+            {{- toYaml .Values.pricingService.resources | nindent 12 }}
+{{- end }}

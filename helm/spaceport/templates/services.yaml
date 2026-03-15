@@ -1,0 +1,55 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "spaceport.fullname" . }}-frontend
+  labels:
+    {{- include "spaceport.labels" . | nindent 4 }}
+    app.kubernetes.io/component: frontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "spaceport.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "spaceport.fullname" . }}-api
+  labels:
+    {{- include "spaceport.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "spaceport.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "spaceport.fullname" . }}-pricing-service
+  labels:
+    {{- include "spaceport.labels" . | nindent 4 }}
+    app.kubernetes.io/component: pricing-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "spaceport.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: pricing-service
+{{- end }}

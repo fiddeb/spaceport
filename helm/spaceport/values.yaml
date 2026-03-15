@@ -1,0 +1,45 @@
+enabled: false
+
+otlpEndpoint: "http://opentelemetry-collector:4317"
+
+frontend:
+  image:
+    repository: ghcr.io/fiddeb/spaceport-frontend
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+
+api:
+  image:
+    repository: ghcr.io/fiddeb/spaceport-api
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+
+pricingService:
+  image:
+    repository: ghcr.io/fiddeb/spaceport-pricing-service
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"

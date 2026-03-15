@@ -1,0 +1,30 @@
+groups:
+  - id: span.spaceport.booking.create
+    type: span
+    span_kind: server
+    brief: Handles an incoming booking creation request in the API.
+    stability: development
+    attributes:
+      - ref: spaceport.booking.id
+        requirement_level: required
+      - ref: spaceport.booking.status
+        requirement_level: required
+      - ref: spaceport.departure.id
+        requirement_level: required
+      - ref: spaceport.departure.destination
+        requirement_level: recommended
+      - ref: spaceport.seat.class
+        requirement_level: required
+      - ref: spaceport.pricing.total
+        requirement_level: recommended
+      - ref: spaceport.pricing.display_currency
+        requirement_level: recommended
+
+  - id: span.spaceport.booking.list
+    type: span
+    span_kind: server
+    brief: Handles a request to list all bookings from the API.
+    stability: development
+    attributes:
+      - ref: spaceport.booking.status
+        requirement_level: opt_in

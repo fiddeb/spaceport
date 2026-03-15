@@ -1,0 +1,24 @@
+groups:
+  - id: registry.spaceport.departure
+    type: attribute_group
+    brief: Attributes describing a spaceport departure.
+    stability: development
+    attributes:
+      - id: spaceport.departure.id
+        type: string
+        stability: development
+        brief: Unique identifier for the departure.
+        requirement_level: recommended
+        examples: ["DEP-2350-ALPHA", "DEP-0042"]
+      - id: spaceport.departure.destination
+        type: string
+        stability: development
+        brief: Destination of the departure (e.g. planet, station, or sector name).
+        requirement_level: recommended
+        examples: ["Mars Colony Alpha", "Kepler-442b", "Deep Space Station 9"]
+      - id: spaceport.departure.departure_time
+        type: string
+        stability: development
+        brief: Scheduled departure time in ISO 8601 format.
+        requirement_level: recommended
+        examples: ["2350-07-21T14:30:00Z", "2350-12-01T08:00:00+02:00"]
