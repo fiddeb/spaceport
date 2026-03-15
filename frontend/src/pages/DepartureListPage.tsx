@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useSpan } from "@/hooks/useSpan";
 import { logger, meter, SeverityNumber } from "@/instrumentation";
+import { context } from "@opentelemetry/api";
 
 const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {
   description: "Page views by page name",
@@ -25,7 +26,7 @@ export function DepartureListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useSpan("user.browse_departures");
+  const { contextRef } = useSpan("user.browse_departures");
 
   useEffect(() => {
     pageViewCounter.add(1, { "page.name": "departure_list" });
@@ -33,7 +34,7 @@ export function DepartureListPage() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/departures")
+    context.with(contextRef.current, () => fetch("/api/departures"))
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();

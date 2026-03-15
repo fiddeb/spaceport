@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { useSpan } from "@/hooks/useSpan";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { logger, meter, SeverityNumber } from "@/instrumentation";
+import { context } from "@opentelemetry/api";
 
 const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {
   description: "Page views by page name",
@@ -48,7 +49,7 @@ export function DepartureDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const { convert } = useCurrency();
 
-  useSpan("user.view_departure", {
+  const { contextRef } = useSpan("user.view_departure", {
     "spaceport.departure.id": id ?? "",
     "spaceport.departure.destination": data?.departure.destination ?? "",
   });
@@ -63,7 +64,7 @@ export function DepartureDetailPage() {
   }, [id]);
 
   useEffect(() => {
-    fetch(`/api/departures/${id}`)
+    context.with(contextRef.current, () => fetch(`/api/departures/${id}`))
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
@@ -99,7 +100,7 @@ export function DepartureDetailPage() {
           {error ?? "Departure not found"}
         </p>
         <Button asChild>
-          <Link to="/">Back to Departures</Link>
+          <Link to="/departures">Back to Departures</Link>
         </Button>
       </div>
     );
@@ -112,7 +113,7 @@ export function DepartureDetailPage() {
     <div className="flex flex-col gap-8">
       <div>
         <Button variant="ghost" asChild className="mb-4">
-          <Link to="/">← Back to Departures</Link>
+          <Link to="/departures">← Back to Departures</Link>
         </Button>
         <h1 className="text-3xl font-bold tracking-tight">
           {departure.destination}

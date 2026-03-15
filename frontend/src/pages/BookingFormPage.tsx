@@ -14,7 +14,7 @@ import {
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { tracer, logger, meter, SeverityNumber } from "@/instrumentation";
-import { SpanStatusCode } from "@opentelemetry/api";
+import { SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 const bookingCounter = meter.createCounter("spaceport.frontend.bookings", {
@@ -49,9 +49,10 @@ export function BookingFormPage() {
         "spaceport.seat.class": seatClass,
       },
     });
+    const ctx = trace.setSpan(context.active(), span);
 
     try {
-      const resp = await fetch("/api/bookings", {
+      const resp = await context.with(ctx, () => fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,11 +63,16 @@ export function BookingFormPage() {
           extra_baggage: extraBaggage ? 1 : 0,
           currency: selectedCurrency,
         }),
-      });
+      }));
 
       if (!resp.ok) {
         const body = await resp.json().catch(() => null);
-        throw new Error(body?.error ?? `Booking failed (HTTP ${resp.status})`);
+        const errorDetail = body?.error ?? `HTTP ${resp.status}`;
+        const bookingErr = new Error(`Booking failed (${errorDetail})`);
+        (bookingErr as any).httpStatus = resp.status;
+        (bookingErr as any).responseBody = body;
+        (bookingErr as any).bookingId = body?.booking_id;
+        throw bookingErr;
       }
 
       const data = await resp.json();
@@ -79,7 +85,13 @@ export function BookingFormPage() {
       logger.emit({
         severityNumber: SeverityNumber.INFO,
         body: `Booking created: ${data.booking_id}`,
-        attributes: { "spaceport.booking.id": data.booking_id, "spaceport.departure.id": id ?? "" },
+        attributes: {
+          "spaceport.booking.id": data.booking_id,
+          "spaceport.departure.id": id ?? "",
+          "spaceport.seat.class": seatClass,
+          "spaceport.booking.currency": data.currency,
+          "spaceport.booking.total_price": data.total_price,
+        },
       });
 
       navigate(`/confirmation/${data.booking_id}`, {
@@ -94,15 +106,31 @@ export function BookingFormPage() {
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
+      const httpStatus = (err as any)?.httpStatus;
+      const responseBody = (err as any)?.responseBody;
+      const serverBookingId = (err as any)?.bookingId;
+
       span.setStatus({ code: SpanStatusCode.ERROR, message });
-      span.addEvent("booking_failed");
+      span.addEvent("booking_failed", {
+        "error.message": message,
+        ...(httpStatus && { "http.response.status_code": httpStatus }),
+      });
       span.end();
 
       bookingCounter.add(1, { outcome: "failure", "spaceport.seat.class": seatClass });
       logger.emit({
         severityNumber: SeverityNumber.ERROR,
         body: `Booking failed: ${message}`,
-        attributes: { "spaceport.departure.id": id ?? "" },
+        attributes: {
+          "spaceport.departure.id": id ?? "",
+          "spaceport.seat.class": seatClass,
+          "spaceport.booking.currency": selectedCurrency,
+          "spaceport.passenger.name": passengerName,
+          ...(httpStatus && { "http.response.status_code": httpStatus }),
+          ...(serverBookingId && { "spaceport.booking.id": serverBookingId }),
+          ...(responseBody && { "spaceport.error.response_body": JSON.stringify(responseBody) }),
+          "error.type": err instanceof Error ? err.name : "Unknown",
+        },
       });
 
       setError(message);
