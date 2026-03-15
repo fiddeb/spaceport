@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/propagation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -27,7 +27,7 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 		return nil, err
 	}
 
-	traceExp, err := otlptracegrpc.New(ctx, otlptracegrpc.WithInsecure())
+	traceExp, err := otlptracehttp.New(ctx, otlptracehttp.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 		propagation.Baggage{},
 	))
 
-	metricExp, err := otlpmetricgrpc.New(ctx, otlpmetricgrpc.WithInsecure())
+	metricExp, err := otlpmetrichttp.New(ctx, otlpmetrichttp.WithInsecure())
 	if err != nil {
 		_ = tp.Shutdown(ctx)
 		return nil, err
