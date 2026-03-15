@@ -16,17 +16,17 @@
 
 ## 3. Shared Configuration
 
-- [ ] 3.1 Create `.env.example` with all variables: `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_VERSION`, port overrides for each service, and `SPACEPORT_ENV`
-- [ ] 3.2 Document service name constants in `docs/service-names.md`: `spaceport-frontend`, `spaceport-api`, `spaceport-pricing-service`
+- [x] 3.1 Create `.env.example` with all variables: `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_VERSION`, port overrides for each service, and `SPACEPORT_ENV`
+- [x] 3.2 Document service name constants in `docs/service-names.md`: `spaceport-frontend`, `spaceport-api`, `spaceport-pricing-service`
 
 ## 4. Docker Compose
 
-- [ ] 4.1 Create `docker-compose.yaml` with services: `frontend` (port 3000), `api` (port 8080), `pricing-service` (port 8000)
-- [ ] 4.2 Add `depends_on` with `condition: service_healthy` so `api` waits for `pricing-service`
-- [ ] 4.3 Configure OTLP env vars on each service using `${OTEL_EXPORTER_OTLP_ENDPOINT}` from `.env`
-- [ ] 4.4 Add named volume `spaceport-sqlite` mounted into `api` at `/data/spaceport.db`
-- [ ] 4.5 Add health check endpoints to each service definition (`/api/health` for api, `/health` for pricing-service, HTTP check on port 3000 for frontend)
-- [ ] 4.6 Test: copy `.env.example` to `.env`, run `docker-compose up --wait`, verify all services healthy
+- [x] 4.1 Create `docker-compose.yaml` with services: `frontend` (port 3000), `api` (port 8080), `pricing-service` (port 8000)
+- [x] 4.2 Add `depends_on` with `condition: service_healthy` so `api` waits for `pricing-service`
+- [x] 4.3 Configure OTLP env vars on each service using `${OTEL_EXPORTER_OTLP_ENDPOINT}` from `.env`
+- [x] 4.4 Add named volume `spaceport-sqlite` mounted into `api` at `/data/spaceport.db`
+- [x] 4.5 Add health check endpoints to each service definition (`/api/health` for api, `/health` for pricing-service, HTTP check on port 3000 for frontend)
+- [x] 4.6 Test: copy `.env.example` to `.env`, run `docker-compose up --wait`, verify all services healthy
 
 ## 5. Helm Chart
 
