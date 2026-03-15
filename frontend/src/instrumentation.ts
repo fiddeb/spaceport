@@ -31,11 +31,19 @@ const traceExporter = new OTLPTraceExporter({
 
 const tracerProvider = new WebTracerProvider({
   resource,
-  spanProcessors: [new BatchSpanProcessor(traceExporter)],
+  spanProcessors: [new BatchSpanProcessor(traceExporter, { scheduledDelayMillis: 500 })],
 });
 
 propagation.setGlobalPropagator(new W3CTraceContextPropagator());
 tracerProvider.register();
+
+// Flush on tab hide/close so spans aren't lost during navigation.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    tracerProvider.forceFlush();
+    loggerProvider.forceFlush();
+  }
+});
 
 registerInstrumentations({
   instrumentations: [
