@@ -1,9 +1,10 @@
-"""JSON log formatter with OpenTelemetry trace correlation."""
+"""JSON log formatter with OpenTelemetry trace correlation + OTLP log bridge."""
 
 import json
 import logging
 
 from opentelemetry import trace
+from opentelemetry.sdk._logs import LoggingHandler
 
 
 class JsonTraceFormatter(logging.Formatter):
@@ -27,10 +28,15 @@ class JsonTraceFormatter(logging.Formatter):
 
 
 def setup_logging() -> None:
-    handler = logging.StreamHandler()
-    handler.setFormatter(JsonTraceFormatter())
+    # Stdout handler (JSON with trace correlation)
+    stdout_handler = logging.StreamHandler()
+    stdout_handler.setFormatter(JsonTraceFormatter())
+
+    # OTLP handler (bridges Python logging → OTel LoggerProvider → collector)
+    otel_handler = LoggingHandler()
 
     root = logging.getLogger()
     root.setLevel(logging.INFO)
     root.handlers.clear()
-    root.addHandler(handler)
+    root.addHandler(stdout_handler)
+    root.addHandler(otel_handler)
