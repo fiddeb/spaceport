@@ -1,0 +1,48 @@
+schema: spec-driven
+
+context: |
+  Project: Spaceport Booking — an OpenTelemetry demo app for a local observability stack.
+  
+  Theme: A small spaceport where users book departures to destinations like Mars, Titan, Europa, and Moonbase Alpha.
+  Humor in details: Economy Cryosleep, Window Seat With Cosmic Radiation Disclaimer, Snacks not included beyond lunar orbit.
+  Error scenarios: solar storms, docking gate busy, captain lost in time anomaly.
+  
+  Tech stack:
+    - Frontend: React + Vite + shadcn (preset aJx2k9T) + TypeScript
+    - Backend API: Go + Gin
+    - Pricing/Recommendation service: Python + FastAPI
+    - No database in v1 — static JSON data, in-memory state
+    - Docker Compose for local dev, Kubernetes manifests for deployment alongside observability stack
+    - Playwright for smoke tests, K6 as optional bonus
+  
+  Observability stack (external, already running):
+    - Grafana, Loki, Prometheus, Tempo, OpenTelemetry Collector
+    - All services send OTLP to the collector
+    - Signals: traces, metrics, logs with trace correlation
+  
+  Conventions:
+    - Conventional commits (feat:, fix:, refactor:, etc.)
+    - Monorepo with services in top-level directories (frontend/, api/, pricing-service/)
+    - Keep it simple — no Kafka, Redis, gRPC, auth, feature flags in v1
+    - Max 3 app services
+    - Must work on a laptop, start in under 5 minutes
+    - Must give clear traces after a few clicks without synthetic load
+  
+  Design goals:
+    1. Start in under 5 minutes
+    2. Max 3 app services
+    3. Works without synthetic load
+    4. Clear traces after a few clicks
+    5. At least one Grafana dashboard for metrics
+    6. Correlated logs with trace_id/span_id
+    7. At least one controlled error scenario
+    8. At least one controlled latency scenario
+
+rules:
+  proposal:
+    - Keep proposals focused and concise
+    - Always include Non-goals section
+    - Reference the spaceport theme where relevant
+  tasks:
+    - Break tasks into chunks of max 2 hours
+    - Each task should be independently verifiable
