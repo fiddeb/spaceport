@@ -10,7 +10,7 @@
 - [ ] 2.2 Define `spaceport.departure.*` attributes: `id` (string), `destination` (string), `departure_time` (string, ISO8601)
 - [ ] 2.3 Define `spaceport.booking.*` attributes: `id` (string), `status` (string enum: confirmed/failed)
 - [ ] 2.4 Define `spaceport.seat.*` attributes: `class` (string enum: economy-cryosleep/business-warp/first-class-nebula)
-- [ ] 2.5 Define `spaceport.pricing.*` attributes: `total` (double, unit: USD), `promo_applied` (boolean), `currency` (string)
+- [ ] 2.5 Define `spaceport.pricing.*` attributes: `total` (double, unit: UNC), `promo_applied` (boolean), `base_currency` (string, constant "UNC"), `display_currency` (string enum: UNC/REP/LAT/QUA/NIN/BZD/COIN/TKN)
 - [ ] 2.6 Define `spaceport.chaos.*` attributes: `failure_mode` (string), `latency_ms` (int)
 - [ ] 2.7 Verify `weaver registry check -r weaver/` exits with code 0
 

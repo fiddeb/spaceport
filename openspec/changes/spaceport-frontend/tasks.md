@@ -55,3 +55,13 @@
 - [ ] 8.1 Create `ErrorBoundary` component that calls `span.recordException(error)` and `span.setStatus(ERROR)` before rendering fallback
 - [ ] 8.2 Fallback UI displays: "Navigation system offline — captain lost in time anomaly" with a retry button
 - [ ] 8.3 Wrap `<App />` in `<ErrorBoundary>` in `src/main.tsx`
+
+## 9. Currency Selector
+
+- [ ] 9.1 Create `src/contexts/CurrencyContext.tsx` exporting `CurrencyProvider` and `useCurrency` hook; state includes `currencies` (catalog array from API), `selectedCurrency` (code string, default "UNC"), and `setSelectedCurrency`
+- [ ] 9.2 Add `convert(amount: number): string` helper inside `useCurrency` that multiplies `amount` by the selected currency's `rate` and formats with the currency code (e.g., `"1112.50 REP"`)
+- [ ] 9.3 Fetch `GET /api/currencies` inside `CurrencyProvider` on mount; store catalog in state; render children only after catalog is loaded (or show minimal spinner)
+- [ ] 9.4 Wrap `<App />` in `<CurrencyProvider>` in `src/main.tsx` (inside `<ErrorBoundary>`)
+- [ ] 9.5 Add shadcn `Select` to the site header (App-level top bar) listing all currencies from context; on change call `setSelectedCurrency`
+- [ ] 9.6 Replace all hardcoded price displays in `DepartureDetailPage` and `ConfirmationPage` with `useCurrency().convert(price)` — prices received from API are in UNC
+- [ ] 9.7 Emit `exchange_completed` span event when `selectedCurrency` changes, with span attributes `spaceport.pricing.base_currency = "UNC"` and `spaceport.pricing.display_currency = newCode`

@@ -13,10 +13,13 @@
 
 ## 3. Pricing Engine
 
-- [ ] 3.1 Create `pricing_service/pricing.py` with function `calculate_price(departure_id, seat_class)` returning `{"seat_class", "base_price", "total_price", "promo_applied", "currency"}` — prices: economy-cryosleep 500 USD, business-warp 1200 USD, first-class-nebula 3000 USD with random 10% promo chance
+- [ ] 3.1 Create `pricing_service/pricing.py` with function `calculate_price(departure_id, seat_class, currency="UNC")` returning `{"seat_class", "base_price", "total_price", "promo_applied", "currency"}` — base prices in UNC: economy-cryosleep 890 UNC, business-warp 2200 UNC, first-class-nebula 5500 UNC with random 10% promo chance (15% discount); other destinations vary by a seeded ±20% factor on the base price
 - [ ] 3.2 Create `GET /price/{departure_id}` endpoint in `main.py` calling `calculate_price` for all three seat classes
-- [ ] 3.3 Add manual span `pricing.calculate` inside `calculate_price` with attributes: `spaceport.departure.id`, `spaceport.seat.class`, `spaceport.pricing.total`, `spaceport.pricing.promo_applied`, `spaceport.pricing.currency`
+- [ ] 3.3 Add manual span `pricing.calculate` inside `calculate_price` with attributes: `spaceport.departure.id`, `spaceport.seat.class`, `spaceport.pricing.total`, `spaceport.pricing.promo_applied`, `spaceport.pricing.base_currency` (always "UNC"), `spaceport.pricing.display_currency` (the requested currency code)
 - [ ] 3.4 Add baseline latency: `await asyncio.sleep(random.uniform(0.05, 0.15))` in each endpoint handler
+- [ ] 3.5 Create `data/currencies.json` with the 8-currency catalog: `{"currencies": [{"code": "UNC", "name": "Universal Neural Credits", "rate": 1.0}, {"code": "REP", "name": "Reputation Tokens", "rate": 1.25}, {"code": "LAT", "name": "Lattice Creds", "rate": 4.0}, {"code": "QUA", "name": "Quantum Marks", "rate": 0.2}, {"code": "NIN", "name": "Nino Chips", "rate": 0.05}, {"code": "BZD", "name": "Bazaar Ducats", "rate": 0.5}, {"code": "COIN", "name": "Standard Coins", "rate": 0.8}, {"code": "TKN", "name": "Generic Tokens", "rate": 0.1}]}`
+- [ ] 3.6 Create `GET /currencies` endpoint in `main.py` that loads and returns `data/currencies.json` (read once at startup into a module-level variable)
+- [ ] 3.7 Update `GET /price/{departure_id}` to accept optional `?currency=CODE` query param; validate `CODE` against the catalog (400 on unknown code); multiply `total_price` by the rate and set `currency` field to `CODE` (default `UNC`)
 
 ## 4. Recommendations Engine
 

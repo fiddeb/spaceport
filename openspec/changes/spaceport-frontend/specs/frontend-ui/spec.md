@@ -53,3 +53,14 @@ The app SHALL wrap all routes in a React ErrorBoundary that renders a spaceport-
 #### Scenario: JS error shows fallback UI
 - **WHEN** a component throws an uncaught error
 - **THEN** the error boundary catches it and renders the fallback UI without a blank page
+
+### Requirement: Currency selector in site header
+The frontend SHALL render a shadcn `Select` component in the site header allowing users to choose their display currency. The available currencies SHALL be fetched from `GET /api/currencies` on app startup and stored in a React `CurrencyContext`. All price values displayed anywhere in the app SHALL be converted from their UNC base amount using the selected currency's exchange rate. The default display currency SHALL be UNC.
+
+#### Scenario: User changes display currency
+- **WHEN** a user selects "REP" from the currency selector in the site header
+- **THEN** all prices on the current page update to show REP-denominated amounts (UNC amount × 1.25)
+
+#### Scenario: Currency catalog loads on startup
+- **WHEN** the app first renders
+- **THEN** the currency catalog has been fetched from `/api/currencies` and is available in `CurrencyContext` before any price is displayed

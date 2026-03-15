@@ -5,7 +5,7 @@
 
 #### Scenario: Price is returned for a known departure
 - **WHEN** `GET /price/1` is called
-- **THEN** a 200 response is returned with prices for all three seat classes in USD
+- **THEN** a 200 response is returned with prices for all three seat classes in UNC (base currency)
 
 #### Scenario: Promo is sometimes applied
 - **WHEN** multiple calls to `GET /price/1` are made
@@ -35,6 +35,20 @@
 #### Scenario: Pricing request takes specified extra latency
 - **WHEN** `/simulate-latency {"count": 5, "latency_ms": 2000}` is activated and `GET /price/1` is called
 - **THEN** the response takes at least 2000ms
+
+### Requirement: GET /currencies returns the currency catalog
+`GET /currencies` SHALL return the full currency catalog as a JSON object with an array of currency entries. Each entry SHALL include: `code` (string), `name` (string), `rate` (number, UNC-relative exchange rate). The catalog SHALL include all 8 currencies: UNC (1.0), REP (1.25), LAT (4.0), QUA (0.2), NIN (0.05), BZD (0.5), COIN (0.8), TKN (0.1).
+
+#### Scenario: Currency catalog is returned
+- **WHEN** `GET /currencies` is called
+- **THEN** a 200 response is returned with a JSON array containing 8 currency entries, each with `code`, `name`, and `rate`
+
+### Requirement: GET /price/{departure_id} accepts optional currency query param
+`GET /price/{departure_id}` SHALL accept an optional `?currency=CODE` query parameter. When provided, `total_price` in each response entry SHALL be the UNC price multiplied by the exchange rate for `CODE`, and the `currency` field SHALL reflect `CODE`. When omitted, prices are returned in UNC.
+
+#### Scenario: Price converted to REP on request
+- **WHEN** `GET /price/1?currency=REP` is called
+- **THEN** the `total_price` values are 1.25x the UNC amounts and `currency` is `"REP"` in each entry
 
 ### Requirement: GET /health returns ok
 `GET /health` SHALL return `{"status": "ok"}` with HTTP 200.

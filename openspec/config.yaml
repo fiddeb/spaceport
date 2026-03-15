@@ -38,6 +38,20 @@ context: |
     7. At least one controlled error scenario
     8. At least one controlled latency scenario
 
+  Currency system:
+    - Base currency: UNC (Universal Neural Credits) — all prices stored and computed in UNC
+    - Display currencies (8 total): UNC, REP (Reputation Tokens), LAT (Lattice Creds), QUA (Quantum Marks),
+      NIN (Nino Chips), BZD (Bazaar Ducats), COIN (Standard Coins), TKN (Generic Tokens)
+    - Exchange rates relative to 1 UNC:
+        UNC: 1.0, REP: 1.25, LAT: 4.0, QUA: 0.2, NIN: 0.05, BZD: 0.5, COIN: 0.8, TKN: 0.1
+    - Currency catalog served at GET /currencies by pricing-service and proxied at GET /api/currencies by api
+    - Frontend fetches catalog on startup, stores in CurrencyContext, renders shadcn Select in site header
+    - Conversion happens client-side: convert(amount_unc * rate) for the selected display currency
+    - Span event `exchange_completed` emitted in frontend when display currency changes
+    - Sample UNC base prices: Local Orbit Shuttle 120, Moon Weekend Pass 340, Mars Economy Cabin 890
+    - Pricing service seat-class multipliers: economy-cryosleep 890 UNC, business-warp 2200 UNC,
+      first-class-nebula 5500 UNC (Mars equivalent; other destinations vary by a random ±20% factor)
+
   Telemetry naming conventions:
     - Follow OTel Semantic Conventions (https://opentelemetry.io/docs/specs/semconv/) for all standard signals:
         HTTP server spans: use http.request.method, url.path, http.response.status_code, server.address, network.protocol.version
@@ -48,6 +62,7 @@ context: |
         Namespace prefix: "spaceport." for all custom attributes
         Examples: spaceport.departure.id, spaceport.departure.destination, spaceport.booking.id,
                   spaceport.seat.class, spaceport.pricing.total, spaceport.pricing.promo_applied,
+                  spaceport.pricing.base_currency, spaceport.pricing.display_currency,
                   spaceport.chaos.failure_mode, spaceport.chaos.latency_ms
         Registry imports official OTel semconv as a dependency (v1.34.0)
         Weaver validates that custom names do not collide with official semconv

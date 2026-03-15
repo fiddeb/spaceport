@@ -27,6 +27,7 @@
 - [ ] 4.3 Create `GetDeparture(c *gin.Context)` that fetches single departure, calls pricing service for prices and recommendations
 - [ ] 4.4 Wrap pricing calls in manual span `api.call_pricing_service` and `api.call_recommendation_service`
 - [ ] 4.5 Register routes: `GET /api/departures`, `GET /api/departures/:id`
+- [ ] 4.6 Create `GET /api/currencies` handler that proxies to pricing service `GET /currencies`; cache the response in memory after the first successful call so subsequent requests do not hit the pricing service
 
 ## 5. Bookings API
 

@@ -12,7 +12,7 @@ The service SHALL use `FastAPIInstrumentor().instrument_app(app)` after OTel SDK
 - **THEN** the span has attributes: `http.request.method`, `url.path`, `http.response.status_code`, `server.address`
 
 ### Requirement: Manual pricing span with spaceport.* attributes
-The pricing calculation logic SHALL be wrapped in a manual child span named `pricing.calculate`. The span SHALL set attributes using Weaver-defined names: `spaceport.departure.id`, `spaceport.departure.destination`, `spaceport.seat.class`, `spaceport.pricing.total`, `spaceport.pricing.promo_applied`, `spaceport.pricing.currency`.
+The pricing calculation logic SHALL be wrapped in a manual child span named `pricing.calculate`. The span SHALL set attributes using Weaver-defined names: `spaceport.departure.id`, `spaceport.departure.destination`, `spaceport.seat.class`, `spaceport.pricing.total`, `spaceport.pricing.promo_applied`, `spaceport.pricing.base_currency`, `spaceport.pricing.display_currency`.
 
 #### Scenario: Pricing span has business attributes
 - **WHEN** `GET /price/1` is processed
