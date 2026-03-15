@@ -1,0 +1,11 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "spaceport.fullname" . }}-config
+  labels:
+    {{- include "spaceport.labels" . | nindent 4 }}
+data:
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.otlpEndpoint | quote }}
+  OTEL_SERVICE_VERSION: {{ .Chart.AppVersion | quote }}
+{{- end }}

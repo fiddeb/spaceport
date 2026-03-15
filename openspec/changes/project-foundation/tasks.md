@@ -30,14 +30,14 @@
 
 ## 5. Helm Chart
 
-- [ ] 5.1 Create `helm/spaceport/Chart.yaml` with `apiVersion: v2`, name `spaceport`, version `0.1.0`
-- [ ] 5.2 Create `helm/spaceport/values.yaml` with keys: `enabled`, `otlpEndpoint`, `frontend.image`, `api.image`, `pricingService.image`, resource requests/limits
-- [ ] 5.3 Create Deployment templates for `frontend`, `api`, `pricing-service` referencing image and OTLP values
-- [ ] 5.4 Create Service templates (ClusterIP) for all three services with correct ports
-- [ ] 5.5 Create ConfigMap template for shared OTLP and service name config
-- [ ] 5.6 Create PersistentVolumeClaim template for SQLite volume (`api`)
-- [ ] 5.7 Verify `helm lint helm/spaceport/` exits with code 0
-- [ ] 5.8 Document `file://` dependency entry for observabilitystack `Chart.yaml` in `docs/helm-integration.md`
+- [x] 5.1 Create `helm/spaceport/Chart.yaml` with `apiVersion: v2`, name `spaceport`, version `0.1.0`
+- [x] 5.2 Create `helm/spaceport/values.yaml` with keys: `enabled`, `otlpEndpoint`, `frontend.image`, `api.image`, `pricingService.image`, resource requests/limits
+- [x] 5.3 Create Deployment templates for `frontend`, `api`, `pricing-service` referencing image and OTLP values
+- [x] 5.4 Create Service templates (ClusterIP) for all three services with correct ports
+- [x] 5.5 Create ConfigMap template for shared OTLP and service name config
+- [x] 5.6 Create PersistentVolumeClaim template for SQLite volume (`api`)
+- [x] 5.7 Verify `helm lint helm/spaceport/` exits with code 0
+- [x] 5.8 Document `file://` dependency entry for observabilitystack `Chart.yaml` in `docs/helm-integration.md`
 
 ## 6. Makefile
 
