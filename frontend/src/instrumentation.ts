@@ -34,14 +34,6 @@ const tracerProvider = new WebTracerProvider({
 propagation.setGlobalPropagator(new W3CTraceContextPropagator());
 tracerProvider.register();
 
-// Flush on tab hide/close so spans aren't lost during navigation.
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") {
-    tracerProvider.forceFlush();
-    loggerProvider.forceFlush();
-  }
-});
-
 // --- Logs ---
 const logExporter = new OTLPLogExporter({
   url: "/otlp/v1/logs",
@@ -52,6 +44,14 @@ const loggerProvider = new LoggerProvider({
   processors: [new BatchLogRecordProcessor(logExporter)],
 });
 logs.setGlobalLoggerProvider(loggerProvider);
+
+// Flush on tab hide/close so spans aren't lost during navigation.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    tracerProvider.forceFlush();
+    loggerProvider.forceFlush();
+  }
+});
 
 // --- Metrics ---
 const metricExporter = new OTLPMetricExporter({

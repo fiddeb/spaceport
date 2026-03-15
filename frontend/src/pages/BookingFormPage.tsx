@@ -14,7 +14,7 @@ import {
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { tracer, logger, meter, SeverityNumber, tracedFetch } from "@/instrumentation";
-import { SpanStatusCode, trace } from "@opentelemetry/api";
+import { SpanStatusCode, trace, context } from "@opentelemetry/api";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 const bookingCounter = meter.createCounter("spaceport.frontend.bookings", {
