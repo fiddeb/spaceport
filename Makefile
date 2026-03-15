@@ -22,10 +22,10 @@ test: ## Run Playwright smoke tests
 	cd tests && npx playwright test
 
 lint: ## Validate the Weaver semantic convention registry
-	weaver-otel registry check -r weaver/ -p policies/
+	weaver-otel registry check -r semconv/models/ -p semconv/policies/
 
 docs: ## Generate markdown docs from the Weaver registry
-	weaver-otel registry generate markdown docs/semconv -r weaver/ -t templates/registry
+	weaver-otel registry generate markdown docs/semconv -r semconv/models/ -t semconv/templates/registry
 
 link-chart: ## Symlink helm/spaceport into the observabilitystack umbrella chart
 	@target_dir="../observabilitystack/helm/stackcharts/charts"; \

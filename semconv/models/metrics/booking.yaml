@@ -1,0 +1,26 @@
+groups:
+  - id: metric.spaceport.booking.count
+    type: metric
+    metric_name: spaceport.booking.count
+    brief: Number of booking attempts processed by the API.
+    instrument: counter
+    unit: "{booking}"
+    stability: development
+    attributes:
+      - ref: spaceport.booking.status
+        requirement_level: required
+      - ref: spaceport.seat.class
+        requirement_level: recommended
+      - ref: spaceport.departure.destination
+        requirement_level: recommended
+
+  - id: metric.spaceport.booking.active
+    type: metric
+    metric_name: spaceport.booking.active
+    brief: Number of confirmed bookings currently in the system.
+    instrument: updowncounter
+    unit: "{booking}"
+    stability: development
+    attributes:
+      - ref: spaceport.seat.class
+        requirement_level: recommended

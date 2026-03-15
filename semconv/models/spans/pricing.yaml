@@ -1,0 +1,32 @@
+groups:
+  - id: span.spaceport.pricing.calculate
+    type: span
+    span_kind: client
+    brief: Outbound call from the API to the pricing service to calculate a fare.
+    stability: development
+    attributes:
+      - ref: spaceport.departure.destination
+        requirement_level: recommended
+      - ref: spaceport.seat.class
+        requirement_level: required
+      - ref: spaceport.pricing.total
+        requirement_level: recommended
+      - ref: spaceport.pricing.base_currency
+        requirement_level: recommended
+      - ref: spaceport.pricing.display_currency
+        requirement_level: recommended
+      - ref: spaceport.pricing.promo_applied
+        requirement_level: recommended
+      - ref: spaceport.chaos.failure_mode
+        requirement_level: opt_in
+      - ref: spaceport.chaos.latency_ms
+        requirement_level: opt_in
+
+  - id: span.spaceport.departure.list
+    type: span
+    span_kind: server
+    brief: Handles a request to list available departures from the API.
+    stability: development
+    attributes:
+      - ref: spaceport.departure.destination
+        requirement_level: opt_in
