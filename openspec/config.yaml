@@ -22,7 +22,7 @@ context: |
   
   Conventions:
     - Conventional commits (feat:, fix:, refactor:, etc.)
-    - Monorepo with services in top-level directories (frontend/, api/, pricing-service/)
+    - Monorepo with services in top-level directories (frontend/, api/, pricing-service/, weaver/)
     - Keep it simple — no Kafka, Redis, gRPC, auth, feature flags in v1
     - Max 3 app services
     - Must work on a laptop, start in under 5 minutes
@@ -37,6 +37,25 @@ context: |
     6. Correlated logs with trace_id/span_id
     7. At least one controlled error scenario
     8. At least one controlled latency scenario
+
+  Telemetry naming conventions:
+    - Follow OTel Semantic Conventions (https://opentelemetry.io/docs/specs/semconv/) for all standard signals:
+        HTTP server spans: use http.request.method, url.path, http.response.status_code, server.address, network.protocol.version
+        HTTP client spans: use http.request.method, server.address, server.port, url.full, http.response.status_code
+        Database spans: use db.system.name="sqlite", db.operation.name, db.query.text, db.namespace
+        Service resource: use service.name, service.version, deployment.environment.name
+    - For domain-specific attributes NOT covered by standard semconv, define a custom Weaver registry in weaver/:
+        Namespace prefix: "spaceport." for all custom attributes
+        Examples: spaceport.departure.id, spaceport.departure.destination, spaceport.booking.id,
+                  spaceport.seat.class, spaceport.pricing.total, spaceport.pricing.promo_applied,
+                  spaceport.chaos.failure_mode, spaceport.chaos.latency_ms
+        Registry imports official OTel semconv as a dependency (v1.34.0)
+        Weaver validates that custom names do not collide with official semconv
+    - Never invent free-form attribute names for signals covered by standard semconv
+    - Metric naming follows semconv instrument conventions:
+        Counters: {domain}.{noun}.{noun} e.g. spaceport.booking.count
+        Histograms: {domain}.{operation}.duration (unit: s) e.g. spaceport.pricing.request.duration
+        Use UCUM units in metric descriptors
 
 rules:
   proposal:
