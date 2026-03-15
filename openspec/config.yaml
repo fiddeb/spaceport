@@ -80,3 +80,6 @@ rules:
   tasks:
     - Break tasks into chunks of max 2 hours
     - Each task should be independently verifiable
+  git:
+    - Every change is implemented on a dedicated feature branch (feat/<change-name>)
+    - Before creating a feature branch, always pull and update main first
