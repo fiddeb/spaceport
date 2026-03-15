@@ -6,10 +6,7 @@ import {
   ATTR_SERVICE_VERSION,
 } from "@opentelemetry/semantic-conventions";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
-import { registerInstrumentations } from "@opentelemetry/instrumentation";
-import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
-import { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xml-http-request";
-import { propagation, trace, metrics } from "@opentelemetry/api";
+import { propagation, trace, metrics, context as otelContext, ROOT_CONTEXT } from "@opentelemetry/api";
 import { LoggerProvider, BatchLogRecordProcessor } from "@opentelemetry/sdk-logs";
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
 import { MeterProvider, PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
@@ -45,18 +42,6 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
-registerInstrumentations({
-  instrumentations: [
-    new FetchInstrumentation({
-      propagateTraceHeaderCorsUrls: [/.*/],
-    }),
-    new XMLHttpRequestInstrumentation({
-      propagateTraceHeaderCorsUrls: [/.*/],
-    }),
-  ],
-  tracerProvider,
-});
-
 // --- Logs ---
 const logExporter = new OTLPLogExporter({
   url: "/otlp/v1/logs",
@@ -87,3 +72,20 @@ export const tracer = trace.getTracer("spaceport-frontend", serviceVersion);
 export const logger = logs.getLogger("spaceport-frontend", serviceVersion);
 export const meter = metrics.getMeter("spaceport-frontend", serviceVersion);
 export { SeverityNumber };
+
+/**
+ * Fetch with W3C trace context propagation.
+ * Injects traceparent/tracestate from the given (or active) OTel context.
+ */
+export function tracedFetch(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+  ctx?: typeof ROOT_CONTEXT,
+): Promise<Response> {
+  const headers: Record<string, string> = {};
+  propagation.inject(ctx ?? otelContext.active(), headers);
+  return fetch(input, {
+    ...init,
+    headers: { ...headers, ...init?.headers },
+  });
+}

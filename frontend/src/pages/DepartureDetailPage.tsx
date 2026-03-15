@@ -6,8 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { useSpan } from "@/hooks/useSpan";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { logger, meter, SeverityNumber } from "@/instrumentation";
-import { context } from "@opentelemetry/api";
+import { logger, meter, SeverityNumber, tracedFetch } from "@/instrumentation";
 
 const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {
   description: "Page views by page name",
@@ -64,7 +63,7 @@ export function DepartureDetailPage() {
   }, [id]);
 
   useEffect(() => {
-    context.with(contextRef.current, () => fetch(`/api/departures/${id}`))
+    tracedFetch(`/api/departures/${id}`, undefined, contextRef.current)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();

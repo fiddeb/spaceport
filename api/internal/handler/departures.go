@@ -14,9 +14,15 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 var tracer = otel.Tracer("spaceport-api")
+
+// injectTrace propagates the OTel context into outgoing HTTP request headers.
+func injectTrace(ctx context.Context, req *http.Request) {
+	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
+}
 
 // Departure represents a departure row.
 type Departure struct {
@@ -125,6 +131,7 @@ func (h *DepartureHandler) callPricingService(ctx context.Context, departureID s
 		span.SetStatus(codes.Error, err.Error())
 		return nil, err
 	}
+	injectTrace(ctx, req)
 	resp, err := h.HTTPClient.Do(req)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
@@ -171,6 +178,7 @@ func (h *DepartureHandler) callRecommendationService(ctx context.Context, depart
 		span.SetStatus(codes.Error, err.Error())
 		return nil, err
 	}
+	injectTrace(ctx, req)
 	resp, err := h.HTTPClient.Do(req)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
@@ -228,6 +236,7 @@ func (h *DepartureHandler) GetCurrencies(c *gin.Context) {
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "pricing service unavailable"})
 		return
 	}
+	injectTrace(ctx, req)
 	resp, err := h.HTTPClient.Do(req)
 	if err != nil {
 		h.Logger.ErrorContext(ctx, "currency fetch failed", "error", err)

@@ -11,8 +11,6 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
 	"github.com/fiddeb/spaceport/api/internal/applog"
 	"github.com/fiddeb/spaceport/api/internal/db"
@@ -48,11 +46,6 @@ func main() {
 	}
 
 	httpClient := &http.Client{
-		Transport: otelhttp.NewTransport(http.DefaultTransport,
-			otelhttp.WithSpanNameFormatter(func(_ string, r *http.Request) string {
-				return "HTTP " + r.Method + " " + r.URL.Path
-			}),
-		),
 		Timeout: 10 * time.Second,
 	}
 
@@ -75,7 +68,7 @@ func main() {
 
 	r := gin.New()
 	r.Use(gin.Recovery())
-	r.Use(otelgin.Middleware("spaceport-api"))
+	r.Use(middleware.Tracing())
 	r.Use(middleware.HTTPMetrics())
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{frontendOrigin},

@@ -128,6 +128,7 @@ func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (f
 		span.SetStatus(codes.Error, err.Error())
 		return 0, currency, err
 	}
+	injectTrace(ctx, httpReq)
 	resp, err := h.HTTPClient.Do(httpReq)
 	elapsed := time.Since(start)
 	metrics.PricingReqDuration.Record(ctx, float64(elapsed.Milliseconds()),

@@ -7,10 +7,10 @@ import random
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Query
-from opentelemetry import trace
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.trace import StatusCode
+from fastapi import FastAPI, HTTPException, Query, Request
+from opentelemetry import context as otel_context, trace
+from opentelemetry.propagate import extract
+from opentelemetry.trace import SpanKind, StatusCode
 
 from pricing_service.logging_config import setup_logging
 from pricing_service.pricing import SEAT_CLASSES, calculate_price
@@ -22,9 +22,28 @@ setup_telemetry()
 setup_logging()
 
 logger = logging.getLogger("pricing_service")
+_tracer = trace.get_tracer("spaceport-pricing-service")
 
 app = FastAPI(title="Spaceport Pricing Service")
-FastAPIInstrumentor().instrument_app(app)
+
+
+@app.middleware("http")
+async def tracing_middleware(request: Request, call_next):
+    """Extract W3C trace context and start a server span per request."""
+    ctx = extract(dict(request.headers))
+    span_name = f"{request.method} {request.url.path}"
+    with _tracer.start_as_current_span(
+        span_name,
+        context=ctx,
+        kind=SpanKind.SERVER,
+    ) as span:
+        span.set_attribute("http.request.method", request.method)
+        span.set_attribute("url.path", request.url.path)
+        response = await call_next(request)
+        span.set_attribute("http.response.status_code", response.status_code)
+        if response.status_code >= 500:
+            span.set_status(StatusCode.ERROR, f"HTTP {response.status_code}")
+        return response
 
 # --- Load currency catalog once at startup ---
 _currencies_path = Path(__file__).resolve().parent.parent / "data" / "currencies.json"
@@ -86,6 +105,7 @@ async def price(
     currency: Optional[str] = Query(None),
 ) -> dict:
     span = trace.get_current_span()
+    span.set_attribute("spaceport.departure.id", departure_id)
     await _apply_chaos(span)
 
     # Validate currency if provided
@@ -109,6 +129,7 @@ async def price(
 @app.get("/recommendations/{departure_id}")
 async def recommendations(departure_id: int) -> dict:
     span = trace.get_current_span()
+    span.set_attribute("spaceport.departure.id", departure_id)
     await _apply_chaos(span)
 
     # Baseline latency
