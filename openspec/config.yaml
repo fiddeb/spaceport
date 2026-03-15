@@ -12,7 +12,7 @@ context: |
     - Backend API: Go + Gin + SQLite (modernc.org/sqlite, pure Go) with otelsql for database span tracing
     - Pricing/Recommendation service: Python + FastAPI
     - SQLite for departures (seeded from JSON) and bookings persistence — simple, no server, single file
-    - Docker Compose for local dev, Kubernetes manifests for deployment alongside observability stack
+    - Docker Compose for local dev, Helm chart for deployment as a local file:// subchart inside observabilitystack's umbrella chart (helm/stackcharts/charts/spaceport), following the mimir-distributed pattern
     - Playwright for smoke tests, K6 as optional bonus
   
   Observability stack (external, already running):
