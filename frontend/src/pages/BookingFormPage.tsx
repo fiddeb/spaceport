@@ -14,7 +14,7 @@ import {
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { tracer, logger, meter, SeverityNumber } from "@/instrumentation";
-import { SpanStatusCode } from "@opentelemetry/api";
+import { SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 const bookingCounter = meter.createCounter("spaceport.frontend.bookings", {
@@ -49,9 +49,10 @@ export function BookingFormPage() {
         "spaceport.seat.class": seatClass,
       },
     });
+    const ctx = trace.setSpan(context.active(), span);
 
     try {
-      const resp = await fetch("/api/bookings", {
+      const resp = await context.with(ctx, () => fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,7 +63,7 @@ export function BookingFormPage() {
           extra_baggage: extraBaggage ? 1 : 0,
           currency: selectedCurrency,
         }),
-      });
+      }));
 
       if (!resp.ok) {
         const body = await resp.json().catch(() => null);
