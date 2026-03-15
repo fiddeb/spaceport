@@ -27,7 +27,7 @@ export function LandingLayout() {
               Departures
             </Link>
             <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
-              <SelectTrigger className="w-36">
+              <SelectTrigger className="h-auto w-auto border-0 bg-transparent p-0 text-sm text-muted-foreground shadow-none transition-colors hover:text-foreground focus-visible:ring-0 [&>svg]:ml-1">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 export function Hero() {
   return (
     <section
-      className="relative flex min-h-screen items-center justify-center overflow-hidden"
+      className="relative flex min-h-screen flex-col overflow-hidden"
       data-prompt="A vast futuristic spaceport terminal interior at dusk, towering glass walls revealing a star-filled sky, neon-lit boarding gates stretching into the distance, silhouettes of passengers with luggage, moody cinematic wide-angle shot, dark atmospheric lighting with teal and blue accent lights, volumetric fog"
     >
       {/* Gradient background */}
@@ -24,25 +24,34 @@ export function Hero() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_40%,oklch(0.25_0.06_220_/_0.3),transparent)]" />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center gap-8 px-6 text-center">
-        <h1 className="animate-in fade-in slide-in-from-bottom-4 fill-mode-both text-6xl font-bold tracking-tight text-foreground duration-700 sm:text-7xl lg:text-8xl">
-          Your Gateway
-          <br />
-          <span className="text-primary">Beyond the Stars</span>
-        </h1>
+      <div className="relative z-10 flex flex-1 flex-col gap-8 px-6 pt-20 sm:px-8 lg:px-12">
+        {/* Hero image */}
+        <img
+          src="/hero.png"
+          alt="Spaceport terminal"
+          className="animate-in fade-in slide-in-from-bottom-2 fill-mode-both mx-auto aspect-[16/9] max-h-[55vh] w-full max-w-7xl object-cover duration-700"
+        />
 
-        <p className="animate-in fade-in slide-in-from-bottom-4 fill-mode-both max-w-xl text-lg text-muted-foreground delay-200 duration-700 sm:text-xl">
-          Book interplanetary voyages from the solar system's premier spaceport.
-          Four destinations. Twelve routes weekly. Zero gravity surcharge.
-        </p>
+        <div className="flex flex-col items-center gap-8 pb-12 text-center">
+          <h1 className="animate-in fade-in slide-in-from-bottom-4 fill-mode-both text-4xl font-bold tracking-tight text-foreground duration-700 sm:text-5xl lg:text-6xl">
+            Your Gateway
+            <br />
+            <span className="text-primary">Beyond the Stars</span>
+          </h1>
 
-        <Button
-          asChild
-          size="lg"
-          className="animate-in fade-in slide-in-from-bottom-4 fill-mode-both h-12 px-8 text-base delay-400 duration-700"
-        >
-          <Link to="/departures">Browse Departures</Link>
-        </Button>
+          <p className="animate-in fade-in slide-in-from-bottom-4 fill-mode-both max-w-xl text-lg text-muted-foreground delay-200 duration-700 sm:text-xl">
+            Book interplanetary voyages from the solar system's premier spaceport.
+            Four destinations. Twelve routes weekly. Zero gravity surcharge.
+          </p>
+
+          <Button
+            asChild
+            size="lg"
+            className="animate-in fade-in slide-in-from-bottom-4 fill-mode-both h-12 px-8 text-base delay-400 duration-700"
+          >
+            <Link to="/departures">Browse Departures</Link>
+          </Button>
+        </div>
       </div>
 
       {/* Bottom fade into next section */}

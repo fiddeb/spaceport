@@ -7,6 +7,7 @@ const destinations = [
     teaser: "Red sands, frontier living, and the best sunsets in the system.",
     gradient:
       "bg-[linear-gradient(160deg,oklch(0.18_0.05_30)_0%,oklch(0.12_0.04_15)_50%,oklch(0.08_0.02_0)_100%)]",
+    image: "/mars.png",
     prompt:
       "Mars colony at golden hour, red desert landscape with dome habitats and landing pads, distant mountains, warm dusty atmosphere, cinematic sci-fi concept art, dark moody tones",
     link: "/departures",
@@ -19,6 +20,7 @@ const destinations = [
     prompt:
       "Space station orbiting Titan with Saturn's rings visible in background, metallic structure with warm interior lights, deep space darkness, cinematic composition, volumetric lighting",
     link: "/departures",
+    image: "/titan.png",
   },
   {
     name: "Europa Deep Dive",
@@ -28,6 +30,7 @@ const destinations = [
     prompt:
       "Underwater research station beneath Europa's ice crust, bioluminescent ocean depths, glass observation dome, deep blue and teal lighting, mysterious aquatic sci-fi atmosphere",
     link: "/departures",
+    image: "/europa.png",
   },
   {
     name: "Moonbase Alpha",
@@ -37,6 +40,7 @@ const destinations = [
     prompt:
       "Lunar base on the Moon's surface with Earth rising in the starry sky, modern modular architecture, soft blue-white lighting, astronauts walking between buildings, cinematic wide shot",
     link: "/departures",
+    image: "/moon.png",
   },
 ];
 
@@ -64,7 +68,7 @@ export function DestinationShowcase() {
               animationDuration: "600ms",
             }}
           >
-            {/* Background gradient placeholder */}
+            {/* Background gradient */}
             <div
               className={`absolute inset-0 ${dest.gradient} transition-transform duration-500 group-hover:scale-105`}
               data-prompt={dest.prompt}
@@ -75,6 +79,13 @@ export function DestinationShowcase() {
 
             {/* Content */}
             <div className="relative z-10">
+              {dest.image && (
+                <img
+                  src={dest.image}
+                  alt={dest.name}
+                  className="mb-3 w-20 rounded object-contain"
+                />
+              )}
               <h3 className="text-lg font-bold text-foreground">
                 {dest.name}
               </h3>
