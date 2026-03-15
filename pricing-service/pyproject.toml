@@ -1,0 +1,27 @@
+[project]
+name = "spaceport-pricing-service"
+version = "0.1.0"
+description = "Spaceport pricing service — FastAPI with OpenTelemetry instrumentation"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.34,<1",
+    "opentelemetry-sdk>=1.29,<2",
+    "opentelemetry-exporter-otlp>=1.29,<2",
+    "opentelemetry-instrumentation-fastapi>=0.50b,<1",
+    "opentelemetry-instrumentation-logging>=0.50b,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx>=0.28,<1",
+    "pytest>=8,<9",
+    "pytest-asyncio>=0.25,<1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["pricing_service"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
