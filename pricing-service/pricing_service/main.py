@@ -53,14 +53,14 @@ async def _apply_chaos(span: trace.Span) -> Optional[dict]:
     if _failure_count > 0:
         _failure_count -= 1
         msg = random.choice(_FAILURE_MESSAGES)
-        span.set_attribute("spaceport.chaos.failure_mode", msg)
+        span.add_event("chaos.failure_triggered", {"spaceport.chaos.failure_mode": msg})
         span.set_status(StatusCode.ERROR, msg)
         logger.error("Chaos failure triggered: %s", msg)
         raise HTTPException(status_code=500, detail=msg)
 
     if _latency_count > 0:
         _latency_count -= 1
-        span.set_attribute("spaceport.chaos.latency_ms", _latency_ms)
+        span.add_event("chaos.latency_injected", {"spaceport.chaos.latency_ms": _latency_ms})
         logger.warning("Chaos latency injected: %dms", _latency_ms)
         await asyncio.sleep(_latency_ms / 1000.0)
 

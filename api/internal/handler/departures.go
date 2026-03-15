@@ -97,14 +97,14 @@ func (h *DepartureHandler) GetDeparture(c *gin.Context) {
 	pricing, err := h.callPricingService(ctx, id)
 	if err != nil {
 		h.Logger.ErrorContext(ctx, "pricing service failed", "error", err)
-		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "pricing service unavailable"})
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 		return
 	}
 
 	recs, err := h.callRecommendationService(ctx, id)
 	if err != nil {
 		h.Logger.ErrorContext(ctx, "recommendation service failed", "error", err)
-		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "recommendation service unavailable"})
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -133,8 +133,25 @@ func (h *DepartureHandler) callPricingService(ctx context.Context, departureID s
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		span.SetStatus(codes.Error, fmt.Sprintf("pricing returned %d", resp.StatusCode))
-		return nil, fmt.Errorf("pricing service returned %d", resp.StatusCode)
+		errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+		var pricingErr struct {
+			Detail string `json:"detail"`
+			Error  string `json:"error"`
+		}
+		_ = json.Unmarshal(errBody, &pricingErr)
+		msg := pricingErr.Detail
+		if msg == "" {
+			msg = pricingErr.Error
+		}
+		if msg == "" {
+			msg = fmt.Sprintf("pricing service returned %d", resp.StatusCode)
+		}
+		span.SetStatus(codes.Error, msg)
+		span.SetAttributes(
+			attribute.Int("http.response.status_code", resp.StatusCode),
+			attribute.String("spaceport.pricing.error", msg),
+		)
+		return nil, fmt.Errorf("%s", msg)
 	}
 
 	var result any
@@ -162,8 +179,25 @@ func (h *DepartureHandler) callRecommendationService(ctx context.Context, depart
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		span.SetStatus(codes.Error, fmt.Sprintf("recommendations returned %d", resp.StatusCode))
-		return nil, fmt.Errorf("recommendation service returned %d", resp.StatusCode)
+		errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+		var recErr struct {
+			Detail string `json:"detail"`
+			Error  string `json:"error"`
+		}
+		_ = json.Unmarshal(errBody, &recErr)
+		msg := recErr.Detail
+		if msg == "" {
+			msg = recErr.Error
+		}
+		if msg == "" {
+			msg = fmt.Sprintf("recommendation service returned %d", resp.StatusCode)
+		}
+		span.SetStatus(codes.Error, msg)
+		span.SetAttributes(
+			attribute.Int("http.response.status_code", resp.StatusCode),
+			attribute.String("spaceport.recommendations.error", msg),
+		)
+		return nil, fmt.Errorf("%s", msg)
 	}
 
 	var result any

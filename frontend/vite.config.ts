@@ -17,8 +17,9 @@ export default defineConfig({
         changeOrigin: true,
       },
       "/otlp": {
-        target: "http://otel-collector.k8s.test",
-        changeOrigin: true,
+        target: "http://127.0.0.1:80",
+        changeOrigin: false,
+        headers: { host: "otel-collector.k8s.test" },
         rewrite: (path) => path.replace(/^\/otlp/, ""),
       },
     },

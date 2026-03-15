@@ -66,11 +66,15 @@ export function BookingFormPage() {
       }));
 
       if (!resp.ok) {
-        const body = await resp.json().catch(() => null);
-        const errorDetail = body?.error ?? `HTTP ${resp.status}`;
-        const bookingErr = new Error(`Booking failed (${errorDetail})`);
+        const rawText = await resp.text().catch(() => "");
+        let body: Record<string, unknown> | null = null;
+        try { body = JSON.parse(rawText); } catch { /* non-JSON body */ }
+        const errorDetail = (body?.error ?? rawText) || `HTTP ${resp.status}`;
+        const bookingErr = new Error(`Booking failed (HTTP ${resp.status})`);
         (bookingErr as any).httpStatus = resp.status;
         (bookingErr as any).responseBody = body;
+        (bookingErr as any).rawBody = rawText;
+        (bookingErr as any).errorDetail = String(errorDetail);
         (bookingErr as any).bookingId = body?.booking_id;
         throw bookingErr;
       }
@@ -81,6 +85,7 @@ export function BookingFormPage() {
       });
       span.end();
 
+      const okSpanCtx = span.spanContext();
       bookingCounter.add(1, { outcome: "success", "spaceport.seat.class": seatClass });
       logger.emit({
         severityNumber: SeverityNumber.INFO,
@@ -91,6 +96,8 @@ export function BookingFormPage() {
           "spaceport.seat.class": seatClass,
           "spaceport.booking.currency": data.currency,
           "spaceport.booking.total_price": data.total_price,
+          "trace_id": okSpanCtx.traceId,
+          "span_id": okSpanCtx.spanId,
         },
       });
 
@@ -110,14 +117,19 @@ export function BookingFormPage() {
       const responseBody = (err as any)?.responseBody;
       const serverBookingId = (err as any)?.bookingId;
 
+      const rawBody = (err as any)?.rawBody;
+      const errorDetail = (err as any)?.errorDetail;
       span.setStatus({ code: SpanStatusCode.ERROR, message });
       span.addEvent("booking_failed", {
         "error.message": message,
         ...(httpStatus && { "http.response.status_code": httpStatus }),
+        ...(errorDetail && { "http.response.error": errorDetail }),
+        ...(rawBody && { "http.response.body": rawBody }),
       });
       span.end();
 
       bookingCounter.add(1, { outcome: "failure", "spaceport.seat.class": seatClass });
+      const errSpanCtx = span.spanContext();
       logger.emit({
         severityNumber: SeverityNumber.ERROR,
         body: `Booking failed: ${message}`,
@@ -127,9 +139,12 @@ export function BookingFormPage() {
           "spaceport.booking.currency": selectedCurrency,
           "spaceport.passenger.name": passengerName,
           ...(httpStatus && { "http.response.status_code": httpStatus }),
+          ...(errorDetail && { "http.response.error": errorDetail }),
+          ...(rawBody && { "http.response.body": rawBody }),
           ...(serverBookingId && { "spaceport.booking.id": serverBookingId }),
-          ...(responseBody && { "spaceport.error.response_body": JSON.stringify(responseBody) }),
           "error.type": err instanceof Error ? err.name : "Unknown",
+          "trace_id": errSpanCtx.traceId,
+          "span_id": errSpanCtx.spanId,
         },
       });
 
