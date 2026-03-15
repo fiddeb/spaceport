@@ -1,14 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { tracer } from "@/instrumentation";
 import type { Span } from "@opentelemetry/api";
 import { SpanStatusCode, context, trace } from "@opentelemetry/api";
 import type { Context } from "@opentelemetry/api";
 
 /**
- * Starts an OTel span on mount, ends it on unmount.
- * Returns the span ref so callers can add events/attributes.
- * Also exposes a `contextRef` that can be used with `context.with()`
- * to propagate trace context into child fetches.
+ * Starts an OTel span on mount.
+ * Call `endSpan()` after your data loads so the span gets exported
+ * while the trace is still active. Unmount ends it as a safety net.
  */
 export function useSpan(
   name: string,
@@ -16,6 +15,7 @@ export function useSpan(
 ) {
   const spanRef = useRef<Span | null>(null);
   const contextRef = useRef<Context>(context.active());
+  const endedRef = useRef(false);
 
   useEffect(() => {
     const span = tracer.startSpan(name, {
@@ -23,15 +23,23 @@ export function useSpan(
     });
     spanRef.current = span;
     contextRef.current = trace.setSpan(context.active(), span);
+    endedRef.current = false;
 
     return () => {
-      span.end();
+      if (!endedRef.current) span.end();
       spanRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name]);
 
-  return { spanRef, contextRef };
+  const endSpan = useCallback(() => {
+    if (!endedRef.current && spanRef.current) {
+      spanRef.current.end();
+      endedRef.current = true;
+    }
+  }, []);
+
+  return { spanRef, contextRef, endSpan };
 }
 
 export { SpanStatusCode };

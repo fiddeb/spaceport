@@ -49,7 +49,7 @@ export function DepartureDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const { convert } = useCurrency();
 
-  const { contextRef } = useSpan("user.view_departure", {
+  const { contextRef, endSpan } = useSpan("user.view_departure", {
     "spaceport.departure.id": id ?? "",
     "spaceport.departure.destination": data?.departure.destination ?? "",
   });
@@ -72,10 +72,12 @@ export function DepartureDetailPage() {
       .then((d) => {
         setData(d);
         setLoading(false);
+        endSpan();
       })
       .catch((err) => {
         setError(err.message);
         setLoading(false);
+        endSpan();
       });
   }, [id]);
 

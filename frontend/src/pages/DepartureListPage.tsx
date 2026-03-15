@@ -26,7 +26,7 @@ export function DepartureListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { contextRef } = useSpan("user.browse_departures");
+  const { contextRef, endSpan } = useSpan("user.browse_departures");
 
   useEffect(() => {
     pageViewCounter.add(1, { "page.name": "departure_list" });
@@ -42,10 +42,12 @@ export function DepartureListPage() {
       .then((data) => {
         setDepartures(data);
         setLoading(false);
+        endSpan();
       })
       .catch((err) => {
         setError(err.message);
         setLoading(false);
+        endSpan();
       });
   }, []);
 
