@@ -1,0 +1,33 @@
+# Environment
+.env
+
+# Database
+*.sqlite
+*.db
+
+# Node
+node_modules/
+dist/
+.next/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+
+# Go build artifacts
+/api/api
+/api/*.test
+*.exe
+*.out
+
+# Helm
+charts/
+*.tgz
+
+# OS
+.DS_Store

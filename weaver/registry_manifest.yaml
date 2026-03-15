@@ -1,0 +1,7 @@
+name: spaceport
+description: Custom semantic conventions for the Spaceport booking demo app
+semconv_version: 0.1.0
+schema_base_url: https://spaceport.example.com/schemas
+dependencies:
+  - name: otel
+    registry_path: https://github.com/open-telemetry/semantic-conventions/archive/refs/tags/v1.34.0.zip[model]

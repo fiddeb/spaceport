@@ -1,0 +1,22 @@
+groups:
+  - id: registry.spaceport.booking
+    type: attribute_group
+    brief: Attributes describing a spaceport booking.
+    stability: development
+    attributes:
+      - id: spaceport.booking.id
+        type: string
+        brief: Unique identifier for the booking.
+        requirement_level: recommended
+        examples: ["BKG-001", "BKG-9999-URGNT"]
+      - id: spaceport.booking.status
+        type:
+          members:
+            - id: confirmed
+              value: "confirmed"
+              brief: Booking was successfully confirmed.
+            - id: failed
+              value: "failed"
+              brief: Booking failed.
+        brief: Status of the booking.
+        requirement_level: recommended

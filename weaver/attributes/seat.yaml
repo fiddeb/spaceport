@@ -1,0 +1,20 @@
+groups:
+  - id: registry.spaceport.seat
+    type: attribute_group
+    brief: Attributes describing a passenger seat.
+    stability: development
+    attributes:
+      - id: spaceport.seat.class
+        type:
+          members:
+            - id: economy_cryosleep
+              value: "economy-cryosleep"
+              brief: Economy class with cryosleep pod.
+            - id: business_warp
+              value: "business-warp"
+              brief: Business class with warp-lounge access.
+            - id: first_class_nebula
+              value: "first-class-nebula"
+              brief: First class nebula suite.
+        brief: The seat class selected for the booking.
+        requirement_level: recommended

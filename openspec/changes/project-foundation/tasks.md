@@ -1,18 +1,18 @@
 ## 1. Repository Structure
 
-- [ ] 1.1 Create top-level directories: `frontend/`, `api/`, `pricing-service/`, `weaver/`, `helm/`, `tests/`, `docs/`
-- [ ] 1.2 Add `.gitkeep` files where directories start empty
-- [ ] 1.3 Add root `.gitignore` covering: `.env`, `*.sqlite`, `node_modules/`, `__pycache__/`, Go build artifacts, `dist/`
+- [x] 1.1 Create top-level directories: `frontend/`, `api/`, `pricing-service/`, `weaver/`, `helm/`, `tests/`, `docs/`
+- [x] 1.2 Add `.gitkeep` files where directories start empty
+- [x] 1.3 Add root `.gitignore` covering: `.env`, `*.sqlite`, `node_modules/`, `__pycache__/`, Go build artifacts, `dist/`
 
 ## 2. Weaver Registry
 
-- [ ] 2.1 Create `weaver/registry_manifest.yaml` with name `spaceport`, version `0.1.0`, importing OTel semconv v1.34.0 as dependency
-- [ ] 2.2 Define `spaceport.departure.*` attributes: `id` (string), `destination` (string), `departure_time` (string, ISO8601)
-- [ ] 2.3 Define `spaceport.booking.*` attributes: `id` (string), `status` (string enum: confirmed/failed)
-- [ ] 2.4 Define `spaceport.seat.*` attributes: `class` (string enum: economy-cryosleep/business-warp/first-class-nebula)
-- [ ] 2.5 Define `spaceport.pricing.*` attributes: `total` (double, unit: UNC), `promo_applied` (boolean), `base_currency` (string, constant "UNC"), `display_currency` (string enum: UNC/REP/LAT/QUA/NIN/BZD/COIN/TKN)
-- [ ] 2.6 Define `spaceport.chaos.*` attributes: `failure_mode` (string), `latency_ms` (int)
-- [ ] 2.7 Verify `weaver registry check -r weaver/` exits with code 0
+- [x] 2.1 Create `weaver/registry_manifest.yaml` with name `spaceport`, version `0.1.0`, importing OTel semconv v1.34.0 as dependency
+- [x] 2.2 Define `spaceport.departure.*` attributes: `id` (string), `destination` (string), `departure_time` (string, ISO8601)
+- [x] 2.3 Define `spaceport.booking.*` attributes: `id` (string), `status` (string enum: confirmed/failed)
+- [x] 2.4 Define `spaceport.seat.*` attributes: `class` (string enum: economy-cryosleep/business-warp/first-class-nebula)
+- [x] 2.5 Define `spaceport.pricing.*` attributes: `total` (double, unit: UNC), `promo_applied` (boolean), `base_currency` (string, constant "UNC"), `display_currency` (string enum: UNC/REP/LAT/QUA/NIN/BZD/COIN/TKN)
+- [x] 2.6 Define `spaceport.chaos.*` attributes: `failure_mode` (string), `latency_ms` (int)
+- [x] 2.7 Verify `weaver registry check -r weaver/` exits with code 0
 
 ## 3. Shared Configuration
 
