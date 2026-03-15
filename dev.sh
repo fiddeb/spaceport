@@ -90,6 +90,7 @@ echo -e "${GREEN}▸ Starting api${RESET} ${DIM}(port 8080)${RESET}"
 (
   cd "$ROOT/api"
   export PRICING_SERVICE_URL="http://localhost:8000"
+  export SPACEPORT_FRONTEND_ORIGIN="http://127.0.0.1:5175"
   export OTEL_SERVICE_NAME=spaceport-api
   go run . 2>&1 | sed "s/^/  ${DIM}[api]${RESET}      /"
 ) &
