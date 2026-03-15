@@ -9,9 +9,9 @@ context: |
   
   Tech stack:
     - Frontend: React + Vite + shadcn (preset aJx2k9T) + TypeScript
-    - Backend API: Go + Gin
+    - Backend API: Go + Gin + SQLite (modernc.org/sqlite, pure Go) with otelsql for database span tracing
     - Pricing/Recommendation service: Python + FastAPI
-    - No database in v1 — static JSON data, in-memory state
+    - SQLite for departures (seeded from JSON) and bookings persistence — simple, no server, single file
     - Docker Compose for local dev, Kubernetes manifests for deployment alongside observability stack
     - Playwright for smoke tests, K6 as optional bonus
   
