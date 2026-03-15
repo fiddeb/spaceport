@@ -29,5 +29,8 @@ venv/
 charts/
 *.tgz
 
+# Weaver binary (installed locally for dev)
+weaver/weaver
+
 # OS
 .DS_Store

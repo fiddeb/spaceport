@@ -51,5 +51,5 @@
 
 ## 7. README
 
-- [ ] 7.1 Write `README.md` with: project description, architecture diagram (ASCII), prerequisites, quickstart (`make dev`), link to `docs/demo-script.md`
-- [ ] 7.2 Add port allocation table to README
+- [x] 7.1 Write `README.md` with: project description, architecture diagram (ASCII), prerequisites, quickstart (`make dev`), link to `docs/demo-script.md`
+- [x] 7.2 Add port allocation table to README
