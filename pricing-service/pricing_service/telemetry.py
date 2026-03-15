@@ -2,6 +2,9 @@
 
 import os
 
+# Opt into stable HTTP semantic conventions for metric names.
+os.environ.setdefault("OTEL_SEMCONV_STABILITY_OPT_IN", "http")
+
 from opentelemetry import _logs, metrics, trace
 from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
 from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter

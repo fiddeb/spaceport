@@ -17,6 +17,7 @@ import (
 	"github.com/fiddeb/spaceport/api/internal/applog"
 	"github.com/fiddeb/spaceport/api/internal/db"
 	"github.com/fiddeb/spaceport/api/internal/handler"
+	"github.com/fiddeb/spaceport/api/internal/middleware"
 	"github.com/fiddeb/spaceport/api/internal/telemetry"
 )
 
@@ -71,6 +72,7 @@ func main() {
 	r := gin.New()
 	r.Use(gin.Recovery())
 	r.Use(otelgin.Middleware("spaceport-api"))
+	r.Use(middleware.HTTPMetrics())
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{frontendOrigin},
 		AllowMethods: []string{"GET", "POST", "OPTIONS"},
