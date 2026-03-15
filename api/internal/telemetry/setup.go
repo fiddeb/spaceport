@@ -17,7 +17,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
-// Setup initialises the OTel TracerProvider and MeterProvider with OTLP gRPC exporters.
+// Setup initialises the OTel TracerProvider, MeterProvider, and LoggerProvider with OTLP HTTP exporters.
 func Setup(ctx context.Context) (shutdown func(), err error) {
 	res, err := resource.New(ctx,
 		resource.WithAttributes(

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	neturl "net/url"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -118,7 +119,9 @@ func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (f
 	if currency == "" {
 		currency = "UNC"
 	}
-	url := fmt.Sprintf("%s/price/%d?currency=%s", h.PricingURL, req.DepartureID, currency)
+	params := neturl.Values{}
+	params.Set("currency", currency)
+	url := fmt.Sprintf("%s/price/%d?%s", h.PricingURL, req.DepartureID, params.Encode())
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {

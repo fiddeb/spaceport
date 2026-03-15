@@ -206,7 +206,7 @@ func (h *DepartureHandler) GetCurrencies(c *gin.Context) {
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "pricing service unavailable"})
 		return
 	}
-	body, err := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
 	if err != nil {
 		h.Logger.ErrorContext(ctx, "currency read failed", "error", err)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "pricing service unavailable"})
