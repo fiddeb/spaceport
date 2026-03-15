@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "destination": "Mars Colony Alpha",
+    "departure_time": "2350-07-21T14:30:00Z",
+    "description": "Express shuttle to the red planet's premier settlement. Complimentary dust-storm viewing on the upper observation deck. Warning: gravity 38% of Earth — your carry-on will feel suspiciously light.",
+    "seat_classes": ["economy-cryosleep", "business-warp", "first-class-nebula"],
+    "available_seats": 120
+  },
+  {
+    "id": 2,
+    "destination": "Titan Station Prometheus",
+    "departure_time": "2350-08-05T09:00:00Z",
+    "description": "Cruise through Saturn's rings before docking at Titan's methane-lake resort. Onboard entertainment includes zero-G karaoke and a surprisingly good ramen bar.",
+    "seat_classes": ["economy-cryosleep", "business-warp", "first-class-nebula"],
+    "available_seats": 80
+  },
+  {
+    "id": 3,
+    "destination": "Europa Deep Dive",
+    "departure_time": "2350-09-12T18:45:00Z",
+    "description": "Sub-ice ocean excursion on Jupiter's most mysterious moon. Bring your own towel — the hotel claims they provide them but they never do.",
+    "seat_classes": ["economy-cryosleep", "business-warp", "first-class-nebula"],
+    "available_seats": 60
+  },
+  {
+    "id": 4,
+    "destination": "Moonbase Alpha",
+    "departure_time": "2350-06-01T06:15:00Z",
+    "description": "Short hop to Earth's favourite neighbour. Perfect weekend getaway — low gravity golf, crater hiking, and the legendary Tranquility Base gift shop.",
+    "seat_classes": ["economy-cryosleep", "business-warp", "first-class-nebula"],
+    "available_seats": 200
+  }
+]
