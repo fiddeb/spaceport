@@ -6,6 +6,7 @@ groups:
     attributes:
       - id: spaceport.booking.id
         type: string
+        stability: development
         brief: Unique identifier for the booking.
         requirement_level: recommended
         examples: ["BKG-001", "BKG-9999-URGNT"]
@@ -14,9 +15,12 @@ groups:
           members:
             - id: confirmed
               value: "confirmed"
+              stability: development
               brief: Booking was successfully confirmed.
             - id: failed
               value: "failed"
+              stability: development
               brief: Booking failed.
+        stability: development
         brief: Status of the booking.
         requirement_level: recommended

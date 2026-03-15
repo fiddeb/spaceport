@@ -6,16 +6,19 @@ groups:
     attributes:
       - id: spaceport.pricing.total
         type: double
+        stability: development
         brief: Total price of the booking in Universal Nano Credits (UNC).
         requirement_level: recommended
         examples: [1500.0, 42000.75]
       - id: spaceport.pricing.promo_applied
         type: boolean
+        stability: development
         brief: Whether a promotional discount was applied to the booking.
         requirement_level: recommended
         examples: [true, false]
       - id: spaceport.pricing.base_currency
         type: string
+        stability: development
         brief: The base currency used for pricing. Always "UNC".
         requirement_level: recommended
         examples: ["UNC"]
@@ -24,27 +27,36 @@ groups:
           members:
             - id: unc
               value: "UNC"
+              stability: development
               brief: Universal Nano Credits
             - id: rep
               value: "REP"
+              stability: development
               brief: Republic Credits
             - id: lat
               value: "LAT"
+              stability: development
               brief: Latinum
             - id: qua
               value: "QUA"
+              stability: development
               brief: Quatloos
             - id: nin
               value: "NIN"
+              stability: development
               brief: Ningi
             - id: bzd
               value: "BZD"
+              stability: development
               brief: Breen Dilithium
             - id: coin
               value: "COIN"
+              stability: development
               brief: Space Coin
             - id: tkn
               value: "TKN"
+              stability: development
               brief: Token
+        stability: development
         brief: The currency in which the price is displayed to the user.
         requirement_level: recommended

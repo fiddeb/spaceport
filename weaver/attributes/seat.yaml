@@ -9,12 +9,16 @@ groups:
           members:
             - id: economy_cryosleep
               value: "economy-cryosleep"
+              stability: development
               brief: Economy class with cryosleep pod.
             - id: business_warp
               value: "business-warp"
+              stability: development
               brief: Business class with warp-lounge access.
             - id: first_class_nebula
               value: "first-class-nebula"
+              stability: development
               brief: First class nebula suite.
+        stability: development
         brief: The seat class selected for the booking.
         requirement_level: recommended

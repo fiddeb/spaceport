@@ -6,11 +6,13 @@ groups:
     attributes:
       - id: spaceport.chaos.failure_mode
         type: string
+        stability: development
         brief: The type of failure injected by the chaos module.
         requirement_level: recommended
         examples: ["timeout", "error_500", "slow_response", "booking_failure"]
       - id: spaceport.chaos.latency_ms
         type: int
+        stability: development
         brief: Artificial latency injected by the chaos module in milliseconds.
         requirement_level: recommended
         examples: [100, 500, 2000]

@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help dev build push deploy test lint link-chart
+.PHONY: help dev build push deploy test lint docs link-chart
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) \
@@ -22,7 +22,10 @@ test: ## Run Playwright smoke tests
 	cd tests && npx playwright test
 
 lint: ## Validate the Weaver semantic convention registry
-	weaver-otel registry check -r weaver/
+	weaver-otel registry check -r weaver/ -p policies/
+
+docs: ## Generate markdown docs from the Weaver registry
+	weaver-otel registry generate markdown docs/semconv -r weaver/ -t templates/registry
 
 link-chart: ## Symlink helm/spaceport into the observabilitystack umbrella chart
 	@target_dir="../observabilitystack/helm/stackcharts/charts"; \
