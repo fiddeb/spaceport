@@ -48,8 +48,12 @@ func main() {
 	}
 
 	httpClient := &http.Client{
-		Transport: otelhttp.NewTransport(http.DefaultTransport),
-		Timeout:   10 * time.Second,
+		Transport: otelhttp.NewTransport(http.DefaultTransport,
+			otelhttp.WithSpanNameFormatter(func(_ string, r *http.Request) string {
+				return "HTTP " + r.Method + " " + r.URL.Path
+			}),
+		),
+		Timeout: 10 * time.Second,
 	}
 
 	pricingURL := envOr("PRICING_SERVICE_URL", "http://localhost:8000")
