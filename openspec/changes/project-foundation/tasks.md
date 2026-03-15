@@ -41,13 +41,13 @@
 
 ## 6. Makefile
 
-- [ ] 6.1 Create root `Makefile` with targets: `help` (default, prints targets), `dev`, `build`, `deploy`, `test`, `lint`
-- [ ] 6.2 `dev` target: `docker-compose up --build`
-- [ ] 6.3 `build` target: `docker-compose build`
-- [ ] 6.4 `deploy` target: `helm upgrade --install spaceport helm/spaceport/`
-- [ ] 6.5 `test` target: `cd tests && npx playwright test`
-- [ ] 6.6 `lint` target: `weaver registry check -r weaver/`
-- [ ] 6.7 Add `link-chart` target that creates symlink from `../observabilitystack/helm/stackcharts/charts/spaceport` to `./helm/spaceport`
+- [x] 6.1 Create root `Makefile` with targets: `help` (default, prints targets), `dev`, `build`, `deploy`, `test`, `lint`
+- [x] 6.2 `dev` target: `docker-compose up --build`
+- [x] 6.3 `build` target: `docker-compose build`
+- [x] 6.4 `deploy` target: `helm upgrade --install spaceport helm/spaceport/`
+- [x] 6.5 `test` target: `cd tests && npx playwright test`
+- [x] 6.6 `lint` target: `weaver registry check -r weaver/`
+- [x] 6.7 Add `link-chart` target that creates symlink from `../observabilitystack/helm/stackcharts/charts/spaceport` to `./helm/spaceport`
 
 ## 7. README
 
