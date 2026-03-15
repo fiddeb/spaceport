@@ -99,7 +99,7 @@ export function DepartureDetailPage() {
           {error ?? "Departure not found"}
         </p>
         <Button asChild>
-          <Link to="/">Back to Departures</Link>
+          <Link to="/departures">Back to Departures</Link>
         </Button>
       </div>
     );
@@ -112,7 +112,7 @@ export function DepartureDetailPage() {
     <div className="flex flex-col gap-8">
       <div>
         <Button variant="ghost" asChild className="mb-4">
-          <Link to="/">← Back to Departures</Link>
+          <Link to="/departures">← Back to Departures</Link>
         </Button>
         <h1 className="text-3xl font-bold tracking-tight">
           {departure.destination}

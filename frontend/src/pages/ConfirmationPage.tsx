@@ -65,7 +65,7 @@ export function ConfirmationPage() {
         </CardContent>
         <CardFooter className="justify-center">
           <Button asChild>
-            <Link to="/">Book Another Trip</Link>
+            <Link to="/departures">Book Another Trip</Link>
           </Button>
         </CardFooter>
       </Card>
