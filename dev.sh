@@ -7,8 +7,11 @@ set -euo pipefail
 #   2. API              (Go)              :8080
 #   3. Frontend         (Vite/React)      :5175
 #
-# Usage:  ./dev.sh          Start all services
+# Usage:  ./dev.sh          Start all services (OTel export disabled)
 #         ./dev.sh stop     Kill running dev processes
+#
+# To export telemetry to a local collector:
+#   OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 ./dev.sh
 # ─────────────────────────────────────────────────────────────
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
@@ -54,14 +57,24 @@ fi
 stop_existing
 trap cleanup EXIT INT TERM
 
+# ── OTel: disable export unless user provides an endpoint ──
+if [[ -z "${OTEL_EXPORTER_OTLP_ENDPOINT:-}" ]]; then
+  export OTEL_TRACES_EXPORTER=none
+  export OTEL_METRICS_EXPORTER=none
+  export OTEL_LOGS_EXPORTER=none
+  OTEL_STATUS="disabled ${DIM}(set OTEL_EXPORTER_OTLP_ENDPOINT to enable)${RESET}"
+else
+  OTEL_STATUS="→ $OTEL_EXPORTER_OTLP_ENDPOINT"
+fi
+
 echo -e "${CYAN}━━━ Spaceport Dev Environment ━━━${RESET}"
+echo -e "  ${DIM}OTel: ${OTEL_STATUS}${RESET}"
 echo ""
 
 # ── 1. Pricing Service (Python FastAPI) ──────────────────────
 echo -e "${GREEN}▸ Starting pricing-service${RESET} ${DIM}(port 8000)${RESET}"
 (
   cd "$ROOT/pricing-service"
-  export OTEL_EXPORTER_OTLP_ENDPOINT="${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}"
   export OTEL_SERVICE_NAME=spaceport-pricing-service
   uv run uvicorn pricing_service.main:app \
     --host 127.0.0.1 --port 8000 --reload \
@@ -77,7 +90,6 @@ echo -e "${GREEN}▸ Starting api${RESET} ${DIM}(port 8080)${RESET}"
 (
   cd "$ROOT/api"
   export PRICING_SERVICE_URL="http://localhost:8000"
-  export OTEL_EXPORTER_OTLP_ENDPOINT="${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}"
   export OTEL_SERVICE_NAME=spaceport-api
   go run . 2>&1 | sed "s/^/  ${DIM}[api]${RESET}      /"
 ) &
