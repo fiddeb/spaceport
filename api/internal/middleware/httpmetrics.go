@@ -5,8 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
+
+	"github.com/fiddeb/spaceport/api/internal/semconv"
 )
 
 var (
@@ -40,8 +41,8 @@ func HTTPMetrics() gin.HandlerFunc {
 		urlScheme := scheme(c)
 
 		httpServerActiveReqs.Add(ctx, 1, metric.WithAttributes(
-			attribute.String("http.request.method", method),
-			attribute.String("url.scheme", urlScheme),
+			semconv.AttrHttpRequestMethod(method),
+			semconv.AttrUrlSchemeKey.String(urlScheme),
 		))
 
 		start := time.Now()
@@ -54,14 +55,14 @@ func HTTPMetrics() gin.HandlerFunc {
 		}
 
 		httpServerDuration.Record(ctx, elapsed, metric.WithAttributes(
-			attribute.String("http.request.method", method),
-			attribute.Int("http.response.status_code", c.Writer.Status()),
-			attribute.String("http.route", route),
-			attribute.String("url.scheme", urlScheme),
+			semconv.AttrHttpRequestMethod(method),
+			semconv.AttrHttpResponseStatusCodeKey.Int(c.Writer.Status()),
+			semconv.AttrHttpRouteKey.String(route),
+			semconv.AttrUrlSchemeKey.String(urlScheme),
 		))
 		httpServerActiveReqs.Add(ctx, -1, metric.WithAttributes(
-			attribute.String("http.request.method", method),
-			attribute.String("url.scheme", urlScheme),
+			semconv.AttrHttpRequestMethod(method),
+			semconv.AttrUrlSchemeKey.String(urlScheme),
 		))
 	}
 }

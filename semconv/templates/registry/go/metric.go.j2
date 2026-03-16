@@ -8,7 +8,7 @@
 {%- endfor -%}
 {%- endmacro -%}
 {%- macro attribute_struct_field(attr) %}{{ smart_title_case(attr.name) }} {% if attr.requirement_level != "required" %}*{% endif %}{{attr.type | map_text("attribute_type_value") }}{%- endmacro -%}
-package svs
+package semconv
 
 import (
 	"context"

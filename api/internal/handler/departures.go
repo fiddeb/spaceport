@@ -11,9 +11,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
+
+	"github.com/fiddeb/spaceport/api/internal/semconv"
 )
 
 var tracer = otel.Tracer("spaceport-api")
@@ -68,7 +69,7 @@ func (h *DepartureHandler) ListDepartures(c *gin.Context) {
 			return
 		}
 		_ = json.Unmarshal([]byte(classes), &d.SeatClasses)
-		span.SetAttributes(attribute.String("spaceport.departure.destination", d.Destination))
+		span.SetAttributes(semconv.AttrSpaceportDepartureDestination(d.Destination))
 		deps = append(deps, d)
 	}
 
@@ -151,8 +152,8 @@ func (h *DepartureHandler) callPricingService(ctx context.Context, departureID s
 		}
 		span.SetStatus(codes.Error, msg)
 		span.SetAttributes(
-			attribute.Int("http.response.status_code", resp.StatusCode),
-			attribute.String("spaceport.pricing.error", msg),
+			semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode),
+			semconv.AttrSpaceportPricingError(msg),
 		)
 		return nil, fmt.Errorf("%s", msg)
 	}
@@ -198,8 +199,8 @@ func (h *DepartureHandler) callRecommendationService(ctx context.Context, depart
 		}
 		span.SetStatus(codes.Error, msg)
 		span.SetAttributes(
-			attribute.Int("http.response.status_code", resp.StatusCode),
-			attribute.String("spaceport.recommendations.error", msg),
+			semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode),
+			semconv.AttrSpaceportRecommendationsError(msg),
 		)
 		return nil, fmt.Errorf("%s", msg)
 	}

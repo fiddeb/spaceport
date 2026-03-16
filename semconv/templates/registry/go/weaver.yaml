@@ -16,6 +16,17 @@ templates:
         }
     application_mode: single
     file_name: metric.go
+  - pattern: attribute.go.j2
+    filter: >
+      .groups
+      | map(select(.type == "attribute_group"))
+      | map(.attributes // [])
+      | flatten
+      | map(select(.name | (startswith("spaceport.") or startswith("http.") or startswith("url."))))
+      | sort_by(.name)
+      | { attributes: . }
+    application_mode: single
+    file_name: attribute.go
 comment_formats:
   go:
     format: markdown

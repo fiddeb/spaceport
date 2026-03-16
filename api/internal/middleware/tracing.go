@@ -5,10 +5,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
+
+	"github.com/fiddeb/spaceport/api/internal/semconv"
 )
 
 var tracer = otel.Tracer("spaceport-api")
@@ -35,10 +36,10 @@ func Tracing() gin.HandlerFunc {
 
 		status := c.Writer.Status()
 		span.SetAttributes(
-			attribute.String("http.request.method", c.Request.Method),
-			attribute.String("http.route", route),
-			attribute.Int("http.response.status_code", status),
-			attribute.String("url.path", c.Request.URL.Path),
+			semconv.AttrHttpRequestMethod(c.Request.Method),
+			semconv.AttrHttpRouteKey.String(route),
+			semconv.AttrHttpResponseStatusCodeKey.Int(status),
+			semconv.AttrUrlPathKey.String(c.Request.URL.Path),
 		)
 		if status >= 500 {
 			span.SetStatus(codes.Error, fmt.Sprintf("HTTP %d", status))
