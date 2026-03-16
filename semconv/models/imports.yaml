@@ -1,0 +1,4 @@
+imports:
+  attribute_groups:
+    - registry.http*   # http.request.method, http.response.status_code, etc.
+    - registry.url*    # url.path, url.scheme, etc.

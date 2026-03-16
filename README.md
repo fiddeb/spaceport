@@ -1,100 +1,111 @@
+<div align="center">
+
 # Spaceport
 
-A demo booking app for interplanetary travel — built to showcase OpenTelemetry instrumentation across a polyglot microservice stack.
+**Book your seat to Mars. Trace every millisecond of the journey.**
+
+<img src="frontend/public/hero.png" alt="Spaceport — interplanetary departures" width="720" />
+
+<br />
+
+A microservice demo for interplanetary travel bookings — three services, three languages, one unified trace from the browser to the database and back.
+
+Built to show what observability-first development actually looks like.
+
+</div>
+
+---
+
+## The story
+
+It's 2387. Passengers book flights to the Moonbase, Mars, Titan, and Europa — picking seat classes from Economy Cryosleep to First-Class Escape Pod, comparing prices across currencies. Solar storms knock out the pricing engine. Docking gate captains get lost in time anomalies. The system handles all of it, and every request leaves a trace you can follow end to end.
+
+## What makes it interesting
+
+**Three services, three languages, full observability.** A React frontend, a Go API, and a Python pricing service — all instrumented with OpenTelemetry. Traces, metrics, and logs flow from every service, correlated automatically and enriched with domain-specific attributes like `spaceport.departure.id` and `spaceport.seat.class`.
+
+**Observability by design.** Custom `spaceport.*` attributes aren't ad-hoc strings — they're defined in a Weaver schema registry (`semconv/`), validated against OTel semconv v1.34.0, and code-generated into Go structs. Telemetry is part of the architecture, not bolted on after.
+
+**Chaos you can trigger on demand.** The pricing service exposes endpoints to inject failures and latency into the next N requests. Fire a few, then watch the dashboards light up. Great for demos, better for learning how distributed systems fail.
+
+**Actually deployable.** Docker Compose for local dev, Helm charts for Kubernetes, Playwright tests for CI. Not a toy — a reference implementation you can point at a real collector.
+
+## Architecture
 
 ```
-  ┌──────────────────────────────────────────────────────────────┐
-  │                        Browser                               │
-  └─────────────────────────┬────────────────────────────────────┘
-                            │ HTTP :3000
-  ┌─────────────────────────▼────────────────────────────────────┐
-  │                      frontend                                │
-  │               React / Next.js  (spaceport-frontend)          │
-  └─────────────────────────┬────────────────────────────────────┘
-                            │ HTTP :8080
-  ┌─────────────────────────▼────────────────────────────────────┐
-  │                        api                                   │
-  │               Go / Chi  (spaceport-api)                      │
-  └──────────┬──────────────────────────────────────┬────────────┘
-             │ HTTP :8000                            │ SQLite
-  ┌──────────▼───────────────────┐     ┌────────────▼────────────┐
-  │       pricing-service        │     │    /data/spaceport.db   │
-  │  Python / FastAPI            │     └─────────────────────────┘
-  │  (spaceport-pricing-service) │
-  └──────────────────────────────┘
-             │
-             │  OTLP gRPC
-  ┌──────────▼───────────────────┐
-  │     OTel Collector           │
-  │  (from observabilitystack)   │
-  └──────────────────────────────┘
+  Browser
+    │
+    │ :3000
+    ▼
+  frontend ·············· React + TypeScript + Vite
+    │
+    │ :8080  (W3C traceparent)
+    ▼
+  api ···················· Go + Gin + SQLite
+    │
+    │ :8000
+    ▼
+  pricing-service ······· Python + FastAPI
+    │
+    │ OTLP gRPC
+    ▼
+  otel-collector ········ from observabilitystack
 ```
 
-## Prerequisites
-
-| Tool | Version | Install |
-|------|---------|---------|
-| Docker + Docker Compose | ≥ 26 | [docs.docker.com](https://docs.docker.com/get-docker/) |
-| kubectl | ≥ 1.28 | [kubernetes.io](https://kubernetes.io/docs/tasks/tools/) |
-| Helm | ≥ 3.14 | [helm.sh](https://helm.sh/docs/intro/install/) |
-| Weaver CLI | ≥ 0.22 | `brew install weaver` or [GitHub releases](https://github.com/open-telemetry/weaver/releases) |
-
-An OTel Collector must be reachable at the endpoint configured in `.env` (default: `http://otel-collector:4317`). The [observabilitystack](https://github.com/fiddeb/observabilitystack) repo provides one.
+All three services emit traces, metrics, and logs via OTLP. The [observabilitystack](https://github.com/fiddeb/observabilitystack) repo provides the collector, Grafana, and pre-built dashboards for Spaceport.
 
 ## Quickstart
 
 ```bash
-# 1. Copy environment config
 cp .env.example .env
-
-# 2. Start all services
 make dev
 ```
 
-The frontend will be available at **http://localhost:3000**.
+Open **http://localhost:3000** — browse departures, book a flight, break the pricing service, and watch the telemetry flow.
 
-## Port Allocation
+## Commands
 
-| Service         | Port |
-|-----------------|------|
-| Frontend        | 3000 |
-| API             | 8080 |
+| Command | What it does |
+|---------|-------------|
+| `make dev` | Start all services (Docker Compose) |
+| `make build` | Build container images |
+| `make deploy` | Helm install to Kubernetes |
+| `make test` | Playwright smoke tests |
+| `make lint` | Validate semantic conventions (Weaver) |
+| `make generate` | Code-gen Go types from semconv registry |
+| `make load-test` | k6 load test |
+
+## Ports
+
+| Service | Port |
+|---------|------|
+| Frontend | 3000 |
+| API | 8080 |
 | Pricing Service | 8000 |
 
-These ports do not conflict with the observabilitystack defaults.
+No conflicts with observabilitystack defaults.
 
-## Available Commands
+## Prerequisites
 
-```
-make help       # List all targets
-make dev        # docker-compose up --build (local dev)
-make build      # docker-compose build
-make deploy     # helm upgrade --install spaceport helm/spaceport/
-make test       # Playwright smoke tests
-make lint       # weaver registry check (semconv validation)
-make link-chart # Symlink helm chart into observabilitystack umbrella
-```
+| Tool | Version |
+|------|---------|
+| Docker + Compose | ≥ 26 |
+| kubectl | ≥ 1.28 |
+| Helm | ≥ 3.14 |
+| Weaver CLI | ≥ 0.22 |
 
-## Kubernetes Deployment
+An OTel Collector must be reachable at the endpoint in `.env` (default `http://otel-collector:4317`). The [observabilitystack](https://github.com/fiddeb/observabilitystack) repo provides one ready to go.
 
-Spaceport integrates with the [observabilitystack](https://github.com/fiddeb/observabilitystack) umbrella Helm chart as a `file://` subchart. See [docs/helm-integration.md](docs/helm-integration.md) for setup instructions.
+## Kubernetes
 
-Quick deploy (standalone):
+Spaceport plugs into the [observabilitystack](https://github.com/fiddeb/observabilitystack) umbrella Helm chart as a `file://` subchart. See [docs/helm-integration.md](docs/helm-integration.md) for details, or deploy standalone:
 
 ```bash
 make deploy
 ```
 
-## Semantic Conventions
+## Docs
 
-Custom `spaceport.*` attributes are defined in the Weaver registry under `weaver/`. Validate with:
-
-```bash
-make lint
-```
-
-See [docs/service-names.md](docs/service-names.md) for service name constants.
-
-## Demo Script
-
-See [docs/demo-script.md](docs/demo-script.md) for a guided walkthrough of the demo.
+- [Demo script](docs/demo-script.md) — guided walkthrough with chaos scenarios
+- [Helm integration](docs/helm-integration.md) — Kubernetes setup
+- [Service names](docs/service-names.md) — OTel service name constants

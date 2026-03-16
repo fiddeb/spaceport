@@ -22,3 +22,10 @@ groups:
         brief: Scheduled departure time in ISO 8601 format.
         requirement_level: recommended
         examples: ["2350-07-21T14:30:00Z", "2350-12-01T08:00:00+02:00"]
+      - id: spaceport.recommendations.error
+        type: string
+        stability: development
+        brief: Error message returned by the recommendations service on failure.
+        requirement_level:
+          conditionally_required: if the recommendations service call failed
+        examples: ["recommendations unavailable", "service timeout"]

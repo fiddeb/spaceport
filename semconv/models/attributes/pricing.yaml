@@ -60,3 +60,10 @@ groups:
         stability: development
         brief: The currency in which the price is displayed to the user.
         requirement_level: recommended
+      - id: spaceport.pricing.error
+        type: string
+        stability: development
+        brief: Error message returned by the pricing service on failure.
+        requirement_level:
+          conditionally_required: if the pricing service call failed
+        examples: ["pricing unavailable", "chaos mode: random failure"]
