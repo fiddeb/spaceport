@@ -1,7 +1,6 @@
 import { Link, useParams, useLocation } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface LocationState {
   bookingId: string;
@@ -16,7 +15,6 @@ export function ConfirmationPage() {
   const { bookingId } = useParams<{ bookingId: string }>();
   const location = useLocation();
   const state = location.state as LocationState | null;
-  const { convert } = useCurrency();
 
   return (
     <div className="mx-auto max-w-lg">
@@ -52,7 +50,7 @@ export function ConfirmationPage() {
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Total Price</dt>
                   <dd className="font-semibold text-primary">
-                    {convert(state.totalPrice)}
+                    {state.totalPrice.toFixed(2)} {state.currency || "UNC"}
                   </dd>
                 </div>
               )}

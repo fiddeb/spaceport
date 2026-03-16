@@ -12,6 +12,7 @@ import { DepartureListPage } from "@/pages/DepartureListPage";
 import { DepartureDetailPage } from "@/pages/DepartureDetailPage";
 import { BookingFormPage } from "@/pages/BookingFormPage";
 import { ConfirmationPage } from "@/pages/ConfirmationPage";
+import { CurrenciesPage } from "@/pages/CurrenciesPage";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -27,6 +28,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/departures/:id" element={<DepartureDetailPage />} />
               <Route path="/book/:id" element={<BookingFormPage />} />
               <Route path="/confirmation/:bookingId" element={<ConfirmationPage />} />
+              <Route path="/currencies" element={<CurrenciesPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

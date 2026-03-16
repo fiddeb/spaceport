@@ -8,7 +8,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"sync"
 
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/otel"
@@ -36,13 +35,10 @@ type Departure struct {
 
 // DepartureHandler groups departure routes and their deps.
 type DepartureHandler struct {
-	DB                *sql.DB
-	PricingURL        string
-	HTTPClient        *http.Client
-	Logger            *slog.Logger
-	currencyCache     []byte
-	currencyCacheMu   sync.Mutex
-	currencyCacheDone bool
+	DB         *sql.DB
+	PricingURL string
+	HTTPClient *http.Client
+	Logger     *slog.Logger
 }
 
 // ListDepartures handles GET /api/departures.
@@ -215,19 +211,10 @@ func (h *DepartureHandler) callRecommendationService(ctx context.Context, depart
 	return result, nil
 }
 
-// GetCurrencies proxies GET /currencies from the pricing service with in-memory caching.
+// GetCurrencies proxies GET /currencies from the pricing service.
 func (h *DepartureHandler) GetCurrencies(c *gin.Context) {
 	ctx := c.Request.Context()
 	h.Logger.InfoContext(ctx, "getting currencies")
-
-	h.currencyCacheMu.Lock()
-	if h.currencyCacheDone {
-		data := h.currencyCache
-		h.currencyCacheMu.Unlock()
-		c.Data(http.StatusOK, "application/json; charset=utf-8", data)
-		return
-	}
-	h.currencyCacheMu.Unlock()
 
 	url := fmt.Sprintf("%s/currencies", h.PricingURL)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -255,11 +242,6 @@ func (h *DepartureHandler) GetCurrencies(c *gin.Context) {
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "pricing service unavailable"})
 		return
 	}
-
-	h.currencyCacheMu.Lock()
-	h.currencyCache = body
-	h.currencyCacheDone = true
-	h.currencyCacheMu.Unlock()
 
 	c.Data(http.StatusOK, "application/json; charset=utf-8", body)
 }
