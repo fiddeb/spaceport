@@ -8,7 +8,7 @@
 
 <br />
 
-A polyglot microservice demo for interplanetary travel bookings — three services, three languages, one unified trace from the browser to the database and back.
+A microservice demo for interplanetary travel bookings — three services, three languages, one unified trace from the browser to the database and back.
 
 Built to show what observability-first development actually looks like.
 
