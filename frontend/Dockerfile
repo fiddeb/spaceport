@@ -18,6 +18,11 @@ server {
         proxy_set_header Host otel-collector.k8s.test;
     }
 
+    location /api/ {
+        proxy_pass http://api:8080/api/;
+        proxy_set_header Host $host;
+    }
+
     location / {
         try_files $uri $uri/ /index.html;
     }

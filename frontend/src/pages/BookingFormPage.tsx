@@ -114,7 +114,6 @@ export function BookingFormPage() {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
       const httpStatus = (err as any)?.httpStatus;
-      const responseBody = (err as any)?.responseBody;
       const serverBookingId = (err as any)?.bookingId;
 
       const rawBody = (err as any)?.rawBody;

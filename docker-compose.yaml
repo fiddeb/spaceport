@@ -4,14 +4,14 @@ services:
     build:
       context: ./frontend
     ports:
-      - "${SPACEPORT_FRONTEND_PORT:-3000}:3000"
+      - "${SPACEPORT_FRONTEND_PORT:-3000}:80"
     environment:
       OTEL_SERVICE_NAME: spaceport-frontend
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
       OTEL_SERVICE_VERSION: ${OTEL_SERVICE_VERSION:-0.1.0}
       SPACEPORT_ENV: ${SPACEPORT_ENV:-local}
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:80"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -32,10 +32,12 @@ services:
       OTEL_SERVICE_VERSION: ${OTEL_SERVICE_VERSION:-0.1.0}
       SPACEPORT_ENV: ${SPACEPORT_ENV:-local}
       DATABASE_PATH: /data/spaceport.db
+      PRICING_SERVICE_URL: http://pricing-service:8000
+      SPACEPORT_FRONTEND_ORIGIN: http://localhost:${SPACEPORT_FRONTEND_PORT:-3000}
     volumes:
       - spaceport-sqlite:/data
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8080/api/health"]
+      test: ["CMD", "/healthcheck"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -56,7 +58,7 @@ services:
       OTEL_SERVICE_VERSION: ${OTEL_SERVICE_VERSION:-0.1.0}
       SPACEPORT_ENV: ${SPACEPORT_ENV:-local}
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
       timeout: 5s
       retries: 6
