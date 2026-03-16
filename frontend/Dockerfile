@@ -18,6 +18,11 @@ server {
         proxy_set_header Host otel-collector.k8s.test;
     }
 
+    location /chaos/ {
+        proxy_pass http://pricing-service:8000/;
+        proxy_set_header Host $host;
+    }
+
     location /api/ {
         proxy_pass http://api:8080/api/;
         proxy_set_header Host $host;
