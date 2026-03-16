@@ -1,6 +1,10 @@
 enabled: false
 
-otlpEndpoint: "http://opentelemetry-collector:4317"
+otlpEndpoint: "http://otel-collector:4317"
+
+ingress:
+  enabled: true
+  host: "spaceport.k8s.test"
 
 grafana:
   provisioning:
