@@ -47,7 +47,7 @@ func (h *DepartureHandler) ListDepartures(c *gin.Context) {
 	ctx := c.Request.Context()
 	h.Logger.InfoContext(ctx, "listing departures")
 
-	ctx, span := tracer.Start(ctx, "api.load_departures")
+	ctx, span := semconv.StartSpaceportDepartureList(ctx, tracer)
 	defer span.End()
 
 	rows, err := h.DB.QueryContext(ctx, "SELECT id, destination, departure_time, description, seat_classes, available_seats FROM departures")
@@ -119,7 +119,7 @@ func (h *DepartureHandler) GetDeparture(c *gin.Context) {
 }
 
 func (h *DepartureHandler) callPricingService(ctx context.Context, departureID string) (any, error) {
-	ctx, span := tracer.Start(ctx, "api.call_pricing_service")
+	ctx, span := tracer.Start(ctx, semconv.SpanSpaceportPricingCalculateName)
 	defer span.End()
 
 	url := fmt.Sprintf("%s/price/%s", h.PricingURL, departureID)

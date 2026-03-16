@@ -27,6 +27,13 @@ templates:
       | { attributes: . }
     application_mode: single
     file_name: attribute.go
+  - pattern: span.go.j2
+    filter: >
+      .groups
+      | map(select(.type == "span"))
+      | { spans: . }
+    application_mode: single
+    file_name: span.go
 comment_formats:
   go:
     format: markdown

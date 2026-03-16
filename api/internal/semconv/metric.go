@@ -54,8 +54,7 @@ func (m SpaceportBookingActive) Add(
     optAttrs ...OptionalAttr,
 ) {
     m.inst.Add(ctx, inc, metric.WithAttributes(
-        append(spaceportBookingActiveAttrToAttrs(optAttrs),
-        )...,
+        spaceportBookingActiveAttrToAttrs(optAttrs)...,
     ))
 }
 
@@ -131,8 +130,7 @@ func (m SpaceportDepartureActive) Add(
     optAttrs ...OptionalAttr,
 ) {
     m.inst.Add(ctx, inc, metric.WithAttributes(
-        append(spaceportDepartureActiveAttrToAttrs(optAttrs),
-        )...,
+        spaceportDepartureActiveAttrToAttrs(optAttrs)...,
     ))
 }
 
