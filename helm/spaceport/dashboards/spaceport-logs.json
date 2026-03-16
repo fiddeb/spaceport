@@ -1,0 +1,76 @@
+{
+  "uid": "spaceport-logs",
+  "title": "Spaceport Logs",
+  "tags": ["spaceport"],
+  "timezone": "browser",
+  "editable": true,
+  "panels": [
+    {
+      "title": "All Spaceport Logs",
+      "type": "logs",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 18, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": true,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "expr": "{service_name=~\"spaceport.*\"}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Error Logs",
+      "type": "logs",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 18 },
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": true,
+        "enableLogDetails": true,
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "expr": "{service_name=~\"spaceport.*\"} |= \"error\" or \"ERROR\"",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Log Volume",
+      "type": "timeseries",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 30 },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 40,
+            "stacking": { "mode": "normal" }
+          }
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum by (service_name) (count_over_time({service_name=~\"spaceport.*\"}[1m]))",
+          "legendFormat": "{{service_name}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "time": { "from": "now-15m", "to": "now" },
+  "refresh": "10s",
+  "schemaVersion": 39
+}

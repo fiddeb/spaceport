@@ -16,6 +16,11 @@ export default defineConfig({
         target: "http://127.0.0.1:8080",
         changeOrigin: true,
       },
+      "/chaos": {
+        target: "http://127.0.0.1:8000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/chaos/, ""),
+      },
       "/otlp": {
         target: "http://127.0.0.1:80",
         changeOrigin: false,

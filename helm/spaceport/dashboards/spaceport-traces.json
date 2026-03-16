@@ -1,0 +1,57 @@
+{
+  "uid": "spaceport-traces",
+  "title": "Spaceport Traces",
+  "tags": ["spaceport"],
+  "timezone": "browser",
+  "editable": true,
+  "panels": [
+    {
+      "title": "Recent Traces — All Spaceport Services",
+      "type": "table",
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "queryType": "traceql",
+          "query": "{ resource.service.name =~ \"spaceport.*\" }",
+          "limit": 20,
+          "tableType": "traces",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Booking Traces",
+      "type": "table",
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 14 },
+      "targets": [
+        {
+          "queryType": "traceql",
+          "query": "{ resource.service.name =~ \"spaceport.*\" && name =~ \".*book.*\" }",
+          "limit": 20,
+          "tableType": "traces",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Error Traces",
+      "type": "table",
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 28 },
+      "targets": [
+        {
+          "queryType": "traceql",
+          "query": "{ resource.service.name =~ \"spaceport.*\" && status = error }",
+          "limit": 20,
+          "tableType": "traces",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "time": { "from": "now-30m", "to": "now" },
+  "refresh": "10s",
+  "schemaVersion": 39
+}

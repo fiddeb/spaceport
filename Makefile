@@ -1,13 +1,13 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help dev build push deploy test lint docs link-chart
+.PHONY: help dev build push deploy test lint docs link-chart load-test
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) \
 		| awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-dev: ## Start all services locally with Docker Compose (hot-reload)
-	docker-compose up --build
+dev: ## Start all services locally with OTel export to the collector
+	OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector.k8s.test ./dev.sh
 
 build: ## Build all Docker images
 	docker-compose build
@@ -19,7 +19,7 @@ deploy: ## Deploy to Kubernetes via Helm
 	helm upgrade --install spaceport helm/spaceport/ --set enabled=true
 
 test: ## Run Playwright smoke tests
-	cd tests && npx playwright test
+	cd tests/playwright && npx playwright test
 
 lint: ## Validate the Weaver semantic convention registry
 	weaver-otel registry check -r semconv/models/ -p semconv/policies/
@@ -35,3 +35,6 @@ link-chart: ## Symlink helm/spaceport into the observabilitystack umbrella chart
 	fi; \
 	ln -sfn "$$(pwd)/helm/spaceport" "$$target_dir/spaceport" && \
 		echo "Linked $$(pwd)/helm/spaceport -> $$target_dir/spaceport"
+
+load-test: ## Run k6 load test against the API
+	k6 run tests/k6/booking-flow.js

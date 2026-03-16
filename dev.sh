@@ -49,6 +49,18 @@ stop_existing() {
   fi
 }
 
+# Kill any process listening on the given port
+free_port() {
+  local port=$1
+  local pids
+  pids=$(lsof -ti :"$port" 2>/dev/null || true)
+  if [[ -n "$pids" ]]; then
+    echo -e "  ${DIM}Freeing port $port (PIDs: $pids)${RESET}"
+    echo "$pids" | xargs kill 2>/dev/null || true
+    sleep 1
+  fi
+}
+
 if [[ "${1:-}" == "stop" ]]; then
   stop_existing
   exit 0
@@ -72,6 +84,7 @@ echo -e "  ${DIM}OTel: ${OTEL_STATUS}${RESET}"
 echo ""
 
 # ── 1. Pricing Service (Python FastAPI) ──────────────────────
+free_port 8000
 echo -e "${GREEN}▸ Starting pricing-service${RESET} ${DIM}(port 8000)${RESET}"
 (
   cd "$ROOT/pricing-service"
@@ -86,6 +99,7 @@ echo $! >> "$PIDFILE"
 sleep 2
 
 # ── 2. API (Go) ─────────────────────────────────────────────
+free_port 8080
 echo -e "${GREEN}▸ Starting api${RESET} ${DIM}(port 8080)${RESET}"
 (
   cd "$ROOT/api"
@@ -99,10 +113,11 @@ echo $! >> "$PIDFILE"
 sleep 2
 
 # ── 3. Frontend (Vite) ──────────────────────────────────────
+free_port 5175
 echo -e "${GREEN}▸ Starting frontend${RESET} ${DIM}(port 5175)${RESET}"
 (
   cd "$ROOT/frontend"
-  npx vite --host 127.0.0.1 --port 5175 \
+  npx vite --host 127.0.0.1 --port 5175 --strictPort \
     2>&1 | sed "s/^/  ${DIM}[frontend]${RESET} /"
 ) &
 echo $! >> "$PIDFILE"

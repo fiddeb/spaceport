@@ -38,3 +38,4 @@ weaver/weaver
 
 # Generated docs
 docs/semconv/
+.vite/
