@@ -1,0 +1,37 @@
+name: Publish Helm Chart
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "helm/spaceport/**"
+      - ".github/workflows/publish-chart.yaml"
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  CHART_PATH: helm/spaceport
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+
+      - name: Package chart
+        run: helm package ${{ env.CHART_PATH }}
+
+      - name: Push chart to GHCR
+        run: |
+          PKG=$(ls spaceport-*.tgz)
+          helm push "$PKG" oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
