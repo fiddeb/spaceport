@@ -15,54 +15,57 @@ import "go.opentelemetry.io/otel/attribute"
 // See templates/registry/go/attribute.go.j2.
 
 // --- Attribute keys ---
-
 {% for attr in ctx.attributes | attribute_sort %}
+
 {{ attr.brief | comment }}
 const Attr{{ go_name(attr.name) }}Key = attribute.Key("{{ attr.name }}")
-{% endfor %}
+{%- endfor %}
 
 // --- Attribute value helpers ---
-
 {% for attr in ctx.attributes | attribute_sort %}
-{% if attr.type is mapping %}
+{%- if attr.type is mapping %}
+
 {{ attr.brief | comment }}
 func Attr{{ go_name(attr.name) }}(val string) attribute.KeyValue {
 	return Attr{{ go_name(attr.name) }}Key.String(val)
 }
-{% elif attr.type == "string" %}
+{%- elif attr.type == "string" %}
+
 {{ attr.brief | comment }}
 func Attr{{ go_name(attr.name) }}(val string) attribute.KeyValue {
 	return Attr{{ go_name(attr.name) }}Key.String(val)
 }
-{% elif attr.type == "int" %}
+{%- elif attr.type == "int" %}
+
 {{ attr.brief | comment }}
 func Attr{{ go_name(attr.name) }}(val int) attribute.KeyValue {
 	return Attr{{ go_name(attr.name) }}Key.Int(val)
 }
-{% elif attr.type == "double" %}
+{%- elif attr.type == "double" %}
+
 {{ attr.brief | comment }}
 func Attr{{ go_name(attr.name) }}(val float64) attribute.KeyValue {
 	return Attr{{ go_name(attr.name) }}Key.Float64(val)
 }
-{% elif attr.type == "boolean" %}
+{%- elif attr.type == "boolean" %}
+
 {{ attr.brief | comment }}
 func Attr{{ go_name(attr.name) }}(val bool) attribute.KeyValue {
 	return Attr{{ go_name(attr.name) }}Key.Bool(val)
 }
-{% endif %}
-{% endfor %}
+{%- endif %}
+{%- endfor %}
 
 // --- Enum values ---
-
 {% for attr in ctx.attributes | attribute_sort %}
-{% if attr.type.members is defined %}
+{%- if attr.type.members is defined %}
+
 // Enum values for {{ attr.name }}.
 const (
-{% for member in attr.type.members %}
+{%- for member in attr.type.members %}
     {{ member.brief | comment }}
     Attr{{ go_name(attr.name) }}{{ member.id | pascal_case }} = "{{ member.value }}"
-{% endfor %}
+{%- endfor %}
 )
-
-{% endif %}
-{% endfor %}
+{%- endif %}
+{%- endfor %}

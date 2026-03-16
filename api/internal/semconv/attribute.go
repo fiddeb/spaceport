@@ -205,9 +205,7 @@ const AttrUrlTemplateKey = attribute.Key("url.template")
 // example.com is `com`.
 const AttrUrlTopLevelDomainKey = attribute.Key("url.top_level_domain")
 
-
 // --- Attribute value helpers ---
-
 
 
 // Error message returned by the pricing service on failure.
@@ -215,35 +213,25 @@ func AttrSpaceportPricingError(val string) attribute.KeyValue {
 	return AttrSpaceportPricingErrorKey.String(val)
 }
 
-
-
 // Error message returned by the recommendations service on failure.
 func AttrSpaceportRecommendationsError(val string) attribute.KeyValue {
 	return AttrSpaceportRecommendationsErrorKey.String(val)
 }
-
-
 
 // Deprecated, use `client.address` instead.
 func AttrHttpClientIp(val string) attribute.KeyValue {
 	return AttrHttpClientIpKey.String(val)
 }
 
-
-
 // State of the HTTP connection in the HTTP connection pool.
 func AttrHttpConnectionState(val string) attribute.KeyValue {
 	return AttrHttpConnectionStateKey.String(val)
 }
 
-
-
 // Deprecated, use `network.protocol.name` instead.
 func AttrHttpFlavor(val string) attribute.KeyValue {
 	return AttrHttpFlavorKey.String(val)
 }
-
-
 
 // Deprecated, use one of `server.address`, `client.address` or
 // `http.request.header.host` instead, depending on the usage.
@@ -251,14 +239,10 @@ func AttrHttpHost(val string) attribute.KeyValue {
 	return AttrHttpHostKey.String(val)
 }
 
-
-
 // Deprecated, use `http.request.method` instead.
 func AttrHttpMethod(val string) attribute.KeyValue {
 	return AttrHttpMethodKey.String(val)
 }
-
-
 
 // The size of the request payload body in bytes. This is the number of bytes
 // transferred excluding headers and is often, but not always, present as the
@@ -270,31 +254,21 @@ func AttrHttpRequestBodySize(val int) attribute.KeyValue {
 	return AttrHttpRequestBodySizeKey.Int(val)
 }
 
-
-
-
-
 // HTTP request method.
 func AttrHttpRequestMethod(val string) attribute.KeyValue {
 	return AttrHttpRequestMethodKey.String(val)
 }
-
-
 
 // Original HTTP method sent by the client in the request line.
 func AttrHttpRequestMethodOriginal(val string) attribute.KeyValue {
 	return AttrHttpRequestMethodOriginalKey.String(val)
 }
 
-
-
 // The ordinal number of request resending attempt (for any reason, including
 // redirects).
 func AttrHttpRequestResendCount(val int) attribute.KeyValue {
 	return AttrHttpRequestResendCountKey.Int(val)
 }
-
-
 
 // The total size of the request in bytes. This should be the total number of
 // bytes sent over the wire, including the request line (HTTP/1.1), framing
@@ -303,21 +277,15 @@ func AttrHttpRequestSize(val int) attribute.KeyValue {
 	return AttrHttpRequestSizeKey.Int(val)
 }
 
-
-
 // Deprecated, use `http.request.header.content-length` instead.
 func AttrHttpRequestContentLength(val int) attribute.KeyValue {
 	return AttrHttpRequestContentLengthKey.Int(val)
 }
 
-
-
 // Deprecated, use `http.request.body.size` instead.
 func AttrHttpRequestContentLengthUncompressed(val int) attribute.KeyValue {
 	return AttrHttpRequestContentLengthUncompressedKey.Int(val)
 }
-
-
 
 // The size of the response payload body in bytes. This is the number of bytes
 // transferred excluding headers and is often, but not always, present as the
@@ -329,18 +297,12 @@ func AttrHttpResponseBodySize(val int) attribute.KeyValue {
 	return AttrHttpResponseBodySizeKey.Int(val)
 }
 
-
-
-
-
 // The total size of the response in bytes. This should be the total number of
 // bytes sent over the wire, including the status line (HTTP/1.1), framing
 // (HTTP/2 and HTTP/3), headers, and response body and trailers if any.
 func AttrHttpResponseSize(val int) attribute.KeyValue {
 	return AttrHttpResponseSizeKey.Int(val)
 }
-
-
 
 // [HTTP response status code].
 //
@@ -349,21 +311,15 @@ func AttrHttpResponseStatusCode(val int) attribute.KeyValue {
 	return AttrHttpResponseStatusCodeKey.Int(val)
 }
 
-
-
 // Deprecated, use `http.response.header.content-length` instead.
 func AttrHttpResponseContentLength(val int) attribute.KeyValue {
 	return AttrHttpResponseContentLengthKey.Int(val)
 }
 
-
-
 // Deprecated, use `http.response.body.size` instead.
 func AttrHttpResponseContentLengthUncompressed(val int) attribute.KeyValue {
 	return AttrHttpResponseContentLengthUncompressedKey.Int(val)
 }
-
-
 
 // The matched route, that is, the path template in the format used by the
 // respective server framework.
@@ -371,147 +327,105 @@ func AttrHttpRoute(val string) attribute.KeyValue {
 	return AttrHttpRouteKey.String(val)
 }
 
-
-
 // Deprecated, use `url.scheme` instead.
 func AttrHttpScheme(val string) attribute.KeyValue {
 	return AttrHttpSchemeKey.String(val)
 }
-
-
 
 // Deprecated, use `server.address` instead.
 func AttrHttpServerName(val string) attribute.KeyValue {
 	return AttrHttpServerNameKey.String(val)
 }
 
-
-
 // Deprecated, use `http.response.status_code` instead.
 func AttrHttpStatusCode(val int) attribute.KeyValue {
 	return AttrHttpStatusCodeKey.Int(val)
 }
-
-
 
 // Deprecated, use `url.path` and `url.query` instead.
 func AttrHttpTarget(val string) attribute.KeyValue {
 	return AttrHttpTargetKey.String(val)
 }
 
-
-
 // Deprecated, use `url.full` instead.
 func AttrHttpUrl(val string) attribute.KeyValue {
 	return AttrHttpUrlKey.String(val)
 }
-
-
 
 // Deprecated, use `user_agent.original` instead.
 func AttrHttpUserAgent(val string) attribute.KeyValue {
 	return AttrHttpUserAgentKey.String(val)
 }
 
-
-
 // Unique identifier for the booking.
 func AttrSpaceportBookingId(val string) attribute.KeyValue {
 	return AttrSpaceportBookingIdKey.String(val)
 }
-
-
 
 // Status of the booking.
 func AttrSpaceportBookingStatus(val string) attribute.KeyValue {
 	return AttrSpaceportBookingStatusKey.String(val)
 }
 
-
-
 // The type of failure injected by the chaos module.
 func AttrSpaceportChaosFailureMode(val string) attribute.KeyValue {
 	return AttrSpaceportChaosFailureModeKey.String(val)
 }
-
-
 
 // Artificial latency injected by the chaos module in milliseconds.
 func AttrSpaceportChaosLatencyMs(val int) attribute.KeyValue {
 	return AttrSpaceportChaosLatencyMsKey.Int(val)
 }
 
-
-
 // Scheduled departure time in ISO 8601 format.
 func AttrSpaceportDepartureDepartureTime(val string) attribute.KeyValue {
 	return AttrSpaceportDepartureDepartureTimeKey.String(val)
 }
-
-
 
 // Destination of the departure (e.g. planet, station, or sector name).
 func AttrSpaceportDepartureDestination(val string) attribute.KeyValue {
 	return AttrSpaceportDepartureDestinationKey.String(val)
 }
 
-
-
 // Unique identifier for the departure.
 func AttrSpaceportDepartureId(val string) attribute.KeyValue {
 	return AttrSpaceportDepartureIdKey.String(val)
 }
-
-
 
 // The base currency used for pricing. Always "UNC".
 func AttrSpaceportPricingBaseCurrency(val string) attribute.KeyValue {
 	return AttrSpaceportPricingBaseCurrencyKey.String(val)
 }
 
-
-
 // The currency in which the price is displayed to the user.
 func AttrSpaceportPricingDisplayCurrency(val string) attribute.KeyValue {
 	return AttrSpaceportPricingDisplayCurrencyKey.String(val)
 }
-
-
 
 // Whether a promotional discount was applied to the booking.
 func AttrSpaceportPricingPromoApplied(val bool) attribute.KeyValue {
 	return AttrSpaceportPricingPromoAppliedKey.Bool(val)
 }
 
-
-
 // Total price of the booking in Universal Nano Credits (UNC).
 func AttrSpaceportPricingTotal(val float64) attribute.KeyValue {
 	return AttrSpaceportPricingTotalKey.Float64(val)
 }
-
-
 
 // The seat class selected for the booking.
 func AttrSpaceportSeatClass(val string) attribute.KeyValue {
 	return AttrSpaceportSeatClassKey.String(val)
 }
 
-
-
 // Domain extracted from the `url.full`, such as "opentelemetry.io".
 func AttrUrlDomain(val string) attribute.KeyValue {
 	return AttrUrlDomainKey.String(val)
 }
 
-
-
 // The file extension extracted from the `url.full`, excluding the leading dot.
 func AttrUrlExtension(val string) attribute.KeyValue {
 	return AttrUrlExtensionKey.String(val)
 }
-
-
 
 // The [URI fragment] component
 //
@@ -520,8 +434,6 @@ func AttrUrlFragment(val string) attribute.KeyValue {
 	return AttrUrlFragmentKey.String(val)
 }
 
-
-
 // Absolute URL describing a network resource according to [RFC3986]
 //
 // [RFC3986]: https://www.rfc-editor.org/rfc/rfc3986
@@ -529,14 +441,10 @@ func AttrUrlFull(val string) attribute.KeyValue {
 	return AttrUrlFullKey.String(val)
 }
 
-
-
 // Unmodified original URL as seen in the event source.
 func AttrUrlOriginal(val string) attribute.KeyValue {
 	return AttrUrlOriginalKey.String(val)
 }
-
-
 
 // The [URI path] component
 //
@@ -545,14 +453,10 @@ func AttrUrlPath(val string) attribute.KeyValue {
 	return AttrUrlPathKey.String(val)
 }
 
-
-
 // Port extracted from the `url.full`
 func AttrUrlPort(val int) attribute.KeyValue {
 	return AttrUrlPortKey.Int(val)
 }
-
-
 
 // The [URI query] component
 //
@@ -561,14 +465,10 @@ func AttrUrlQuery(val string) attribute.KeyValue {
 	return AttrUrlQueryKey.String(val)
 }
 
-
-
 // The highest registered url domain, stripped of the subdomain.
 func AttrUrlRegisteredDomain(val string) attribute.KeyValue {
 	return AttrUrlRegisteredDomainKey.String(val)
 }
-
-
 
 // The [URI scheme] component identifying the used protocol.
 //
@@ -576,8 +476,6 @@ func AttrUrlRegisteredDomain(val string) attribute.KeyValue {
 func AttrUrlScheme(val string) attribute.KeyValue {
 	return AttrUrlSchemeKey.String(val)
 }
-
-
 
 // The subdomain portion of a fully qualified domain name includes all of the
 // names except the host name under the registered_domain. In a partially
@@ -587,16 +485,12 @@ func AttrUrlSubdomain(val string) attribute.KeyValue {
 	return AttrUrlSubdomainKey.String(val)
 }
 
-
-
 // The low-cardinality template of an [absolute path reference].
 //
 // [absolute path reference]: https://www.rfc-editor.org/rfc/rfc3986#section-4.2
 func AttrUrlTemplate(val string) attribute.KeyValue {
 	return AttrUrlTemplateKey.String(val)
 }
-
-
 
 // The effective top level domain (eTLD), also known as the domain suffix, is the
 // last part of the domain name. For example, the top level domain for
@@ -605,242 +499,91 @@ func AttrUrlTopLevelDomain(val string) attribute.KeyValue {
 	return AttrUrlTopLevelDomainKey.String(val)
 }
 
-
-
 // --- Enum values ---
-
-
-
-
-
-
-
 
 
 // Enum values for http.connection.state.
 const (
-
     // active state.
     AttrHttpConnectionStateActive = "active"
-
     // idle state.
     AttrHttpConnectionStateIdle = "idle"
-
 )
-
-
-
 
 // Enum values for http.flavor.
 const (
-
     // HTTP/1.0
     AttrHttpFlavorHttp10 = "1.0"
-
     // HTTP/1.1
     AttrHttpFlavorHttp11 = "1.1"
-
     // HTTP/2
     AttrHttpFlavorHttp20 = "2.0"
-
     // HTTP/3
     AttrHttpFlavorHttp30 = "3.0"
-
     // SPDY protocol.
     AttrHttpFlavorSpdy = "SPDY"
-
     // QUIC protocol.
     AttrHttpFlavorQuic = "QUIC"
-
 )
-
-
-
-
-
-
-
-
-
-
-
 
 // Enum values for http.request.method.
 const (
-
     // CONNECT method.
     AttrHttpRequestMethodConnect = "CONNECT"
-
     // DELETE method.
     AttrHttpRequestMethodDelete = "DELETE"
-
     // GET method.
     AttrHttpRequestMethodGet = "GET"
-
     // HEAD method.
     AttrHttpRequestMethodHead = "HEAD"
-
     // OPTIONS method.
     AttrHttpRequestMethodOptions = "OPTIONS"
-
     // PATCH method.
     AttrHttpRequestMethodPatch = "PATCH"
-
     // POST method.
     AttrHttpRequestMethodPost = "POST"
-
     // PUT method.
     AttrHttpRequestMethodPut = "PUT"
-
     // TRACE method.
     AttrHttpRequestMethodTrace = "TRACE"
-
     // Any HTTP method that the instrumentation has no prior knowledge of.
     AttrHttpRequestMethodOther = "_OTHER"
-
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Enum values for spaceport.booking.status.
 const (
-
     // Booking was successfully confirmed.
     AttrSpaceportBookingStatusConfirmed = "confirmed"
-
     // Booking failed.
     AttrSpaceportBookingStatusFailed = "failed"
-
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Enum values for spaceport.pricing.display_currency.
 const (
-
     // Universal Nano Credits
     AttrSpaceportPricingDisplayCurrencyUnc = "UNC"
-
     // Republic Credits
     AttrSpaceportPricingDisplayCurrencyRep = "REP"
-
     // Latinum
     AttrSpaceportPricingDisplayCurrencyLat = "LAT"
-
     // Quatloos
     AttrSpaceportPricingDisplayCurrencyQua = "QUA"
-
     // Ningi
     AttrSpaceportPricingDisplayCurrencyNin = "NIN"
-
     // Breen Dilithium
     AttrSpaceportPricingDisplayCurrencyBzd = "BZD"
-
     // Space Coin
     AttrSpaceportPricingDisplayCurrencyCoin = "COIN"
-
     // Token
     AttrSpaceportPricingDisplayCurrencyTkn = "TKN"
-
 )
-
-
-
-
-
-
-
 
 // Enum values for spaceport.seat.class.
 const (
-
     // Economy class with cryosleep pod.
     AttrSpaceportSeatClassEconomyCryosleep = "economy-cryosleep"
-
     // Business class with warp-lounge access.
     AttrSpaceportSeatClassBusinessWarp = "business-warp"
-
     // First class nebula suite.
     AttrSpaceportSeatClassFirstClassNebula = "first-class-nebula"
-
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
