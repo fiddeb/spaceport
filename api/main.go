@@ -50,7 +50,7 @@ func main() {
 	}
 
 	pricingURL := envOr("PRICING_SERVICE_URL", "http://localhost:8000")
-	frontendOrigin := envOr("SPACEPORT_FRONTEND_ORIGIN", "http://localhost:3000")
+	frontendOrigin := envOr("SPACEPORT_FRONTEND_ORIGIN", "http://localhost:5173")
 
 	depHandler := &handler.DepartureHandler{
 		DB:         database,

@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { ChaosMenu } from "@/components/ChaosMenu";
 
 export default function App() {
   const { currencies, selectedCurrency, setSelectedCurrency } = useCurrency();
@@ -20,6 +21,7 @@ export default function App() {
             <span>Spaceport</span>
           </Link>
           <div className="flex items-center gap-4">
+            <ChaosMenu />
             <Link to="/currencies" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Currencies
             </Link>

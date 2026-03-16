@@ -21,6 +21,7 @@ func init() {
 		"http.server.request.duration",
 		metric.WithDescription("Duration of HTTP server requests"),
 		metric.WithUnit("s"),
+		metric.WithExplicitBucketBoundaries(0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10),
 	)
 
 	httpServerActiveReqs, _ = meter.Int64UpDownCounter(

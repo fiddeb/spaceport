@@ -2,6 +2,11 @@ enabled: false
 
 otlpEndpoint: "http://opentelemetry-collector:4317"
 
+grafana:
+  provisioning:
+    enabled: true
+    folder: "/etc/grafana/provisioning/dashboards/spaceport"
+
 frontend:
   image:
     repository: ghcr.io/fiddeb/spaceport-frontend

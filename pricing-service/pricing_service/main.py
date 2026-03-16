@@ -11,6 +11,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from opentelemetry import context as otel_context, trace
 from opentelemetry.propagate import extract
 from opentelemetry.trace import SpanKind, StatusCode
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 from pricing_service.logging_config import setup_logging
 from pricing_service.pricing import SEAT_CLASSES, calculate_price
@@ -25,25 +26,7 @@ logger = logging.getLogger("pricing_service")
 _tracer = trace.get_tracer("spaceport-pricing-service")
 
 app = FastAPI(title="Spaceport Pricing Service")
-
-
-@app.middleware("http")
-async def tracing_middleware(request: Request, call_next):
-    """Extract W3C trace context and start a server span per request."""
-    ctx = extract(dict(request.headers))
-    span_name = f"{request.method} {request.url.path}"
-    with _tracer.start_as_current_span(
-        span_name,
-        context=ctx,
-        kind=SpanKind.SERVER,
-    ) as span:
-        span.set_attribute("http.request.method", request.method)
-        span.set_attribute("url.path", request.url.path)
-        response = await call_next(request)
-        span.set_attribute("http.response.status_code", response.status_code)
-        if response.status_code >= 500:
-            span.set_status(StatusCode.ERROR, f"HTTP {response.status_code}")
-        return response
+FastAPIInstrumentor.instrument_app(app)
 
 # --- Load currency catalog once at startup ---
 _currencies_path = Path(__file__).resolve().parent.parent / "data" / "currencies.json"

@@ -1,0 +1,15 @@
+{{- if .Values.grafana.provisioning.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "spaceport.fullname" . }}-grafana-dashboards
+  labels:
+    {{- include "spaceport.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+data:
+  {{- $dashboardDir := "dashboards" }}
+  {{- range $path, $_ := .Files.Glob (printf "%s/*.json" $dashboardDir) }}
+  {{ $path | base }}: |-
+    {{ $.Files.Get $path | nindent 4 }}
+  {{- end }}
+{{- end }}
