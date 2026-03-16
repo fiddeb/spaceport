@@ -1,1 +1,10 @@
-{"currencies": [{"code": "UNC", "name": "Universal Neural Credits", "rate": 1.0}, {"code": "REP", "name": "Reputation Tokens", "rate": 1.25}, {"code": "LAT", "name": "Lattice Creds", "rate": 4.0}, {"code": "QUA", "name": "Quantum Marks", "rate": 0.2}, {"code": "NIN", "name": "Nino Chips", "rate": 0.05}, {"code": "BZD", "name": "Bazaar Ducats", "rate": 0.5}, {"code": "COIN", "name": "Standard Coins", "rate": 0.8}, {"code": "TKN", "name": "Generic Tokens", "rate": 0.1}]}
+{"currencies": [
+  {"code": "UNC",  "name": "UN Credits",       "source": "Altered Carbon",                      "rate": 1},
+  {"code": "REP",  "name": "Republic Credits",  "source": "Star Wars",                           "rate": 3},
+  {"code": "LAT",  "name": "Latinum",            "source": "Star Trek",                           "rate": 4},
+  {"code": "QUA",  "name": "Quatloos",           "source": "Star Trek",                           "rate": 11},
+  {"code": "NIN",  "name": "Ning",               "source": "The Hitchhiker's Guide to the Galaxy", "rate": 13},
+  {"code": "BZD",  "name": "Buckazoid",          "source": "Futurama",                            "rate": 15},
+  {"code": "COIN", "name": "Coin",               "source": "Cyberpunk Sci-Fi",                    "rate": 25},
+  {"code": "TKN",  "name": "Token",              "source": "Cyberpunk Sci-Fi",                    "rate": 30}
+]}
