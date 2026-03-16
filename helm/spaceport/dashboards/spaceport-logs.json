@@ -42,7 +42,7 @@
       },
       "targets": [
         {
-          "expr": "{service_name=~\"spaceport.*\"} |= \"error\" or \"ERROR\"",
+          "expr": "{service_name=~\"spaceport.*\"} | severity_text=\"ERROR\"",
           "refId": "A"
         }
       ]
