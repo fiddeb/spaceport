@@ -1,6 +1,6 @@
 enabled: false
 
-otlpEndpoint: "http://otel-collector:4317"
+otlpEndpoint: "http://otel-collector:4318"
 
 ingress:
   enabled: true
