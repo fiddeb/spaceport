@@ -8,6 +8,12 @@ import "go.opentelemetry.io/otel/attribute"
 // --- Attribute keys ---
 
 
+// A message providing more detail about an error in human-readable form.
+const AttrErrorMessageKey = attribute.Key("error.message")
+
+// Describes a class of error the operation ended with.
+const AttrErrorTypeKey = attribute.Key("error.type")
+
 // Deprecated, use `client.address` instead.
 const AttrHttpClientIpKey = attribute.Key("http.client_ip")
 
@@ -109,6 +115,76 @@ const AttrHttpUrlKey = attribute.Key("http.url")
 // Deprecated, use `user_agent.original` instead.
 const AttrHttpUserAgentKey = attribute.Key("http.user_agent")
 
+// The ISO 3166-1 alpha-2 2-character country code associated with the mobile
+// carrier network.
+const AttrNetworkCarrierIccKey = attribute.Key("network.carrier.icc")
+
+// The mobile carrier country code.
+const AttrNetworkCarrierMccKey = attribute.Key("network.carrier.mcc")
+
+// The mobile carrier network code.
+const AttrNetworkCarrierMncKey = attribute.Key("network.carrier.mnc")
+
+// The name of the mobile carrier.
+const AttrNetworkCarrierNameKey = attribute.Key("network.carrier.name")
+
+// The state of network connection
+const AttrNetworkConnectionStateKey = attribute.Key("network.connection.state")
+
+// This describes more details regarding the connection.type. It may be the type
+// of cell technology connection, but it could be used for describing details
+// about a wifi connection.
+const AttrNetworkConnectionSubtypeKey = attribute.Key("network.connection.subtype")
+
+// The internet connection type.
+const AttrNetworkConnectionTypeKey = attribute.Key("network.connection.type")
+
+// The network interface name.
+const AttrNetworkInterfaceNameKey = attribute.Key("network.interface.name")
+
+// The network IO operation direction.
+const AttrNetworkIoDirectionKey = attribute.Key("network.io.direction")
+
+// Local address of the network connection - IP address or Unix domain socket
+// name.
+const AttrNetworkLocalAddressKey = attribute.Key("network.local.address")
+
+// Local port number of the network connection.
+const AttrNetworkLocalPortKey = attribute.Key("network.local.port")
+
+// Peer address of the network connection - IP address or Unix domain socket
+// name.
+const AttrNetworkPeerAddressKey = attribute.Key("network.peer.address")
+
+// Peer port number of the network connection.
+const AttrNetworkPeerPortKey = attribute.Key("network.peer.port")
+
+// [OSI application layer] or non-OSI equivalent.
+//
+// [OSI application layer]: https://wikipedia.org/wiki/Application_layer
+const AttrNetworkProtocolNameKey = attribute.Key("network.protocol.name")
+
+// The actual version of the protocol used for network communication.
+const AttrNetworkProtocolVersionKey = attribute.Key("network.protocol.version")
+
+// [OSI transport layer] or [inter-process communication method].
+//
+// [OSI transport layer]: https://wikipedia.org/wiki/Transport_layer
+// [inter-process communication method]: https://wikipedia.org/wiki/Inter-process_communication
+const AttrNetworkTransportKey = attribute.Key("network.transport")
+
+// [OSI network layer] or non-OSI equivalent.
+//
+// [OSI network layer]: https://wikipedia.org/wiki/Network_layer
+const AttrNetworkTypeKey = attribute.Key("network.type")
+
+// Server domain name if available without reverse DNS lookup; otherwise, IP
+// address or Unix domain socket name.
+const AttrServerAddressKey = attribute.Key("server.address")
+
+// Server port number.
+const AttrServerPortKey = attribute.Key("server.port")
+
 // Unique identifier for the booking.
 const AttrSpaceportBookingIdKey = attribute.Key("spaceport.booking.id")
 
@@ -209,6 +285,16 @@ const AttrUrlTopLevelDomainKey = attribute.Key("url.top_level_domain")
 
 // --- Attribute value helpers ---
 
+
+// A message providing more detail about an error in human-readable form.
+func AttrErrorMessage(val string) attribute.KeyValue {
+	return AttrErrorMessageKey.String(val)
+}
+
+// Describes a class of error the operation ended with.
+func AttrErrorType(val string) attribute.KeyValue {
+	return AttrErrorTypeKey.String(val)
+}
 
 // Deprecated, use `client.address` instead.
 func AttrHttpClientIp(val string) attribute.KeyValue {
@@ -349,6 +435,114 @@ func AttrHttpUrl(val string) attribute.KeyValue {
 // Deprecated, use `user_agent.original` instead.
 func AttrHttpUserAgent(val string) attribute.KeyValue {
 	return AttrHttpUserAgentKey.String(val)
+}
+
+// The ISO 3166-1 alpha-2 2-character country code associated with the mobile
+// carrier network.
+func AttrNetworkCarrierIcc(val string) attribute.KeyValue {
+	return AttrNetworkCarrierIccKey.String(val)
+}
+
+// The mobile carrier country code.
+func AttrNetworkCarrierMcc(val string) attribute.KeyValue {
+	return AttrNetworkCarrierMccKey.String(val)
+}
+
+// The mobile carrier network code.
+func AttrNetworkCarrierMnc(val string) attribute.KeyValue {
+	return AttrNetworkCarrierMncKey.String(val)
+}
+
+// The name of the mobile carrier.
+func AttrNetworkCarrierName(val string) attribute.KeyValue {
+	return AttrNetworkCarrierNameKey.String(val)
+}
+
+// The state of network connection
+func AttrNetworkConnectionState(val string) attribute.KeyValue {
+	return AttrNetworkConnectionStateKey.String(val)
+}
+
+// This describes more details regarding the connection.type. It may be the type
+// of cell technology connection, but it could be used for describing details
+// about a wifi connection.
+func AttrNetworkConnectionSubtype(val string) attribute.KeyValue {
+	return AttrNetworkConnectionSubtypeKey.String(val)
+}
+
+// The internet connection type.
+func AttrNetworkConnectionType(val string) attribute.KeyValue {
+	return AttrNetworkConnectionTypeKey.String(val)
+}
+
+// The network interface name.
+func AttrNetworkInterfaceName(val string) attribute.KeyValue {
+	return AttrNetworkInterfaceNameKey.String(val)
+}
+
+// The network IO operation direction.
+func AttrNetworkIoDirection(val string) attribute.KeyValue {
+	return AttrNetworkIoDirectionKey.String(val)
+}
+
+// Local address of the network connection - IP address or Unix domain socket
+// name.
+func AttrNetworkLocalAddress(val string) attribute.KeyValue {
+	return AttrNetworkLocalAddressKey.String(val)
+}
+
+// Local port number of the network connection.
+func AttrNetworkLocalPort(val int) attribute.KeyValue {
+	return AttrNetworkLocalPortKey.Int(val)
+}
+
+// Peer address of the network connection - IP address or Unix domain socket
+// name.
+func AttrNetworkPeerAddress(val string) attribute.KeyValue {
+	return AttrNetworkPeerAddressKey.String(val)
+}
+
+// Peer port number of the network connection.
+func AttrNetworkPeerPort(val int) attribute.KeyValue {
+	return AttrNetworkPeerPortKey.Int(val)
+}
+
+// [OSI application layer] or non-OSI equivalent.
+//
+// [OSI application layer]: https://wikipedia.org/wiki/Application_layer
+func AttrNetworkProtocolName(val string) attribute.KeyValue {
+	return AttrNetworkProtocolNameKey.String(val)
+}
+
+// The actual version of the protocol used for network communication.
+func AttrNetworkProtocolVersion(val string) attribute.KeyValue {
+	return AttrNetworkProtocolVersionKey.String(val)
+}
+
+// [OSI transport layer] or [inter-process communication method].
+//
+// [OSI transport layer]: https://wikipedia.org/wiki/Transport_layer
+// [inter-process communication method]: https://wikipedia.org/wiki/Inter-process_communication
+func AttrNetworkTransport(val string) attribute.KeyValue {
+	return AttrNetworkTransportKey.String(val)
+}
+
+// [OSI network layer] or non-OSI equivalent.
+//
+// [OSI network layer]: https://wikipedia.org/wiki/Network_layer
+func AttrNetworkType(val string) attribute.KeyValue {
+	return AttrNetworkTypeKey.String(val)
+}
+
+// Server domain name if available without reverse DNS lookup; otherwise, IP
+// address or Unix domain socket name.
+func AttrServerAddress(val string) attribute.KeyValue {
+	return AttrServerAddressKey.String(val)
+}
+
+// Server port number.
+func AttrServerPort(val int) attribute.KeyValue {
+	return AttrServerPortKey.Int(val)
 }
 
 // Unique identifier for the booking.
@@ -506,6 +700,13 @@ func AttrUrlTopLevelDomain(val string) attribute.KeyValue {
 // --- Enum values ---
 
 
+// Enum values for error.type.
+const (
+    // A fallback error value to be used when the instrumentation doesn't define a
+// custom value.
+    AttrErrorTypeOther = "_OTHER"
+)
+
 // Enum values for http.connection.state.
 const (
     // active state.
@@ -554,6 +755,122 @@ const (
     AttrHttpRequestMethodQuery = "QUERY"
     // Any HTTP method that the instrumentation has no prior knowledge of.
     AttrHttpRequestMethodOther = "_OTHER"
+)
+
+// Enum values for network.connection.state.
+const (
+    
+    AttrNetworkConnectionStateClosed = "closed"
+    
+    AttrNetworkConnectionStateCloseWait = "close_wait"
+    
+    AttrNetworkConnectionStateClosing = "closing"
+    
+    AttrNetworkConnectionStateEstablished = "established"
+    
+    AttrNetworkConnectionStateFinWait1 = "fin_wait_1"
+    
+    AttrNetworkConnectionStateFinWait2 = "fin_wait_2"
+    
+    AttrNetworkConnectionStateLastAck = "last_ack"
+    
+    AttrNetworkConnectionStateListen = "listen"
+    
+    AttrNetworkConnectionStateSynReceived = "syn_received"
+    
+    AttrNetworkConnectionStateSynSent = "syn_sent"
+    
+    AttrNetworkConnectionStateTimeWait = "time_wait"
+)
+
+// Enum values for network.connection.subtype.
+const (
+    // GPRS
+    AttrNetworkConnectionSubtypeGprs = "gprs"
+    // EDGE
+    AttrNetworkConnectionSubtypeEdge = "edge"
+    // UMTS
+    AttrNetworkConnectionSubtypeUmts = "umts"
+    // CDMA
+    AttrNetworkConnectionSubtypeCdma = "cdma"
+    // EVDO Rel. 0
+    AttrNetworkConnectionSubtypeEvdo0 = "evdo_0"
+    // EVDO Rev. A
+    AttrNetworkConnectionSubtypeEvdoA = "evdo_a"
+    // CDMA2000 1XRTT
+    AttrNetworkConnectionSubtypeCdma20001xrtt = "cdma2000_1xrtt"
+    // HSDPA
+    AttrNetworkConnectionSubtypeHsdpa = "hsdpa"
+    // HSUPA
+    AttrNetworkConnectionSubtypeHsupa = "hsupa"
+    // HSPA
+    AttrNetworkConnectionSubtypeHspa = "hspa"
+    // IDEN
+    AttrNetworkConnectionSubtypeIden = "iden"
+    // EVDO Rev. B
+    AttrNetworkConnectionSubtypeEvdoB = "evdo_b"
+    // LTE
+    AttrNetworkConnectionSubtypeLte = "lte"
+    // EHRPD
+    AttrNetworkConnectionSubtypeEhrpd = "ehrpd"
+    // HSPAP
+    AttrNetworkConnectionSubtypeHspap = "hspap"
+    // GSM
+    AttrNetworkConnectionSubtypeGsm = "gsm"
+    // TD-SCDMA
+    AttrNetworkConnectionSubtypeTdScdma = "td_scdma"
+    // IWLAN
+    AttrNetworkConnectionSubtypeIwlan = "iwlan"
+    // 5G NR (New Radio)
+    AttrNetworkConnectionSubtypeNr = "nr"
+    // 5G NRNSA (New Radio Non-Standalone)
+    AttrNetworkConnectionSubtypeNrnsa = "nrnsa"
+    // LTE CA
+    AttrNetworkConnectionSubtypeLteCa = "lte_ca"
+)
+
+// Enum values for network.connection.type.
+const (
+    
+    AttrNetworkConnectionTypeWifi = "wifi"
+    
+    AttrNetworkConnectionTypeWired = "wired"
+    
+    AttrNetworkConnectionTypeCell = "cell"
+    
+    AttrNetworkConnectionTypeUnavailable = "unavailable"
+    
+    AttrNetworkConnectionTypeUnknown = "unknown"
+)
+
+// Enum values for network.io.direction.
+const (
+    
+    AttrNetworkIoDirectionTransmit = "transmit"
+    
+    AttrNetworkIoDirectionReceive = "receive"
+)
+
+// Enum values for network.transport.
+const (
+    // TCP
+    AttrNetworkTransportTcp = "tcp"
+    // UDP
+    AttrNetworkTransportUdp = "udp"
+    // Named or anonymous pipe.
+    AttrNetworkTransportPipe = "pipe"
+    // Unix domain socket
+    AttrNetworkTransportUnix = "unix"
+    // QUIC
+    AttrNetworkTransportQuic = "quic"
+)
+
+// Enum values for network.type.
+const (
+    // IPv4
+    AttrNetworkTypeIpv4 = "ipv4"
+    // IPv6
+    AttrNetworkTypeIpv6 = "ipv6"
 )
 
 // Enum values for spaceport.booking.status.

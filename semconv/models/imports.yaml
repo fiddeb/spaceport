@@ -1,4 +1,11 @@
 imports:
   attribute_groups:
-    - registry.http*   # http.request.method, http.response.status_code, etc.
-    - registry.url*    # url.path, url.scheme, etc.
+    - registry.http*      # http.request.method, http.response.status_code, etc.
+    - registry.url*       # url.path, url.scheme, etc.
+    - registry.network*   # network.protocol.version (used by http server metrics)
+    - registry.server*    # server.address, server.port (used by http server metrics)
+    - registry.error*     # error.type (used by http.server.request.duration)
+    - registry.user_agent*  # user_agent.synthetic.type (opt_in on http server metrics)
+  metrics:
+    - http.server.request.duration
+    - http.server.active_requests

@@ -22,6 +22,96 @@ type OptionalAttr interface {
     attr() attribute.KeyValue
 }
 
+// An instrument for recording `http.server.active_requests`
+type HttpServerActiveRequests struct {
+    inst metric.Float64UpDownCounter
+}
+
+// Construct a new instrument for measuring `http.server.active_requests`
+func NewHttpServerActiveRequests(m metric.Meter) (HttpServerActiveRequests, error) {
+    i, err := m.Float64UpDownCounter(
+        "http.server.active_requests",
+        metric.WithDescription("Number of active HTTP server requests."),
+        metric.WithUnit("{request}"),
+    )
+    if err != nil {
+        return HttpServerActiveRequests{}, err
+    }
+    return HttpServerActiveRequests{i}, nil
+}
+
+func httpServerActiveRequestsAttrToAttrs(in []OptionalAttr) []attribute.KeyValue {
+	out := make([]attribute.KeyValue, len(in))
+	for i, a := range in {
+		out[i] = a.attr()
+	}
+	return out
+}
+// Adds an increment to the existing count.
+func (m HttpServerActiveRequests) Add(
+    ctx context.Context,
+    inc float64,
+    // HTTP request method.
+    httpRequestMethod string,
+    // The [URI scheme] component identifying the used protocol.
+//
+// [URI scheme]: https://www.rfc-editor.org/rfc/rfc3986#section-3.1
+    urlScheme string,
+    optAttrs ...OptionalAttr,
+) {
+    m.inst.Add(ctx, inc, metric.WithAttributes(
+        append(httpServerActiveRequestsAttrToAttrs(optAttrs),
+        attribute.String("http.request.method", httpRequestMethod),
+        attribute.String("url.scheme", urlScheme),
+        )...,
+    ))
+}
+
+// An instrument for recording `http.server.request.duration`
+type HttpServerRequestDuration struct {
+    inst metric.Float64Histogram
+}
+
+// Construct a new instrument for measuring `http.server.request.duration`
+func NewHttpServerRequestDuration(m metric.Meter) (HttpServerRequestDuration, error) {
+    i, err := m.Float64Histogram(
+        "http.server.request.duration",
+        metric.WithDescription("Duration of HTTP server requests."),
+        metric.WithUnit("s"),
+    )
+    if err != nil {
+        return HttpServerRequestDuration{}, err
+    }
+    return HttpServerRequestDuration{i}, nil
+}
+
+func httpServerRequestDurationAttrToAttrs(in []OptionalAttr) []attribute.KeyValue {
+	out := make([]attribute.KeyValue, len(in))
+	for i, a := range in {
+		out[i] = a.attr()
+	}
+	return out
+}
+// Records a value in the histogram.
+func (m HttpServerRequestDuration) Record(
+    ctx context.Context,
+    value float64,
+    // HTTP request method.
+    httpRequestMethod string,
+    // The [URI scheme] component identifying the used protocol.
+//
+// [URI scheme]: https://www.rfc-editor.org/rfc/rfc3986#section-3.1
+    urlScheme string,
+    optAttrs ...OptionalAttr,
+) {
+    m.inst.Record(ctx, value, metric.WithAttributes(
+        append(httpServerRequestDurationAttrToAttrs(optAttrs),
+        attribute.String("http.request.method", httpRequestMethod),
+        attribute.String("url.scheme", urlScheme),
+        )...,
+    ))
+}
+
 // An instrument for recording `spaceport.booking.active`
 type SpaceportBookingActive struct {
     inst metric.Float64UpDownCounter
@@ -175,6 +265,26 @@ func (m SpaceportPricingRequestDuration) Record(
 }
 
 
+func ErrorType(errorType string) OptionalAttr {
+	return attr{attribute.String("error.type", errorType)}
+}
+
+func HttpResponseStatusCode(httpResponseStatusCode int) OptionalAttr {
+	return attr{attribute.Int("http.response.status_code", httpResponseStatusCode)}
+}
+
+func HttpRoute(httpRoute string) OptionalAttr {
+	return attr{attribute.String("http.route", httpRoute)}
+}
+
+func NetworkProtocolName(networkProtocolName string) OptionalAttr {
+	return attr{attribute.String("network.protocol.name", networkProtocolName)}
+}
+
+func NetworkProtocolVersion(networkProtocolVersion string) OptionalAttr {
+	return attr{attribute.String("network.protocol.version", networkProtocolVersion)}
+}
+
 func SpaceportDepartureDestination(spaceportDepartureDestination string) OptionalAttr {
 	return attr{attribute.String("spaceport.departure.destination", spaceportDepartureDestination)}
 }
@@ -191,6 +301,18 @@ func SpaceportSeatClass(spaceportSeatClass string) OptionalAttr {
 	return attr{attribute.String("spaceport.seat.class", spaceportSeatClass)}
 }
 
+func ServerAddress(serverAddress string) OptionalAttr {
+	return attr{attribute.String("server.address", serverAddress)}
+}
+
+func ServerPort(serverPort int) OptionalAttr {
+	return attr{attribute.Int("server.port", serverPort)}
+}
+
 func SpaceportChaosFailureMode(spaceportChaosFailureMode string) OptionalAttr {
 	return attr{attribute.String("spaceport.chaos.failure_mode", spaceportChaosFailureMode)}
+}
+
+func UserAgentSyntheticType(userAgentSyntheticType string) OptionalAttr {
+	return attr{attribute.String("user_agent.synthetic.type", userAgentSyntheticType)}
 }

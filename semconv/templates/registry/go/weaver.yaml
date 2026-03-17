@@ -22,7 +22,7 @@ templates:
       | map(select(.type == "attribute_group"))
       | map(.attributes // [])
       | flatten
-      | map(select(.name | (startswith("spaceport.") or startswith("http.") or startswith("url."))))
+      | map(select(.name | (startswith("spaceport.") or startswith("http.") or startswith("url.") or startswith("error.") or startswith("network.") or startswith("server."))))
       | sort_by(.name)
       | { attributes: . }
     application_mode: single

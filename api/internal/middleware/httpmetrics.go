@@ -5,31 +5,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/metric"
 
 	"github.com/fiddeb/spaceport/api/internal/semconv"
 )
 
 var (
-	httpServerDuration   metric.Float64Histogram
-	httpServerActiveReqs metric.Int64UpDownCounter
+	httpServerDuration   semconv.HttpServerRequestDuration
+	httpServerActiveReqs semconv.HttpServerActiveRequests
 )
 
 func init() {
 	meter := otel.Meter("spaceport-api")
 
-	httpServerDuration, _ = meter.Float64Histogram(
-		"http.server.request.duration",
-		metric.WithDescription("Duration of HTTP server requests"),
-		metric.WithUnit("s"),
-		metric.WithExplicitBucketBoundaries(0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10),
-	)
-
-	httpServerActiveReqs, _ = meter.Int64UpDownCounter(
-		"http.server.active_requests",
-		metric.WithDescription("Number of active HTTP server requests"),
-		metric.WithUnit("{request}"),
-	)
+	httpServerDuration, _ = semconv.NewHttpServerRequestDuration(meter)
+	httpServerActiveReqs, _ = semconv.NewHttpServerActiveRequests(meter)
 }
 
 // HTTPMetrics returns a Gin middleware that records HTTP server metrics
@@ -40,10 +29,7 @@ func HTTPMetrics() gin.HandlerFunc {
 		method := c.Request.Method
 		urlScheme := scheme(c)
 
-		httpServerActiveReqs.Add(ctx, 1, metric.WithAttributes(
-			semconv.AttrHttpRequestMethod(method),
-			semconv.AttrUrlSchemeKey.String(urlScheme),
-		))
+		httpServerActiveReqs.Add(ctx, 1, method, urlScheme)
 
 		start := time.Now()
 		c.Next()
@@ -54,16 +40,11 @@ func HTTPMetrics() gin.HandlerFunc {
 			route = "unmatched"
 		}
 
-		httpServerDuration.Record(ctx, elapsed, metric.WithAttributes(
-			semconv.AttrHttpRequestMethod(method),
-			semconv.AttrHttpResponseStatusCodeKey.Int(c.Writer.Status()),
-			semconv.AttrHttpRouteKey.String(route),
-			semconv.AttrUrlSchemeKey.String(urlScheme),
-		))
-		httpServerActiveReqs.Add(ctx, -1, metric.WithAttributes(
-			semconv.AttrHttpRequestMethod(method),
-			semconv.AttrUrlSchemeKey.String(urlScheme),
-		))
+		httpServerDuration.Record(ctx, elapsed, method, urlScheme,
+			semconv.HttpResponseStatusCode(c.Writer.Status()),
+			semconv.HttpRoute(route),
+		)
+		httpServerActiveReqs.Add(ctx, -1, method, urlScheme)
 	}
 }
 

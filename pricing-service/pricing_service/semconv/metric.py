@@ -13,6 +13,90 @@ from opentelemetry.metrics import Meter, Counter, Histogram, UpDownCounter
 from . import attribute
 
 
+class HttpServerActive_requests:
+    """Number of active HTTP server requests."""
+
+    name = "http.server.active_requests"
+    unit = "{request}"
+    description = "Number of active HTTP server requests."
+
+    def __init__(self, meter: Meter) -> None:
+        self._inst = meter.create_up_down_counter(
+            name=self.name,
+            description=self.description,
+            unit=self.unit,
+        )
+
+    def add(
+        self,
+        value: float,
+        http_request_method: str,
+        url_scheme: str,
+        server_address: Optional[str] = None,
+        server_port: Optional[int] = None,
+    ) -> None:
+        attrs: dict[str, str | int | float | bool | Sequence] = {
+            attribute.HTTP_REQUEST_METHOD: http_request_method,
+            attribute.URL_SCHEME: url_scheme,
+        }
+        if server_address is not None:
+            attrs[attribute.SERVER_ADDRESS] = server_address
+        if server_port is not None:
+            attrs[attribute.SERVER_PORT] = server_port
+        self._inst.add(value, attributes=attrs)
+
+
+class HttpServerRequestDuration:
+    """Duration of HTTP server requests."""
+
+    name = "http.server.request.duration"
+    unit = "s"
+    description = "Duration of HTTP server requests."
+
+    def __init__(self, meter: Meter) -> None:
+        self._inst = meter.create_histogram(
+            name=self.name,
+            description=self.description,
+            unit=self.unit,
+        )
+
+    def record(
+        self,
+        value: float,
+        http_request_method: str,
+        url_scheme: str,
+        error_type: Optional[str] = None,
+        http_response_status_code: Optional[int] = None,
+        http_route: Optional[str] = None,
+        network_protocol_name: Optional[str] = None,
+        network_protocol_version: Optional[str] = None,
+        server_address: Optional[str] = None,
+        server_port: Optional[int] = None,
+        user_agent_synthetic_type: Optional[str] = None,
+    ) -> None:
+        attrs: dict[str, str | int | float | bool | Sequence] = {
+            attribute.HTTP_REQUEST_METHOD: http_request_method,
+            attribute.URL_SCHEME: url_scheme,
+        }
+        if error_type is not None:
+            attrs[attribute.ERROR_TYPE] = error_type
+        if http_response_status_code is not None:
+            attrs[attribute.HTTP_RESPONSE_STATUS_CODE] = http_response_status_code
+        if http_route is not None:
+            attrs[attribute.HTTP_ROUTE] = http_route
+        if network_protocol_name is not None:
+            attrs[attribute.NETWORK_PROTOCOL_NAME] = network_protocol_name
+        if network_protocol_version is not None:
+            attrs[attribute.NETWORK_PROTOCOL_VERSION] = network_protocol_version
+        if server_address is not None:
+            attrs[attribute.SERVER_ADDRESS] = server_address
+        if server_port is not None:
+            attrs[attribute.SERVER_PORT] = server_port
+        if user_agent_synthetic_type is not None:
+            attrs[attribute.USER_AGENT_SYNTHETIC_TYPE] = user_agent_synthetic_type
+        self._inst.record(value, attributes=attrs)
+
+
 class SpaceportBookingActive:
     """Number of confirmed bookings currently in the system."""
 
