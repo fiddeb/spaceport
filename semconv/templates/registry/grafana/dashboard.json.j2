@@ -1,0 +1,197 @@
+{%- macro prom_name(metric_name) -%}
+{{ metric_name | replace('.', '_') }}
+{%- endmacro -%}
+{%- macro prom_metric(metric) -%}
+{%- if metric.instrument == "counter" -%}
+{{ prom_name(metric.metric_name) }}_total
+{%- elif metric.instrument == "histogram" -%}
+{{ prom_name(metric.metric_name) }}
+{%- else -%}
+{{ prom_name(metric.metric_name) }}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro promql_expr(metric) -%}
+{%- if metric.instrument == "counter" -%}
+rate({{ prom_metric(metric) }}[5m])
+{%- elif metric.instrument == "histogram" -%}
+histogram_quantile(0.95, sum(rate({{ prom_metric(metric) }}_bucket[5m])) by (le))
+{%- elif metric.instrument == "updowncounter" -%}
+{{ prom_metric(metric) }}
+{%- elif metric.instrument == "gauge" -%}
+{{ prom_metric(metric) }}
+{%- else -%}
+{{ prom_metric(metric) }}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro panel_type(metric) -%}
+{%- if metric.instrument == "histogram" -%}
+timeseries
+{%- elif metric.instrument in ["counter"] -%}
+timeseries
+{%- elif metric.instrument in ["updowncounter", "gauge"] -%}
+stat
+{%- else -%}
+timeseries
+{%- endif -%}
+{%- endmacro -%}
+{%- macro panel_unit(metric) -%}
+{%- if metric.unit == "ms" -%}
+ms
+{%- elif metric.unit == "s" -%}
+s
+{%- elif metric.unit == "By" -%}
+bytes
+{%- elif metric.unit == "1" or metric.unit == "" -%}
+short
+{%- else -%}
+short
+{%- endif -%}
+{%- endmacro -%}
+{%- set ns = namespace(y=0) -%}
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "annotations": {
+    "list": []
+  },
+  "description": "Auto-generated from the Spaceport semantic convention registry using OTel Weaver.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+{%- for metric in ctx.metrics %}
+    {
+      "type": "{{ panel_type(metric) }}",
+      "title": "{{ metric.brief | replace('"', '\\"') }}",
+      "description": "Metric: `{{ metric.metric_name }}`\nInstrument: {{ metric.instrument }}\nUnit: {{ metric.unit }}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "{{ panel_unit(metric) }}"
+{%- if metric.instrument in ["updowncounter", "gauge"] %},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+{%- endif %}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+{%- if metric.instrument in ["updowncounter", "gauge"] %}
+        "h": 6,
+        "w": 8,
+{%- else %}
+        "h": 8,
+        "w": 24,
+{%- endif %}
+        "x": 0,
+        "y": {{ ns.y }}
+      },
+      "options": {
+{%- if metric.instrument in ["updowncounter", "gauge"] %}
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area"
+{%- else %}
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max"]
+        }
+{%- endif %}
+      },
+      "targets": [
+{%- if metric.instrument == "histogram" %}
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "histogram_quantile(0.50, sum(rate({{ prom_metric(metric) }}_bucket[$__rate_interval])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "histogram_quantile(0.95, sum(rate({{ prom_metric(metric) }}_bucket[$__rate_interval])) by (le))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "histogram_quantile(0.99, sum(rate({{ prom_metric(metric) }}_bucket[$__rate_interval])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+{%- elif metric.instrument == "counter" %}
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "sum(rate({{ prom_metric(metric) }}[$__rate_interval]))",
+          "legendFormat": "total rate",
+          "refId": "A"
+        }
+{%- if metric.attributes is defined %}
+{%- for attr in metric.attributes | required | attribute_sort %}
+        ,{
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "sum by ({{ attr.name | replace('.', '_') }}) (rate({{ prom_metric(metric) }}[$__rate_interval]))",
+          "legendFormat": "{% raw %}{{{% endraw %}{{ attr.name | replace('.', '_') }}{% raw %}}}{% endraw %}",
+          "refId": "{{ 'BCDEFGH'[loop.index0] }}"
+        }
+{%- endfor %}
+{%- endif %}
+{%- else %}
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "{{ prom_metric(metric) }}",
+          "legendFormat": "{{ metric.metric_name }}",
+          "refId": "A"
+        }
+{%- endif %}
+      ]
+    }
+{%- if not loop.last %},{% endif %}
+{%- if metric.instrument in ["updowncounter", "gauge"] %}
+{%- set ns.y = ns.y + 6 %}
+{%- else %}
+{%- set ns.y = ns.y + 8 %}
+{%- endif %}
+{%- endfor %}
+  ],
+  "schemaVersion": 39,
+  "tags": ["spaceport", "otel", "generated"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Spaceport Metrics (Generated)",
+  "uid": "spaceport-metrics-gen",
+  "version": 1
+}

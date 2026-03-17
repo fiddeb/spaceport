@@ -1,0 +1,8 @@
+templates:
+  - pattern: dashboard.json.j2
+    filter: >
+      .groups
+      | map(select(.type == "metric"))
+      | { metrics: . }
+    application_mode: single
+    file_name: dashboard.json
