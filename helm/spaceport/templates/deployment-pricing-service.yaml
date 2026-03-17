@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: pricing-service
-          image: "{{ .Values.pricingService.image.repository }}:{{ .Values.pricingService.image.tag }}"
+          image: "{{ .Values.pricingService.image.repository }}:{{ .Values.pricingService.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.pricingService.image.pullPolicy }}
           ports:
             - name: http
