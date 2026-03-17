@@ -7,7 +7,8 @@ import {
   useRef,
 } from "react";
 import type { ReactNode } from "react";
-import { tracer } from "@/instrumentation";
+import { tracer, tracedFetch } from "@/instrumentation";
+import { trace, context } from "@opentelemetry/api";
 import { Spinner } from "@/components/ui/spinner";
 
 interface Currency {
@@ -36,15 +37,19 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   const prevCurrency = useRef(selectedCurrency);
 
   useEffect(() => {
-    fetch("/api/currencies")
+    const span = tracer.startSpan("app.load_currencies");
+    const ctx = trace.setSpan(context.active(), span);
+    tracedFetch("/api/currencies", undefined, ctx)
       .then((r) => r.json())
       .then((data: { currencies: Currency[] } | Currency[]) => {
         const raw = Array.isArray(data) ? data : data.currencies;
         const list = raw.map((c) => ({ ...c, baseRate: c.rate }));
         setCurrencies(list);
         setLoaded(true);
+        span.end();
       })
       .catch(() => {
+        span.end();
         // Fallback: UNC at rate 1
         setCurrencies([{ code: "UNC", name: "Universal Credits", symbol: "UNC", rate: 1, baseRate: 1 }]);
         setLoaded(true);

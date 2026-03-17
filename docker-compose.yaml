@@ -3,13 +3,15 @@ services:
     image: ghcr.io/fiddeb/spaceport-frontend:${OTEL_SERVICE_VERSION:-latest}
     build:
       context: ./frontend
+      args:
+        VITE_SPACEPORT_ENV: docker
     ports:
       - "${SPACEPORT_FRONTEND_PORT:-3000}:80"
     environment:
       OTEL_SERVICE_NAME: spaceport-frontend
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
       OTEL_SERVICE_VERSION: ${OTEL_SERVICE_VERSION:-0.1.0}
-      SPACEPORT_ENV: ${SPACEPORT_ENV:-local}
+      SPACEPORT_ENV: ${SPACEPORT_ENV:-docker}
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:80"]
       interval: 10s
@@ -30,7 +32,7 @@ services:
       OTEL_SERVICE_NAME: spaceport-api
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
       OTEL_SERVICE_VERSION: ${OTEL_SERVICE_VERSION:-0.1.0}
-      SPACEPORT_ENV: ${SPACEPORT_ENV:-local}
+      SPACEPORT_ENV: ${SPACEPORT_ENV:-docker}
       DATABASE_PATH: /data/spaceport.db
       PRICING_SERVICE_URL: http://pricing-service:8000
       SPACEPORT_FRONTEND_ORIGIN: http://localhost:${SPACEPORT_FRONTEND_PORT:-3000}
@@ -56,7 +58,7 @@ services:
       OTEL_SERVICE_NAME: spaceport-pricing-service
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}
       OTEL_SERVICE_VERSION: ${OTEL_SERVICE_VERSION:-0.1.0}
-      SPACEPORT_ENV: ${SPACEPORT_ENV:-local}
+      SPACEPORT_ENV: ${SPACEPORT_ENV:-docker}
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s

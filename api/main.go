@@ -12,6 +12,8 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 
 	"github.com/fiddeb/spaceport/api/internal/applog"
 	"github.com/fiddeb/spaceport/api/internal/db"
@@ -33,22 +35,30 @@ func main() {
 	}
 	defer shutdown()
 
+	startCtx, startSpan := otel.Tracer("spaceport-api").Start(ctx, "startup",
+		trace.WithSpanKind(trace.SpanKindInternal),
+	)
+
 	dbPath := envOr("SPACEPORT_DB_PATH", "spaceport.db")
-	database, err := db.Open(ctx, dbPath)
+	database, err := db.Open(startCtx, dbPath)
 	if err != nil {
+		startSpan.End()
 		log.Fatalf("db open: %v", err)
 	}
 	defer database.Close()
 
-	if err := db.Migrate(ctx, database); err != nil {
+	if err := db.Migrate(startCtx, database); err != nil {
+		startSpan.End()
 		log.Fatalf("db migrate: %v", err)
 	}
-	if err := db.Seed(ctx, database); err != nil {
+	if err := db.Seed(startCtx, database); err != nil {
+		startSpan.End()
 		log.Fatalf("db seed: %v", err)
 	}
 
 	// Set initial values for active gauges from DB state.
-	initActiveMetrics(ctx, database)
+	initActiveMetrics(startCtx, database)
+	startSpan.End()
 
 	httpClient := &http.Client{
 		Timeout: 10 * time.Second,
