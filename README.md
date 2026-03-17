@@ -56,12 +56,16 @@ All three services emit traces, metrics, and logs via OTLP. The [observabilityst
 
 ## Quickstart
 
+Requires Go, Python, and Node installed locally. Starts all three services as native processes — no Docker needed.
+
 ```bash
-cp .env.example .env
-make dev
+cp .env.example .env  # set OTEL_EXPORTER_OTLP_ENDPOINT and ports
+make dev              # starts frontend :5175, API :8080, pricing :8000
 ```
 
-Open **http://localhost:3000** — browse departures, book a flight, break the pricing service, and watch the telemetry flow.
+Open **http://localhost:5175** — browse departures, book a flight, break the pricing service, and watch the telemetry flow.
+
+Telemetry is exported to the endpoint in `.env` (default: `http://otel-collector.k8s.test:4317`). The [observabilitystack](https://github.com/fiddeb/observabilitystack) repo provides a collector ready to receive it.
 
 ## Commands
 
@@ -79,7 +83,7 @@ Open **http://localhost:3000** — browse departures, book a flight, break the p
 
 | Service | Port |
 |---------|------|
-| Frontend | 3000 |
+| Frontend | 5175 |
 | API | 8080 |
 | Pricing Service | 8000 |
 
@@ -98,7 +102,7 @@ An OTel Collector must be reachable at the endpoint in `.env` (default `http://o
 
 ## Kubernetes
 
-Spaceport plugs into the [observabilitystack](https://github.com/fiddeb/observabilitystack) umbrella Helm chart as a `file://` subchart. See [docs/helm-integration.md](docs/helm-integration.md) for details, or deploy standalone:
+Spaceport plugs into the [observabilitystack](https://github.com/fiddeb/observabilitystack) umbrella Helm chart as an OCI subchart (`oci://ghcr.io/fiddeb/charts`). See [docs/helm-integration.md](docs/helm-integration.md) for details, or deploy standalone:
 
 ```bash
 make deploy

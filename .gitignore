@@ -37,5 +37,5 @@ weaver/weaver
 .DS_Store
 
 # Generated docs
-docs/semconv/
+
 .vite/
