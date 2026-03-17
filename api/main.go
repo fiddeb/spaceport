@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +16,7 @@ import (
 	"github.com/fiddeb/spaceport/api/internal/applog"
 	"github.com/fiddeb/spaceport/api/internal/db"
 	"github.com/fiddeb/spaceport/api/internal/handler"
+	"github.com/fiddeb/spaceport/api/internal/metrics"
 	"github.com/fiddeb/spaceport/api/internal/middleware"
 	"github.com/fiddeb/spaceport/api/internal/telemetry"
 )
@@ -44,6 +46,9 @@ func main() {
 	if err := db.Seed(ctx, database); err != nil {
 		log.Fatalf("db seed: %v", err)
 	}
+
+	// Set initial values for active gauges from DB state.
+	initActiveMetrics(ctx, database)
 
 	httpClient := &http.Client{
 		Timeout: 10 * time.Second,
@@ -105,4 +110,15 @@ func envOr(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+func initActiveMetrics(ctx context.Context, database *sql.DB) {
+	var depCount int
+	if err := database.QueryRowContext(ctx, "SELECT COUNT(*) FROM departures").Scan(&depCount); err == nil {
+		metrics.DepartureActive.Add(ctx, float64(depCount))
+	}
+	var bookCount int
+	if err := database.QueryRowContext(ctx, "SELECT COUNT(*) FROM bookings WHERE status = 'confirmed'").Scan(&bookCount); err == nil {
+		metrics.BookingActive.Add(ctx, float64(bookCount))
+	}
 }

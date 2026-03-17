@@ -95,6 +95,7 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 		semconv.AttrSpaceportBookingStatusConfirmed,
 		semconv.SpaceportSeatClass(req.SeatClass),
 	)
+	metrics.BookingActive.Add(ctx, 1)
 
 	h.Logger.InfoContext(ctx, "booking confirmed", "booking_id", bookingID, "total_price", totalPrice)
 
