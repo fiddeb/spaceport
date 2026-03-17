@@ -11,11 +11,11 @@ import (
 // See templates/registry/go/span.go.j2.
 
 
-// SpanSpaceportBookingCreateName is the span name for: Handles an incoming booking creation request in the API.
-const SpanSpaceportBookingCreateName = "spaceport.booking.create"
+// SpanSpaceportBookingCreateServerName is the span name for: Handles an incoming booking creation request in the API.
+const SpanSpaceportBookingCreateServerName = "spaceport.booking.create.server"
 
 // Handles an incoming booking creation request in the API.
-func StartSpaceportBookingCreate(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportBookingCreateServer(ctx context.Context, tracer trace.Tracer,
     spaceportBookingId string,
     spaceportBookingStatus string,
     spaceportDepartureId string,
@@ -31,40 +31,40 @@ func StartSpaceportBookingCreate(ctx context.Context, tracer trace.Tracer,
             attribute.String("spaceport.seat.class", spaceportSeatClass),
         ),
     )
-    return tracer.Start(ctx, SpanSpaceportBookingCreateName, opts...)
+    return tracer.Start(ctx, SpanSpaceportBookingCreateServerName, opts...)
 }
 
-// SpanSpaceportBookingListName is the span name for: Handles a request to list all bookings from the API.
-const SpanSpaceportBookingListName = "spaceport.booking.list"
+// SpanSpaceportBookingListServerName is the span name for: Handles a request to list all bookings from the API.
+const SpanSpaceportBookingListServerName = "spaceport.booking.list.server"
 
 // Handles a request to list all bookings from the API.
-func StartSpaceportBookingList(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportBookingListServer(ctx context.Context, tracer trace.Tracer,
     opts ...trace.SpanStartOption,
 ) (context.Context, trace.Span) {
     opts = append(opts,
         trace.WithSpanKind(trace.SpanKindServer),
     )
-    return tracer.Start(ctx, SpanSpaceportBookingListName, opts...)
+    return tracer.Start(ctx, SpanSpaceportBookingListServerName, opts...)
 }
 
-// SpanSpaceportDepartureListName is the span name for: Handles a request to list available departures from the API.
-const SpanSpaceportDepartureListName = "spaceport.departure.list"
+// SpanSpaceportDepartureListServerName is the span name for: Handles a request to list available departures from the API.
+const SpanSpaceportDepartureListServerName = "spaceport.departure.list.server"
 
 // Handles a request to list available departures from the API.
-func StartSpaceportDepartureList(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportDepartureListServer(ctx context.Context, tracer trace.Tracer,
     opts ...trace.SpanStartOption,
 ) (context.Context, trace.Span) {
     opts = append(opts,
         trace.WithSpanKind(trace.SpanKindServer),
     )
-    return tracer.Start(ctx, SpanSpaceportDepartureListName, opts...)
+    return tracer.Start(ctx, SpanSpaceportDepartureListServerName, opts...)
 }
 
-// SpanSpaceportPricingCalculateName is the span name for: Outbound call from the API to the pricing service to calculate a fare.
-const SpanSpaceportPricingCalculateName = "spaceport.pricing.calculate"
+// SpanSpaceportPricingCalculateClientName is the span name for: Outbound call from the API to the pricing service to calculate a fare.
+const SpanSpaceportPricingCalculateClientName = "spaceport.pricing.calculate.client"
 
 // Outbound call from the API to the pricing service to calculate a fare.
-func StartSpaceportPricingCalculate(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportPricingCalculateClient(ctx context.Context, tracer trace.Tracer,
     spaceportSeatClass string,
     opts ...trace.SpanStartOption,
 ) (context.Context, trace.Span) {
@@ -74,5 +74,5 @@ func StartSpaceportPricingCalculate(ctx context.Context, tracer trace.Tracer,
             attribute.String("spaceport.seat.class", spaceportSeatClass),
         ),
     )
-    return tracer.Start(ctx, SpanSpaceportPricingCalculateName, opts...)
+    return tracer.Start(ctx, SpanSpaceportPricingCalculateClientName, opts...)
 }

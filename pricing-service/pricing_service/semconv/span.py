@@ -13,10 +13,10 @@ from opentelemetry.trace import SpanKind, Tracer
 
 from . import attribute
 
-SPAN_SPACEPORT_BOOKING_CREATE_NAME: str = "spaceport.booking.create"
+SPAN_SPACEPORT_BOOKING_CREATE_SERVER_NAME: str = "spaceport.booking.create.server"
 
 
-def start_spaceport_booking_create(
+def start_spaceport_booking_create_server(
     tracer: Tracer,
     spaceport_booking_id: str,
     spaceport_booking_status: str,
@@ -30,43 +30,43 @@ def start_spaceport_booking_create(
     attrs[attribute.SPACEPORT_DEPARTURE_ID] = spaceport_departure_id
     attrs[attribute.SPACEPORT_SEAT_CLASS] = spaceport_seat_class
     return tracer.start_span(
-        name=SPAN_SPACEPORT_BOOKING_CREATE_NAME,
+        name=SPAN_SPACEPORT_BOOKING_CREATE_SERVER_NAME,
         kind=SpanKind.SERVER,
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_BOOKING_LIST_NAME: str = "spaceport.booking.list"
+SPAN_SPACEPORT_BOOKING_LIST_SERVER_NAME: str = "spaceport.booking.list.server"
 
 
-def start_spaceport_booking_list(
+def start_spaceport_booking_list_server(
     tracer: Tracer,
 ) -> tuple:
     """Handles a request to list all bookings from the API."""
     attrs: dict[str, str | int | float | bool] = {}
     return tracer.start_span(
-        name=SPAN_SPACEPORT_BOOKING_LIST_NAME,
+        name=SPAN_SPACEPORT_BOOKING_LIST_SERVER_NAME,
         kind=SpanKind.SERVER,
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_DEPARTURE_LIST_NAME: str = "spaceport.departure.list"
+SPAN_SPACEPORT_DEPARTURE_LIST_SERVER_NAME: str = "spaceport.departure.list.server"
 
 
-def start_spaceport_departure_list(
+def start_spaceport_departure_list_server(
     tracer: Tracer,
 ) -> tuple:
     """Handles a request to list available departures from the API."""
     attrs: dict[str, str | int | float | bool] = {}
     return tracer.start_span(
-        name=SPAN_SPACEPORT_DEPARTURE_LIST_NAME,
+        name=SPAN_SPACEPORT_DEPARTURE_LIST_SERVER_NAME,
         kind=SpanKind.SERVER,
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_PRICING_CALCULATE_NAME: str = "spaceport.pricing.calculate"
+SPAN_SPACEPORT_PRICING_CALCULATE_CLIENT_NAME: str = "spaceport.pricing.calculate.client"
 
 
-def start_spaceport_pricing_calculate(
+def start_spaceport_pricing_calculate_client(
     tracer: Tracer,
     spaceport_seat_class: str,
 ) -> tuple:
@@ -74,7 +74,7 @@ def start_spaceport_pricing_calculate(
     attrs: dict[str, str | int | float | bool] = {}
     attrs[attribute.SPACEPORT_SEAT_CLASS] = spaceport_seat_class
     return tracer.start_span(
-        name=SPAN_SPACEPORT_PRICING_CALCULATE_NAME,
+        name=SPAN_SPACEPORT_PRICING_CALCULATE_CLIENT_NAME,
         kind=SpanKind.CLIENT,
         attributes=attrs,
     )

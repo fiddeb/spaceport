@@ -1,7 +1,7 @@
 # Spans - spaceport
 
 
-## Span `span.spaceport.booking.create`
+## Span `span.spaceport.booking.create.server`
 
 **Status:** ![Development](https://img.shields.io/badge/-development-blue)
 
@@ -14,7 +14,7 @@ Handles an incoming booking creation request in the API.
 
 
 
-### `span.spaceport.booking.create` Attributes
+### `span.spaceport.booking.create.server` Attributes
 
 **Attributes:**
 
@@ -24,6 +24,7 @@ Handles an incoming booking creation request in the API.
 | [`spaceport.booking.status`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | Status of the booking. | `confirmed`; `failed` |
 | [`spaceport.departure.id`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | Unique identifier for the departure. | `DEP-2350-ALPHA`; `DEP-0042` |
 | [`spaceport.seat.class`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | The seat class selected for the booking. | `economy-cryosleep`; `business-warp`; `first-class-nebula` |
+| [`spaceport.pricing.error`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Conditionally Required` if the pricing service call failed | string | Error message returned by the pricing service on failure. | `pricing unavailable`; `chaos mode: random failure` |
 | [`spaceport.departure.destination`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | Destination of the departure (e.g. planet, station, or sector name). | `Mars Colony Alpha`; `Kepler-442b`; `Deep Space Station 9` |
 | [`spaceport.pricing.display_currency`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | The currency in which the price is displayed to the user. | `UNC`; `REP`; `LAT` |
 | [`spaceport.pricing.total`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | double | Total price of the booking in Universal Nano Credits (UNC). | `1500.0`; `42000.75` |
@@ -66,7 +67,7 @@ Handles an incoming booking creation request in the API.
 
 
 
-## Span `span.spaceport.booking.list`
+## Span `span.spaceport.booking.list.server`
 
 **Status:** ![Development](https://img.shields.io/badge/-development-blue)
 
@@ -79,7 +80,7 @@ Handles a request to list all bookings from the API.
 
 
 
-### `span.spaceport.booking.list` Attributes
+### `span.spaceport.booking.list.server` Attributes
 
 **Attributes:**
 
@@ -100,7 +101,7 @@ Handles a request to list all bookings from the API.
 
 
 
-## Span `span.spaceport.departure.list`
+## Span `span.spaceport.departure.list.server`
 
 **Status:** ![Development](https://img.shields.io/badge/-development-blue)
 
@@ -113,19 +114,20 @@ Handles a request to list available departures from the API.
 
 
 
-### `span.spaceport.departure.list` Attributes
+### `span.spaceport.departure.list.server` Attributes
 
 **Attributes:**
 
 | Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
 | --- | --- | --- | --- | --- | --- |
+| [`spaceport.recommendations.error`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Conditionally Required` if the recommendations service call failed | string | Error message returned by the recommendations service on failure. | `recommendations unavailable`; `service timeout` |
 | [`spaceport.departure.destination`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Opt-In` | string | Destination of the departure (e.g. planet, station, or sector name). | `Mars Colony Alpha`; `Kepler-442b`; `Deep Space Station 9` |
 
 
 
 
 
-## Span `span.spaceport.pricing.calculate`
+## Span `span.spaceport.pricing.calculate.client`
 
 **Status:** ![Development](https://img.shields.io/badge/-development-blue)
 
@@ -138,13 +140,14 @@ Outbound call from the API to the pricing service to calculate a fare.
 
 
 
-### `span.spaceport.pricing.calculate` Attributes
+### `span.spaceport.pricing.calculate.client` Attributes
 
 **Attributes:**
 
 | Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
 | --- | --- | --- | --- | --- | --- |
 | [`spaceport.seat.class`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | The seat class selected for the booking. | `economy-cryosleep`; `business-warp`; `first-class-nebula` |
+| [`spaceport.pricing.error`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Conditionally Required` if the pricing service call failed | string | Error message returned by the pricing service on failure. | `pricing unavailable`; `chaos mode: random failure` |
 | [`spaceport.departure.destination`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | Destination of the departure (e.g. planet, station, or sector name). | `Mars Colony Alpha`; `Kepler-442b`; `Deep Space Station 9` |
 | [`spaceport.pricing.base_currency`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | The base currency used for pricing. Always "UNC". | `UNC` |
 | [`spaceport.pricing.display_currency`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | The currency in which the price is displayed to the user. | `UNC`; `REP`; `LAT` |

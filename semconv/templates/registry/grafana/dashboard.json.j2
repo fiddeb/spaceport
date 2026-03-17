@@ -1,0 +1,220 @@
+{%- macro mn(metric) -%}
+{__name__=\"{{ metric.metric_name }}\"}
+{%- endmacro -%}
+{%- macro mn_bucket(metric) -%}
+{__name__=\"{{ metric.metric_name }}_bucket\"}
+{%- endmacro -%}
+{%- macro mn_count(metric) -%}
+{__name__=\"{{ metric.metric_name }}_count\"}
+{%- endmacro -%}
+{%- macro mn_count_error(metric) -%}
+{__name__=\"{{ metric.metric_name }}_count\", \"http.response.status_code\"=~\"5..\"}
+{%- endmacro -%}
+{%- macro has_attr(metric, name) -%}
+{%- for attr in metric.attributes | default(value=[]) -%}
+{%- if attr.name == name -%}true{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+{%- macro panel_type(metric) -%}
+{%- if metric.instrument == "histogram" -%}
+timeseries
+{%- elif metric.instrument in ["counter"] -%}
+timeseries
+{%- elif metric.instrument in ["updowncounter", "gauge"] -%}
+stat
+{%- else -%}
+timeseries
+{%- endif -%}
+{%- endmacro -%}
+{%- macro panel_unit(metric) -%}
+{%- if metric.unit == "ms" -%}
+ms
+{%- elif metric.unit == "s" -%}
+s
+{%- elif metric.unit == "By" -%}
+bytes
+{%- elif metric.unit == "1" or metric.unit == "" -%}
+short
+{%- else -%}
+short
+{%- endif -%}
+{%- endmacro -%}
+{%- macro ds() -%}
+{ "type": "prometheus", "uid": "prometheus" }
+{%- endmacro -%}
+{%- macro timeseries_options() -%}
+"tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max"]
+        }
+{%- endmacro -%}
+{%- set ns = namespace(y=0, panel_id=0) -%}
+{
+  "annotations": {
+    "list": []
+  },
+  "description": "Auto-generated from the Spaceport semantic convention registry using OTel Weaver.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+{%- for metric in ctx.metrics %}
+{%- if metric.instrument == "histogram" and has_attr(metric, "http.response.status_code") | trim == "true" %}
+    {
+      "type": "timeseries",
+      "title": "Request Rate — {{ metric.brief | replace('"', '\\"') }}",
+      "description": "Rate of requests from `{{ metric.metric_name }}`",
+      "datasource": {{ ds() }},
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "fillOpacity": 10 } }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": {{ ns.y }} },
+      "options": { {{ timeseries_options() }} },
+      "targets": [
+        {
+          "datasource": {{ ds() }},
+          "expr": "sum(rate({{ mn_count(metric) }}[2m]))",
+          "legendFormat": "req/s",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate % — {{ metric.brief | replace('"', '\\"') }}",
+      "description": "5xx error rate from `{{ metric.metric_name }}`",
+      "datasource": {{ ds() }},
+      "fieldConfig": { "defaults": { "unit": "percent", "custom": { "fillOpacity": 10 }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 5 }] } }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": {{ ns.y }} },
+      "options": { {{ timeseries_options() }} },
+      "targets": [
+        {
+          "datasource": {{ ds() }},
+          "expr": "(sum(rate({{ mn_count_error(metric) }}[2m])) or vector(0)) / sum(rate({{ mn_count(metric) }}[2m])) * 100",
+          "legendFormat": "error %",
+          "refId": "A"
+        }
+      ]
+    },
+{%- set ns.y = ns.y + 8 %}
+{%- endif %}
+    {
+      "type": "{{ panel_type(metric) }}",
+      "title": "{{ metric.brief | replace('"', '\\"') }}",
+      "description": "Metric: `{{ metric.metric_name }}`\nInstrument: {{ metric.instrument }}\nUnit: {{ metric.unit }}",
+      "datasource": {{ ds() }},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "{{ panel_unit(metric) }}"
+{%- if metric.instrument in ["updowncounter", "gauge"] %},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+{%- endif %}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+{%- if metric.instrument in ["updowncounter", "gauge"] %}
+        "h": 6,
+        "w": 8,
+{%- else %}
+        "h": 8,
+        "w": 24,
+{%- endif %}
+        "x": 0,
+        "y": {{ ns.y }}
+      },
+      "options": {
+{%- if metric.instrument in ["updowncounter", "gauge"] %}
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area"
+{%- else %}
+        {{ timeseries_options() }}
+{%- endif %}
+      },
+      "targets": [
+{%- if metric.instrument == "histogram" %}
+        {
+          "datasource": {{ ds() }},
+          "expr": "histogram_quantile(0.50, sum(rate({{ mn_bucket(metric) }}[2m])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "datasource": {{ ds() }},
+          "expr": "histogram_quantile(0.95, sum(rate({{ mn_bucket(metric) }}[2m])) by (le))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "datasource": {{ ds() }},
+          "expr": "histogram_quantile(0.99, sum(rate({{ mn_bucket(metric) }}[2m])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+{%- elif metric.instrument == "counter" %}
+        {
+          "datasource": {{ ds() }},
+          "expr": "sum(rate({{ mn(metric) }}[2m]))",
+          "legendFormat": "total rate",
+          "refId": "A"
+        }
+{%- if metric.attributes is defined %}
+{%- for attr in metric.attributes | required | attribute_sort %}
+        ,{
+          "datasource": {{ ds() }},
+          "expr": "sum by (\"{{ attr.name }}\") (rate({{ mn(metric) }}[2m]))",
+          "legendFormat": "{% raw %}{{{% endraw %}{{ attr.name }}{% raw %}}}{% endraw %}",
+          "refId": "{{ 'BCDEFGH'[loop.index0] }}"
+        }
+{%- endfor %}
+{%- endif %}
+{%- else %}
+        {
+          "datasource": {{ ds() }},
+          "expr": "sum({{ mn(metric) }})",
+          "legendFormat": "{{ metric.metric_name }}",
+          "refId": "A"
+        }
+{%- endif %}
+      ]
+    }
+{%- if not loop.last %},{% endif %}
+{%- if metric.instrument in ["updowncounter", "gauge"] %}
+{%- set ns.y = ns.y + 6 %}
+{%- else %}
+{%- set ns.y = ns.y + 8 %}
+{%- endif %}
+{%- endfor %}
+  ],
+  "schemaVersion": 39,
+  "tags": ["spaceport", "otel", "generated"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "refresh": "10s",
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Spaceport Metrics (Generated)",
+  "uid": "spaceport-metrics-gen",
+  "version": 1
+}
