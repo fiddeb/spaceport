@@ -18,7 +18,7 @@ const serviceVersion = import.meta.env.VITE_SERVICE_VERSION || "0.0.0";
 const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: "spaceport-frontend",
   [ATTR_SERVICE_VERSION]: serviceVersion,
-  "deployment.environment.name": "local",
+  "deployment.environment.name": import.meta.env.VITE_SPACEPORT_ENV || "local",
 });
 
 // --- Traces ---
