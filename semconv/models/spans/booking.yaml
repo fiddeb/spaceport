@@ -1,5 +1,5 @@
 groups:
-  - id: span.spaceport.booking.create
+  - id: span.spaceport.booking.create.server
     type: span
     span_kind: server
     brief: Handles an incoming booking creation request in the API.
@@ -19,8 +19,11 @@ groups:
         requirement_level: recommended
       - ref: spaceport.pricing.display_currency
         requirement_level: recommended
+      - ref: spaceport.pricing.error
+        requirement_level:
+          conditionally_required: if the pricing service call failed
 
-  - id: span.spaceport.booking.list
+  - id: span.spaceport.booking.list.server
     type: span
     span_kind: server
     brief: Handles a request to list all bookings from the API.

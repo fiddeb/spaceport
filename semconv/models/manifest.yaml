@@ -3,4 +3,4 @@ description: Custom semantic conventions for the Spaceport booking demo app
 schema_url: https://spaceport.example.com/schemas/v0.1.0
 dependencies:
   - name: otel
-    registry_path: https://github.com/open-telemetry/semantic-conventions/archive/refs/tags/v1.34.0.zip[model]
+    registry_path: https://github.com/open-telemetry/semantic-conventions/archive/refs/tags/v1.40.0.zip[model]

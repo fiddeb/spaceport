@@ -26,6 +26,4 @@ groups:
         type: string
         stability: development
         brief: Error message returned by the recommendations service on failure.
-        requirement_level:
-          conditionally_required: if the recommendations service call failed
         examples: ["recommendations unavailable", "service timeout"]

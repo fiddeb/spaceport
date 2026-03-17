@@ -8,19 +8,14 @@ import "go.opentelemetry.io/otel/attribute"
 // --- Attribute keys ---
 
 
-// Error message returned by the pricing service on failure.
-const AttrSpaceportPricingErrorKey = attribute.Key("spaceport.pricing.error")
-
-// Error message returned by the recommendations service on failure.
-const AttrSpaceportRecommendationsErrorKey = attribute.Key("spaceport.recommendations.error")
-
 // Deprecated, use `client.address` instead.
 const AttrHttpClientIpKey = attribute.Key("http.client_ip")
 
 // State of the HTTP connection in the HTTP connection pool.
 const AttrHttpConnectionStateKey = attribute.Key("http.connection.state")
 
-// Deprecated, use `network.protocol.name` instead.
+// Deprecated, use `network.protocol.name` and `network.protocol.version`
+// instead.
 const AttrHttpFlavorKey = attribute.Key("http.flavor")
 
 // Deprecated, use one of `server.address`, `client.address` or
@@ -91,8 +86,9 @@ const AttrHttpResponseContentLengthKey = attribute.Key("http.response_content_le
 // Deprecated, use `http.response.body.size` instead.
 const AttrHttpResponseContentLengthUncompressedKey = attribute.Key("http.response_content_length_uncompressed")
 
-// The matched route, that is, the path template in the format used by the
-// respective server framework.
+// The matched route template for the request. This MUST be low-cardinality and
+// include all static path segments, with dynamic path segments represented with
+// placeholders.
 const AttrHttpRouteKey = attribute.Key("http.route")
 
 // Deprecated, use `url.scheme` instead.
@@ -140,11 +136,17 @@ const AttrSpaceportPricingBaseCurrencyKey = attribute.Key("spaceport.pricing.bas
 // The currency in which the price is displayed to the user.
 const AttrSpaceportPricingDisplayCurrencyKey = attribute.Key("spaceport.pricing.display_currency")
 
+// Error message returned by the pricing service on failure.
+const AttrSpaceportPricingErrorKey = attribute.Key("spaceport.pricing.error")
+
 // Whether a promotional discount was applied to the booking.
 const AttrSpaceportPricingPromoAppliedKey = attribute.Key("spaceport.pricing.promo_applied")
 
 // Total price of the booking in Universal Nano Credits (UNC).
 const AttrSpaceportPricingTotalKey = attribute.Key("spaceport.pricing.total")
+
+// Error message returned by the recommendations service on failure.
+const AttrSpaceportRecommendationsErrorKey = attribute.Key("spaceport.recommendations.error")
 
 // The seat class selected for the booking.
 const AttrSpaceportSeatClassKey = attribute.Key("spaceport.seat.class")
@@ -208,16 +210,6 @@ const AttrUrlTopLevelDomainKey = attribute.Key("url.top_level_domain")
 // --- Attribute value helpers ---
 
 
-// Error message returned by the pricing service on failure.
-func AttrSpaceportPricingError(val string) attribute.KeyValue {
-	return AttrSpaceportPricingErrorKey.String(val)
-}
-
-// Error message returned by the recommendations service on failure.
-func AttrSpaceportRecommendationsError(val string) attribute.KeyValue {
-	return AttrSpaceportRecommendationsErrorKey.String(val)
-}
-
 // Deprecated, use `client.address` instead.
 func AttrHttpClientIp(val string) attribute.KeyValue {
 	return AttrHttpClientIpKey.String(val)
@@ -228,7 +220,8 @@ func AttrHttpConnectionState(val string) attribute.KeyValue {
 	return AttrHttpConnectionStateKey.String(val)
 }
 
-// Deprecated, use `network.protocol.name` instead.
+// Deprecated, use `network.protocol.name` and `network.protocol.version`
+// instead.
 func AttrHttpFlavor(val string) attribute.KeyValue {
 	return AttrHttpFlavorKey.String(val)
 }
@@ -321,8 +314,9 @@ func AttrHttpResponseContentLengthUncompressed(val int) attribute.KeyValue {
 	return AttrHttpResponseContentLengthUncompressedKey.Int(val)
 }
 
-// The matched route, that is, the path template in the format used by the
-// respective server framework.
+// The matched route template for the request. This MUST be low-cardinality and
+// include all static path segments, with dynamic path segments represented with
+// placeholders.
 func AttrHttpRoute(val string) attribute.KeyValue {
 	return AttrHttpRouteKey.String(val)
 }
@@ -402,6 +396,11 @@ func AttrSpaceportPricingDisplayCurrency(val string) attribute.KeyValue {
 	return AttrSpaceportPricingDisplayCurrencyKey.String(val)
 }
 
+// Error message returned by the pricing service on failure.
+func AttrSpaceportPricingError(val string) attribute.KeyValue {
+	return AttrSpaceportPricingErrorKey.String(val)
+}
+
 // Whether a promotional discount was applied to the booking.
 func AttrSpaceportPricingPromoApplied(val bool) attribute.KeyValue {
 	return AttrSpaceportPricingPromoAppliedKey.Bool(val)
@@ -410,6 +409,11 @@ func AttrSpaceportPricingPromoApplied(val bool) attribute.KeyValue {
 // Total price of the booking in Universal Nano Credits (UNC).
 func AttrSpaceportPricingTotal(val float64) attribute.KeyValue {
 	return AttrSpaceportPricingTotalKey.Float64(val)
+}
+
+// Error message returned by the recommendations service on failure.
+func AttrSpaceportRecommendationsError(val string) attribute.KeyValue {
+	return AttrSpaceportRecommendationsErrorKey.String(val)
 }
 
 // The seat class selected for the booking.
@@ -546,6 +550,8 @@ const (
     AttrHttpRequestMethodPut = "PUT"
     // TRACE method.
     AttrHttpRequestMethodTrace = "TRACE"
+    // QUERY method.
+    AttrHttpRequestMethodQuery = "QUERY"
     // Any HTTP method that the instrumentation has no prior knowledge of.
     AttrHttpRequestMethodOther = "_OTHER"
 )

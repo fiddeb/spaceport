@@ -64,6 +64,4 @@ groups:
         type: string
         stability: development
         brief: Error message returned by the pricing service on failure.
-        requirement_level:
-          conditionally_required: if the pricing service call failed
         examples: ["pricing unavailable", "chaos mode: random failure"]

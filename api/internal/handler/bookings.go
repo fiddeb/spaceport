@@ -42,7 +42,7 @@ type BookingHandler struct {
 func (h *BookingHandler) CreateBooking(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	ctx, span := tracer.Start(ctx, semconv.SpanSpaceportBookingCreateName)
+	ctx, span := tracer.Start(ctx, semconv.SpanSpaceportBookingCreateServerName)
 	defer span.End()
 
 	var req BookingRequest
@@ -107,7 +107,7 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 }
 
 func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (float64, string, error) {
-	ctx, span := semconv.StartSpaceportPricingCalculate(ctx, tracer, req.SeatClass)
+	ctx, span := semconv.StartSpaceportPricingCalculateClient(ctx, tracer, req.SeatClass)
 	defer span.End()
 
 	start := time.Now()

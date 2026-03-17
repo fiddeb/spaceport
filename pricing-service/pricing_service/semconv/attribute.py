@@ -10,19 +10,14 @@ from __future__ import annotations
 # --- Attribute keys ---
 
 
-# Error message returned by the pricing service on failure.
-SPACEPORT_PRICING_ERROR: str = "spaceport.pricing.error"
-
-# Error message returned by the recommendations service on failure.
-SPACEPORT_RECOMMENDATIONS_ERROR: str = "spaceport.recommendations.error"
-
 # Deprecated, use `client.address` instead.
 HTTP_CLIENT_IP: str = "http.client_ip"
 
 # State of the HTTP connection in the HTTP connection pool.
 HTTP_CONNECTION_STATE: str = "http.connection.state"
 
-# Deprecated, use `network.protocol.name` instead.
+# Deprecated, use `network.protocol.name` and `network.protocol.version`
+# instead.
 HTTP_FLAVOR: str = "http.flavor"
 
 # Deprecated, use one of `server.address`, `client.address` or
@@ -93,8 +88,9 @@ HTTP_RESPONSE_CONTENT_LENGTH: str = "http.response_content_length"
 # Deprecated, use `http.response.body.size` instead.
 HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED: str = "http.response_content_length_uncompressed"
 
-# The matched route, that is, the path template in the format used by the
-# respective server framework.
+# The matched route template for the request. This MUST be low-cardinality and
+# include all static path segments, with dynamic path segments represented with
+# placeholders.
 HTTP_ROUTE: str = "http.route"
 
 # Deprecated, use `url.scheme` instead.
@@ -142,11 +138,17 @@ SPACEPORT_PRICING_BASE_CURRENCY: str = "spaceport.pricing.base_currency"
 # The currency in which the price is displayed to the user.
 SPACEPORT_PRICING_DISPLAY_CURRENCY: str = "spaceport.pricing.display_currency"
 
+# Error message returned by the pricing service on failure.
+SPACEPORT_PRICING_ERROR: str = "spaceport.pricing.error"
+
 # Whether a promotional discount was applied to the booking.
 SPACEPORT_PRICING_PROMO_APPLIED: str = "spaceport.pricing.promo_applied"
 
 # Total price of the booking in Universal Nano Credits (UNC).
 SPACEPORT_PRICING_TOTAL: str = "spaceport.pricing.total"
+
+# Error message returned by the recommendations service on failure.
+SPACEPORT_RECOMMENDATIONS_ERROR: str = "spaceport.recommendations.error"
 
 # The seat class selected for the booking.
 SPACEPORT_SEAT_CLASS: str = "spaceport.seat.class"
@@ -217,17 +219,23 @@ HTTP_CONNECTION_STATE_ACTIVE: str = "active"
 HTTP_CONNECTION_STATE_IDLE: str = "idle"
 
 # Enum values for http.flavor.
-# Deprecated, use `network.protocol.name` instead.
+# Deprecated, use `network.protocol.name` and `network.protocol.version`
+# instead.
 HTTP_FLAVOR_HTTP_1_0: str = "1.0"
-# Deprecated, use `network.protocol.name` instead.
+# Deprecated, use `network.protocol.name` and `network.protocol.version`
+# instead.
 HTTP_FLAVOR_HTTP_1_1: str = "1.1"
-# Deprecated, use `network.protocol.name` instead.
+# Deprecated, use `network.protocol.name` and `network.protocol.version`
+# instead.
 HTTP_FLAVOR_HTTP_2_0: str = "2.0"
-# Deprecated, use `network.protocol.name` instead.
+# Deprecated, use `network.protocol.name` and `network.protocol.version`
+# instead.
 HTTP_FLAVOR_HTTP_3_0: str = "3.0"
-# Deprecated, use `network.protocol.name` instead.
+# Deprecated, use `network.protocol.name` and `network.protocol.version`
+# instead.
 HTTP_FLAVOR_SPDY: str = "SPDY"
-# Deprecated, use `network.protocol.name` instead.
+# Deprecated, use `network.protocol.name` and `network.protocol.version`
+# instead.
 HTTP_FLAVOR_QUIC: str = "QUIC"
 
 # Enum values for http.request.method.
@@ -249,6 +257,8 @@ HTTP_REQUEST_METHOD_POST: str = "POST"
 HTTP_REQUEST_METHOD_PUT: str = "PUT"
 # HTTP request method.
 HTTP_REQUEST_METHOD_TRACE: str = "TRACE"
+# HTTP request method.
+HTTP_REQUEST_METHOD_QUERY: str = "QUERY"
 # HTTP request method.
 HTTP_REQUEST_METHOD_OTHER: str = "_OTHER"
 
