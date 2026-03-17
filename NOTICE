@@ -1,0 +1,42 @@
+Spaceport
+Copyright (c) 2026 Fredrik Berggren
+
+This project is licensed under the MIT License.
+See the LICENSE file for the full license text.
+
+---
+
+THIRD-PARTY NOTICES AND ATTRIBUTIONS
+
+## Semantic Conventions (semconv/)
+
+The semantic conventions defined in this project are inspired by and draw
+concepts from the following projects:
+
+### o11y-by-design
+  URL: https://github.com/jsuereth/o11y-by-design
+  The design philosophy and structure of the semantic conventions in this
+  project are influenced by the observability-by-design patterns described
+  in this repository.
+
+### OpenTelemetry Semantic Conventions
+  URL: https://github.com/open-telemetry/semantic-conventions
+  License: Apache License 2.0
+  The naming conventions, attribute definitions, and overall structure of
+  the semconv/ directory are inspired by the OpenTelemetry Semantic
+  Conventions project. OpenTelemetry is a CNCF project.
+
+---
+
+## Tooling
+
+### GitHub Copilot
+  URL: https://github.com/features/copilot
+  Portions of the code, configuration, and documentation in this project
+  were developed with the assistance of GitHub Copilot, an AI-powered
+  coding assistant.
+
+### OpenSpec (openspec/)
+  URL: https://github.com/fiddeb/spaceport/tree/main/openspec
+  The API specifications in this project follow OpenAPI / OpenSpec conventions
+to describe service interfaces in a machine-readable, standardized format.
