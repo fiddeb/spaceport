@@ -4,7 +4,7 @@
 
 **Book your seat to Mars. Trace every millisecond of the journey.**
 
-<img src="frontend/public/hero.png" alt="Spaceport — interplanetary departures" width="720" />
+<img src="docs/img/hero.png" alt="Spaceport — interplanetary departures" width="720" />
 
 <br />
 
