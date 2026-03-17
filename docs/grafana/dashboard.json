@@ -58,7 +58,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "spaceport_booking_active",
+          "expr": "sum({__name__=\"spaceport.booking.active\"})",
           "legendFormat": "spaceport.booking.active",
           "refId": "A"
         }
@@ -98,14 +98,14 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "sum(rate(spaceport_booking_count_total[$__rate_interval]))",
+          "expr": "sum(rate({__name__=\"spaceport.booking.count\"}[$__rate_interval]))",
           "legendFormat": "total rate",
           "refId": "A"
         }
         ,{
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "sum by (spaceport_booking_status) (rate(spaceport_booking_count_total[$__rate_interval]))",
-          "legendFormat": "{{spaceport_booking_status}}",
+          "expr": "sum by (\"spaceport.booking.status\") (rate({__name__=\"spaceport.booking.count\"}[$__rate_interval]))",
+          "legendFormat": "{{spaceport.booking.status}}",
           "refId": "B"
         }
       ]
@@ -150,7 +150,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "spaceport_departure_active",
+          "expr": "sum({__name__=\"spaceport.departure.active\"})",
           "legendFormat": "spaceport.departure.active",
           "refId": "A"
         }
@@ -190,19 +190,19 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.50, sum(rate(spaceport_pricing_request_duration_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[$__rate_interval])) by (le))",
           "legendFormat": "p50",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.95, sum(rate(spaceport_pricing_request_duration_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[$__rate_interval])) by (le))",
           "legendFormat": "p95",
           "refId": "B"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.99, sum(rate(spaceport_pricing_request_duration_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[$__rate_interval])) by (le))",
           "legendFormat": "p99",
           "refId": "C"
         }

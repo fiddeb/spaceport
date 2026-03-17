@@ -1,27 +1,11 @@
-{%- macro prom_name(metric_name) -%}
-{{ metric_name | replace('.', '_') }}
+{%- macro mn(metric) -%}
+{__name__=\"{{ metric.metric_name }}\"}
 {%- endmacro -%}
-{%- macro prom_metric(metric) -%}
-{%- if metric.instrument == "counter" -%}
-{{ prom_name(metric.metric_name) }}_total
-{%- elif metric.instrument == "histogram" -%}
-{{ prom_name(metric.metric_name) }}
-{%- else -%}
-{{ prom_name(metric.metric_name) }}
-{%- endif -%}
+{%- macro mn_bucket(metric) -%}
+{__name__=\"{{ metric.metric_name }}_bucket\"}
 {%- endmacro -%}
-{%- macro promql_expr(metric) -%}
-{%- if metric.instrument == "counter" -%}
-rate({{ prom_metric(metric) }}[5m])
-{%- elif metric.instrument == "histogram" -%}
-histogram_quantile(0.95, sum(rate({{ prom_metric(metric) }}_bucket[5m])) by (le))
-{%- elif metric.instrument == "updowncounter" -%}
-{{ prom_metric(metric) }}
-{%- elif metric.instrument == "gauge" -%}
-{{ prom_metric(metric) }}
-{%- else -%}
-{{ prom_metric(metric) }}
-{%- endif -%}
+{%- macro mn_count(metric) -%}
+{__name__=\"{{ metric.metric_name }}_count\"}
 {%- endmacro -%}
 {%- macro panel_type(metric) -%}
 {%- if metric.instrument == "histogram" -%}
@@ -129,26 +113,26 @@ short
 {%- if metric.instrument == "histogram" %}
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.50, sum(rate({{ prom_metric(metric) }}_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate({{ mn_bucket(metric) }}[$__rate_interval])) by (le))",
           "legendFormat": "p50",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.95, sum(rate({{ prom_metric(metric) }}_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate({{ mn_bucket(metric) }}[$__rate_interval])) by (le))",
           "legendFormat": "p95",
           "refId": "B"
         },
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.99, sum(rate({{ prom_metric(metric) }}_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate({{ mn_bucket(metric) }}[$__rate_interval])) by (le))",
           "legendFormat": "p99",
           "refId": "C"
         }
 {%- elif metric.instrument == "counter" %}
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "sum(rate({{ prom_metric(metric) }}[$__rate_interval]))",
+          "expr": "sum(rate({{ mn(metric) }}[$__rate_interval]))",
           "legendFormat": "total rate",
           "refId": "A"
         }
@@ -156,8 +140,8 @@ short
 {%- for attr in metric.attributes | required | attribute_sort %}
         ,{
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "sum by ({{ attr.name | replace('.', '_') }}) (rate({{ prom_metric(metric) }}[$__rate_interval]))",
-          "legendFormat": "{% raw %}{{{% endraw %}{{ attr.name | replace('.', '_') }}{% raw %}}}{% endraw %}",
+          "expr": "sum by (\"{{ attr.name }}\") (rate({{ mn(metric) }}[$__rate_interval]))",
+          "legendFormat": "{% raw %}{{{% endraw %}{{ attr.name }}{% raw %}}}{% endraw %}",
           "refId": "{{ 'BCDEFGH'[loop.index0] }}"
         }
 {%- endfor %}
@@ -165,7 +149,7 @@ short
 {%- else %}
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "{{ prom_metric(metric) }}",
+          "expr": "sum({{ mn(metric) }})",
           "legendFormat": "{{ metric.metric_name }}",
           "refId": "A"
         }
