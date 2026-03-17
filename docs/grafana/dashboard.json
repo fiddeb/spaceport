@@ -1,14 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
   "annotations": {
     "list": []
   },
@@ -24,7 +14,7 @@
       "description": "Metric: `spaceport.booking.active`\nInstrument: updowncounter\nUnit: {booking}",
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -57,7 +47,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "sum({__name__=\"spaceport.booking.active\"})",
           "legendFormat": "spaceport.booking.active",
           "refId": "A"
@@ -70,7 +60,7 @@
       "description": "Metric: `spaceport.booking.count`\nInstrument: counter\nUnit: {booking}",
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -97,14 +87,14 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "sum(rate({__name__=\"spaceport.booking.count\"}[$__rate_interval]))",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate({__name__=\"spaceport.booking.count\"}[2m]))",
           "legendFormat": "total rate",
           "refId": "A"
         }
         ,{
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "sum by (\"spaceport.booking.status\") (rate({__name__=\"spaceport.booking.count\"}[$__rate_interval]))",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum by (\"spaceport.booking.status\") (rate({__name__=\"spaceport.booking.count\"}[2m]))",
           "legendFormat": "{{spaceport.booking.status}}",
           "refId": "B"
         }
@@ -116,7 +106,7 @@
       "description": "Metric: `spaceport.departure.active`\nInstrument: updowncounter\nUnit: {departure}",
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -149,7 +139,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "sum({__name__=\"spaceport.departure.active\"})",
           "legendFormat": "spaceport.departure.active",
           "refId": "A"
@@ -162,7 +152,7 @@
       "description": "Metric: `spaceport.pricing.request.duration`\nInstrument: histogram\nUnit: ms",
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -189,20 +179,20 @@
       },
       "targets": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.50, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[$__rate_interval])) by (le))",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "histogram_quantile(0.50, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[2m])) by (le))",
           "legendFormat": "p50",
           "refId": "A"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.95, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[$__rate_interval])) by (le))",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "histogram_quantile(0.95, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[2m])) by (le))",
           "legendFormat": "p95",
           "refId": "B"
         },
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "histogram_quantile(0.99, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[$__rate_interval])) by (le))",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "histogram_quantile(0.99, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[2m])) by (le))",
           "legendFormat": "p99",
           "refId": "C"
         }
@@ -215,11 +205,12 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-15m",
     "to": "now"
   },
+  "refresh": "10s",
   "timepicker": {},
-  "timezone": "",
+  "timezone": "browser",
   "title": "Spaceport Metrics (Generated)",
   "uid": "spaceport-metrics-gen",
   "version": 1
