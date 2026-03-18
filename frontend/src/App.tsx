@@ -44,7 +44,7 @@ export default function App() {
         <Outlet />
       </main>
       <footer className="border-t border-border py-4 text-center text-xs text-muted-foreground">
-        Spaceport © 2387 — All routes subject to gravitational delays
+        Spaceport © 2384 — Take what is offered and that must sometimes be enough
       </footer>
     </div>
   );

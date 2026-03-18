@@ -18,7 +18,7 @@ Built to show what observability-first development actually looks like.
 
 ## The story
 
-It's 2387. Passengers book flights to the Moonbase, Mars, Titan, and Europa — picking seat classes from Economy Cryosleep to First-Class Escape Pod, comparing prices across currencies. Solar storms knock out the pricing engine. Docking gate captains get lost in time anomalies. The system handles all of it, and every request leaves a trace you can follow end to end.
+It's 2384. Passengers book flights to the Moonbase, Mars, Titan, and Europa — picking seat classes from Economy Cryosleep to First-Class Escape Pod, comparing prices across currencies. Solar storms knock out the pricing engine. Docking gate captains get lost in time anomalies. The system handles all of it, and every request leaves a trace you can follow end to end.
 
 ## What makes it interesting
 
