@@ -79,6 +79,8 @@ Telemetry is exported to the endpoint in `.env` (default: `http://otel-collector
 | `make generate` | Code-gen Go types from semconv registry |
 | `make load-test` | k6 load test |
 
+`make test` expects the app to already be running (for example via `make dev`) and defaults `PLAYWRIGHT_BASE_URL` to `http://localhost:5175`.
+
 ## Ports
 
 | Service | Port |

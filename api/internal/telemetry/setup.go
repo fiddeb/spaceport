@@ -19,6 +19,15 @@ import (
 
 // Setup initialises the OTel TracerProvider, MeterProvider, and LoggerProvider with OTLP HTTP exporters.
 func Setup(ctx context.Context) (shutdown func(), err error) {
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+		propagation.TraceContext{},
+		propagation.Baggage{},
+	))
+
+	if os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT") == "" {
+		return func() {}, nil
+	}
+
 	res, err := resource.New(ctx,
 		resource.WithAttributes(
 			semconv.ServiceName("spaceport-api"),
@@ -39,11 +48,6 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 		sdktrace.WithResource(res),
 	)
 	otel.SetTracerProvider(tp)
-
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
-		propagation.TraceContext{},
-		propagation.Baggage{},
-	))
 
 	metricExp, err := otlpmetrichttp.New(ctx, otlpmetrichttp.WithInsecure())
 	if err != nil {

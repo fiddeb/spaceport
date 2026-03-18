@@ -19,6 +19,9 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 
 def setup_telemetry() -> None:
+    if not os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "").strip():
+        return
+
     resource = Resource.create(
         {
             "service.name": "spaceport-pricing-service",
