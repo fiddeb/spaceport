@@ -1,4 +1,4 @@
-magroups:
+groups:
   - id: registry.spaceport.pricing
     type: attribute_group
     brief: Attributes describing pricing information for a booking.

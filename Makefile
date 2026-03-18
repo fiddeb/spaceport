@@ -18,8 +18,14 @@ push: ## Push all Docker images to the registry
 deploy: ## Deploy to Kubernetes via Helm
 	helm upgrade --install spaceport helm/spaceport/ --set enabled=true
 
-test: ## Run Playwright smoke tests
-	cd tests/playwright && npx playwright test
+test: ## Run Playwright smoke tests (requires app running at PLAYWRIGHT_BASE_URL, default http://localhost:5175)
+	@base_url=$${PLAYWRIGHT_BASE_URL:-http://localhost:5175}; \
+	if ! curl -fsS "$$base_url" >/dev/null 2>&1; then \
+		echo "Playwright target not reachable at $$base_url"; \
+		echo "Start app with 'make dev' or set PLAYWRIGHT_BASE_URL"; \
+		exit 1; \
+	fi; \
+	cd tests/playwright && PLAYWRIGHT_BASE_URL="$$base_url" npx playwright test
 
 lint: ## Validate the Weaver semantic convention registry
 	weaver registry check -r semconv/models/ -p semconv/policies/

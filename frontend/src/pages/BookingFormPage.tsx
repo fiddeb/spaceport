@@ -21,6 +21,14 @@ const bookingCounter = meter.createCounter("spaceport.frontend.bookings", {
   description: "Booking attempts by outcome",
 });
 
+type BookingRequestError = Error & {
+  httpStatus?: number;
+  responseBody?: Record<string, unknown> | null;
+  rawBody?: string;
+  errorDetail?: string;
+  bookingId?: string | number;
+};
+
 const SEAT_CLASSES = [
   { value: "economy-cryosleep", label: "Economy Cryosleep — Sleep through the boring parts" },
   { value: "business-warp", label: "Business Warp — Window Seat With Cosmic Radiation Disclaimer" },
@@ -69,13 +77,17 @@ export function BookingFormPage() {
         const rawText = await resp.text().catch(() => "");
         let body: Record<string, unknown> | null = null;
         try { body = JSON.parse(rawText); } catch { /* non-JSON body */ }
-        const errorDetail = (body?.error ?? rawText) || `HTTP ${resp.status}`;
-        const bookingErr = new Error(`Booking failed (HTTP ${resp.status})`);
-        (bookingErr as any).httpStatus = resp.status;
-        (bookingErr as any).responseBody = body;
-        (bookingErr as any).rawBody = rawText;
-        (bookingErr as any).errorDetail = String(errorDetail);
-        (bookingErr as any).bookingId = body?.booking_id;
+        const bodyError = typeof body?.error === "string" ? body.error : "";
+        const errorDetail = bodyError || rawText || `HTTP ${resp.status}`;
+        const bookingId = body?.booking_id;
+        const bookingErr: BookingRequestError = new Error(`Booking failed (HTTP ${resp.status})`);
+        bookingErr.httpStatus = resp.status;
+        bookingErr.responseBody = body;
+        bookingErr.rawBody = rawText;
+        bookingErr.errorDetail = errorDetail;
+        if (typeof bookingId === "string" || typeof bookingId === "number") {
+          bookingErr.bookingId = bookingId;
+        }
         throw bookingErr;
       }
 
@@ -112,12 +124,13 @@ export function BookingFormPage() {
         },
       });
     } catch (err) {
+      const bookingErr = err as BookingRequestError;
       const message = err instanceof Error ? err.message : "Unknown error";
-      const httpStatus = (err as any)?.httpStatus;
-      const serverBookingId = (err as any)?.bookingId;
+      const httpStatus = bookingErr.httpStatus;
+      const serverBookingId = bookingErr.bookingId;
 
-      const rawBody = (err as any)?.rawBody;
-      const errorDetail = (err as any)?.errorDetail;
+      const rawBody = bookingErr.rawBody;
+      const errorDetail = bookingErr.errorDetail;
       span.setStatus({ code: SpanStatusCode.ERROR, message });
       span.addEvent("booking_failed", {
         "error.message": message,
