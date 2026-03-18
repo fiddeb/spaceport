@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { useSpan } from "@/hooks/useSpan";
+import { useSpan, SpanStatusCode } from "@/hooks/useSpan";
 import { logger, meter, SeverityNumber, tracedFetch } from "@/instrumentation";
 
 const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {
@@ -25,7 +25,7 @@ export function DepartureListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { contextRef, endSpan } = useSpan("user.browse_departures");
+  const { spanRef, contextRef, endSpan } = useSpan("user.browse_departures");
 
   useEffect(() => {
     pageViewCounter.add(1, { "page.name": "departure_list" });
@@ -44,6 +44,14 @@ export function DepartureListPage() {
         endSpan();
       })
       .catch((err) => {
+        if (spanRef.current) {
+          spanRef.current.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+          spanRef.current.addEvent("fetch_departures_failed", { "error.message": err.message });
+        }
+        logger.emit({
+          severityNumber: SeverityNumber.ERROR,
+          body: `Failed to load departures: ${err.message}`,
+        });
         setError(err.message);
         setLoading(false);
         endSpan();

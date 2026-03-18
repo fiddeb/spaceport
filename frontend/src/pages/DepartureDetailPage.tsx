@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { useSpan } from "@/hooks/useSpan";
+import { useSpan, SpanStatusCode } from "@/hooks/useSpan";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { logger, meter, SeverityNumber, tracedFetch } from "@/instrumentation";
 
@@ -48,7 +48,7 @@ export function DepartureDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const { convert } = useCurrency();
 
-  const { contextRef, endSpan } = useSpan("user.view_departure", {
+  const { spanRef, contextRef, endSpan } = useSpan("user.view_departure", {
     "spaceport.departure.id": id ?? "",
     "spaceport.departure.destination": data?.departure.destination ?? "",
   });
@@ -74,6 +74,18 @@ export function DepartureDetailPage() {
         endSpan();
       })
       .catch((err) => {
+        if (spanRef.current) {
+          spanRef.current.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+          spanRef.current.addEvent("fetch_departure_failed", {
+            "error.message": err.message,
+            "spaceport.departure.id": id ?? "",
+          });
+        }
+        logger.emit({
+          severityNumber: SeverityNumber.ERROR,
+          body: `Failed to load departure ${id}: ${err.message}`,
+          attributes: { "spaceport.departure.id": id ?? "" },
+        });
         setError(err.message);
         setLoading(false);
         endSpan();

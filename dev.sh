@@ -116,7 +116,9 @@ sleep 2
 free_port 5175
 echo -e "${GREEN}▸ Starting frontend${RESET} ${DIM}(port 5175)${RESET}"
 (
-  cd "$ROOT/frontend"  export VITE_SPACEPORT_ENV=local  npx vite --host 127.0.0.1 --port 5175 --strictPort \
+  cd "$ROOT/frontend" && \
+  export VITE_SPACEPORT_ENV=local && \
+  npx vite --host 127.0.0.1 --port 5175 --strictPort \
     2>&1 | sed "s/^/  ${DIM}[frontend]${RESET} /"
 ) &
 echo $! >> "$PIDFILE"

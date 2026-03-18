@@ -12,7 +12,7 @@ import {
 export function ChaosMenu() {
   const [status, setStatus] = useState<string | null>(null);
 
-  async function trigger(endpoint: string, body: object, label: string) {
+  async function trigger(endpoint: string, body: object, label: string, successMsg?: string) {
     setStatus(`${label}…`);
     try {
       const resp = await fetch(`/chaos/${endpoint}`, {
@@ -21,11 +21,11 @@ export function ChaosMenu() {
         body: JSON.stringify(body),
       });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      setStatus(`${label} ✓`);
+      setStatus(successMsg ?? `${label} ✓`);
     } catch {
       setStatus(`${label} failed`);
     }
-    setTimeout(() => setStatus(null), 2000);
+    setTimeout(() => setStatus(null), successMsg ? 4000 : 2000);
   }
 
   return (
@@ -40,7 +40,7 @@ export function ChaosMenu() {
         <DropdownMenuItem onSelect={() => trigger("simulate-failure", { count: 1 }, "1 failure")}>
           Fail next request
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => trigger("simulate-failure", { count: 3 }, "3 failures")}>
+        <DropdownMenuItem onSelect={() => trigger("simulate-failure", { count: 3 }, "3 failures", "For a moment, nothing happened. Then, after a second or so, nothing continued to happen")}>
           Fail next 3 requests
         </DropdownMenuItem>
         <DropdownMenuSeparator />
