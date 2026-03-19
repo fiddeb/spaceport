@@ -9,6 +9,13 @@
  * e.g. "/information/otel-pipeline.png".
  */
 
+export interface InfoLink {
+  label: string;
+  url: string;
+  /** Short description shown below the link */
+  description?: string;
+}
+
 export interface InfoPoint {
   label: string;
   text: string;
@@ -34,6 +41,8 @@ export interface InfoExhibit {
   image?: string;
   /** Alt text for the image */
   imageAlt?: string;
+  /** External/internal links shown at the bottom of the exhibit */
+  links?: InfoLink[];
 }
 
 // ---------------------------------------------------------------------------
@@ -45,6 +54,7 @@ export const exhibits: InfoExhibit[] = [
     id: "strategic-case",
     number: 1,
     title: "The Strategic Case for OpenTelemetry",
+    image: "/info/logmetrictrace.png",
     intro:
       "Modern enterprise observability is navigating a silent crisis: the compounding debt of fragmented tooling and aggressive vendor lock-in. For years, organizations have been tethered to proprietary agents, creating fragile \"agent sprawl\" that increases operational friction. OpenTelemetry is the industry's strategic response — a unified, vendor-neutral standard that decouples telemetry generation from storage, transforming observability from a vendor-controlled tax into a future-proof engineering discipline.",
     slideTitle: "Breaking the Chains of Fragmented Observability",
@@ -99,6 +109,7 @@ export const exhibits: InfoExhibit[] = [
   {
     id: "core-signals",
     number: 3,
+    image: "/info/logmetrictrace.png",
     title: "The Core Signals",
     intro:
       "True observability is achieved through the correlation of signals. OTel ensures that Traces, Metrics, and Logs share a common context. This interoperability allows an engineer to jump from a high-level metric spike to a specific trace, and finally to the granular log entry describing the failure.",
@@ -193,9 +204,58 @@ export const exhibits: InfoExhibit[] = [
         label: "Spaceport Demo",
         text: "A multi-language demo (Go, Python, React) designed for learning observability, OpenTelemetry, Weaver, and schema-first development.",
       },
+    ],
+    links: [
       {
-        label: "Resources",
-        text: "Visit opentelemetry.io for specifications, language SDKs, and community resources.",
+        label: "ObservabilityStack on GitHub",
+        url: "https://github.com/fiddeb/observabilitystack",
+        description: "Full local lab setup with ArgoCD, Grafana, Loki, Prometheus, and Tempo.",
+      },
+      {
+        label: "Spaceport on GitHub",
+        url: "https://github.com/fiddeb/spaceport",
+        description: "The source code for this demo application.",
+      },
+    ],
+  },
+  {
+    id: "resources",
+    number: 7,
+    title: "Resources & Links",
+    intro:
+      "A curated collection of specifications, tools, and community resources to deepen your understanding of OpenTelemetry and modern observability.",
+    slideTitle: "Essential Reading",
+    points: [],
+    links: [
+      {
+        label: "OpenTelemetry",
+        url: "https://opentelemetry.io",
+        description: "Official site — specifications, language SDKs, and getting started guides.",
+      },
+      {
+        label: "OTel Collector Documentation",
+        url: "https://opentelemetry.io/docs/collector/",
+        description: "Configuration, deployment patterns, and component reference.",
+      },
+      {
+        label: "Semantic Conventions",
+        url: "https://opentelemetry.io/docs/specs/semconv/",
+        description: "The standardized attribute naming registry for all signal types.",
+      },
+      {
+        label: "OTel Weaver",
+        url: "https://github.com/open-telemetry/weaver",
+        description: "Schema-driven code generation and policy validation for semantic conventions.",
+      },
+      {
+        label: "OTLP Specification",
+        url: "https://opentelemetry.io/docs/specs/otlp/",
+        description: "The protocol specification for telemetry data exchange.",
+      },
+      {
+        label: "CNCF OpenTelemetry Project",
+        url: "https://www.cncf.io/projects/opentelemetry/",
+        description: "CNCF project page with community, governance, and adoption details.",
       },
     ],
   },

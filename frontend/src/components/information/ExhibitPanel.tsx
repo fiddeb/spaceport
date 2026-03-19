@@ -1,4 +1,25 @@
-import type { InfoExhibit } from "@/data/informationDesk";
+import type { InfoExhibit, InfoLink } from "@/data/informationDesk";
+
+function ExhibitLink({ link }: { link: InfoLink }) {
+  return (
+    <a
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-baseline gap-3 border-l-2 border-transparent pl-3 transition-colors hover:border-primary/40"
+    >
+      <span className="font-medium text-primary group-hover:underline">
+        {link.label}
+      </span>
+      <span className="text-xs text-muted-foreground/50">{"\u2197"}</span>
+      {link.description && (
+        <span className="text-sm text-muted-foreground">
+          — {link.description}
+        </span>
+      )}
+    </a>
+  );
+}
 
 interface ExhibitPanelProps {
   exhibit: InfoExhibit;
@@ -10,10 +31,10 @@ export function ExhibitPanel({ exhibit }: ExhibitPanelProps) {
   return (
     <section
       id={exhibit.id}
-      className="group/exhibit scroll-mt-20"
+      className="flex min-h-[calc(100vh-3.5rem)] snap-start flex-col justify-center py-16"
     >
       {/* Section number + title block */}
-      <div className="mb-8">
+      <div className="mb-6">
         <span className="block font-mono text-[5rem] leading-none font-extralight tracking-tighter text-primary/15 select-none sm:text-[7rem]">
           {num}
         </span>
@@ -23,17 +44,17 @@ export function ExhibitPanel({ exhibit }: ExhibitPanelProps) {
       </div>
 
       {/* Intro paragraph */}
-      <p className="mb-8 max-w-[65ch] text-base leading-relaxed text-muted-foreground">
+      <p className="mb-6 max-w-[65ch] text-base leading-relaxed text-muted-foreground">
         {exhibit.intro}
       </p>
 
       {/* Slide title */}
-      <h3 className="mb-5 border-l-2 border-primary/60 pl-4 text-lg font-semibold text-foreground">
+      <h3 className="mb-4 border-l-2 border-primary/60 pl-4 text-lg font-semibold text-foreground">
         {exhibit.slideTitle}
       </h3>
 
       {/* Key points */}
-      <div className="mb-8 flex flex-col gap-4">
+      <div className="mb-6 flex flex-col gap-3">
         {exhibit.points.map((point) => (
           <div key={point.label} className="pl-4">
             <div className="flex items-baseline gap-2">
@@ -66,12 +87,21 @@ export function ExhibitPanel({ exhibit }: ExhibitPanelProps) {
 
       {/* Optional image */}
       {exhibit.image && (
-        <div className="mb-8 overflow-hidden border border-border">
+        <div className="mb-6 overflow-hidden border border-border">
           <img
             src={exhibit.image}
             alt={exhibit.imageAlt ?? exhibit.title}
             className="w-full object-cover"
           />
+        </div>
+      )}
+
+      {/* Optional links */}
+      {exhibit.links && exhibit.links.length > 0 && (
+        <div className="mb-6 flex flex-col gap-3">
+          {exhibit.links.map((link) => (
+            <ExhibitLink key={link.url} link={link} />
+          ))}
         </div>
       )}
 
