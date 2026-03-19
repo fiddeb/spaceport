@@ -60,8 +60,12 @@ export const pageConfig = {
     "and modern observability \u2014 from first principles to hands-on experimentation.",
   /** Hint shown below the subtitle */
   scrollHint: "Scroll to begin \u2193",
-  /** Text at the bottom after the last exhibit */
-  footer: "End of exhibits \u2014 More content added each release",
+  /** Closing slide shown after the last exhibit */
+  closing: {
+    label: "End of Presentation",
+    title: "So Long, and Thanks for All the *Fish*",
+    subtitle: "Now go instrument something.",
+  },
 };
 
 // ---------------------------------------------------------------------------

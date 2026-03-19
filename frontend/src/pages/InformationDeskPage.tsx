@@ -207,9 +207,23 @@ export function InformationDeskPage() {
             <ExhibitPanel key={exhibit.id} exhibit={exhibit} />
           ))}
 
-          {/* Footer marker */}
-          <div className="flex min-h-[40vh] snap-start items-center justify-center border-t border-border text-sm text-muted-foreground">
-            {pageConfig.footer}
+          {/* Closing slide */}
+          <div className="flex min-h-[calc(100vh-3.5rem)] snap-start flex-col items-center justify-center border-t border-border py-16 text-center">
+            <p className="mb-4 font-mono text-xs tracking-widest text-primary/60 uppercase">
+              {pageConfig.closing.label}
+            </p>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+              {pageConfig.closing.title.split(/\*(.*?)\*/).map((part, i) =>
+                i % 2 === 1 ? (
+                  <span key={i} className="text-primary">{part}</span>
+                ) : (
+                  <span key={i}>{part}</span>
+                ),
+              )}
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              {pageConfig.closing.subtitle}
+            </p>
           </div>
         </div>
       </div>
