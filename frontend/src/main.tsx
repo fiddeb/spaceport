@@ -14,12 +14,14 @@ import { BookingFormPage } from "@/pages/BookingFormPage";
 import { ConfirmationPage } from "@/pages/ConfirmationPage";
 import { CurrenciesPage } from "@/pages/CurrenciesPage";
 import { InformationDeskPage } from "@/pages/InformationDeskPage";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
       <CurrencyProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route element={<LandingLayout />}>
               <Route path="/" element={<LandingPage />} />
