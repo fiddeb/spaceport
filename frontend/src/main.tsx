@@ -13,6 +13,7 @@ import { DepartureDetailPage } from "@/pages/DepartureDetailPage";
 import { BookingFormPage } from "@/pages/BookingFormPage";
 import { ConfirmationPage } from "@/pages/ConfirmationPage";
 import { CurrenciesPage } from "@/pages/CurrenciesPage";
+import { InformationDeskPage } from "@/pages/InformationDeskPage";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -29,6 +30,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/book/:id" element={<BookingFormPage />} />
               <Route path="/confirmation/:bookingId" element={<ConfirmationPage />} />
               <Route path="/currencies" element={<CurrenciesPage />} />
+              <Route path="/information" element={<InformationDeskPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

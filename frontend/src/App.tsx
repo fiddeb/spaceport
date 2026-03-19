@@ -22,6 +22,9 @@ export default function App() {
           </Link>
           <div className="flex items-center gap-4">
             <ChaosMenu />
+            <Link to="/information" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Information
+            </Link>
             <Link to="/currencies" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Currencies
             </Link>
