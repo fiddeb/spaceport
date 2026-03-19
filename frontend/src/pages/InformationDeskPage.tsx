@@ -2,18 +2,56 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { exhibits } from "@/data/informationDesk";
 import { ExhibitNav } from "@/components/information/ExhibitNav";
 import { ExhibitPanel } from "@/components/information/ExhibitPanel";
+import { useSpan } from "@/hooks/useSpan";
+import {
+  tracer,
+  logger,
+  meter,
+  SeverityNumber,
+} from "@/instrumentation";
+import { SpanStatusCode } from "@opentelemetry/api";
+
+// Metrics — reuse the existing page_views counter, add exhibit-specific ones
+const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {
+  description: "Page views by page name",
+});
+const exhibitViewCounter = meter.createCounter(
+  "spaceport.frontend.exhibit_views",
+  { description: "Exhibits scrolled into view" },
+);
+const exhibitDwellHistogram = meter.createHistogram(
+  "spaceport.frontend.exhibit_dwell_time",
+  { description: "Seconds an exhibit was in the viewport", unit: "s" },
+);
 
 export function InformationDeskPage() {
   const [activeId, setActiveId] = useState<string | null>(
     exhibits[0]?.id ?? null,
   );
 
+  // --- Telemetry: page-level span ---
+  const { spanRef } = useSpan("user.view_information_desk", {
+    "spaceport.exhibit.count": exhibits.length,
+  });
+
+  // Track which exhibits have been seen (to avoid duplicate counter bumps)
+  const seenExhibits = useRef(new Set<string>());
+  // Track dwell time per exhibit
+  const dwellStart = useRef<Map<string, number>>(new Map());
+
+  // Record page view once on mount
+  useEffect(() => {
+    pageViewCounter.add(1, { "page.name": "information_desk" });
+    logger.emit({
+      severityNumber: SeverityNumber.INFO,
+      body: "User viewing information desk",
+    });
+  }, []);
+
   // Track which section is in view via IntersectionObserver
   const sectionRefs = useRef<Map<string, IntersectionObserverEntry>>(new Map());
 
   const updateActive = useCallback(() => {
-    // Pick the section with the largest visible ratio,
-    // biased toward earlier sections when ratios are close.
     let best: string | null = null;
     let bestRatio = -1;
 
@@ -23,8 +61,6 @@ export function InformationDeskPage() {
         best = id;
       }
     }
-    // Fallback: if nothing is intersecting, pick the first visible entry
-    // by checking boundingClientRect.top closest to 0+
     if (!best) {
       let closestDist = Infinity;
       for (const [id, entry] of sectionRefs.current) {
@@ -42,21 +78,69 @@ export function InformationDeskPage() {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          sectionRefs.current.set(entry.target.id, entry);
+          const id = entry.target.id;
+          sectionRefs.current.set(id, entry);
+
+          // --- Telemetry: exhibit enters/leaves viewport ---
+          if (entry.isIntersecting) {
+            if (!dwellStart.current.has(id)) {
+              dwellStart.current.set(id, performance.now());
+            }
+
+            if (!seenExhibits.current.has(id)) {
+              seenExhibits.current.add(id);
+              const exhibit = exhibits.find((e) => e.id === id);
+              const title = exhibit?.title ?? id;
+
+              exhibitViewCounter.add(1, {
+                "spaceport.exhibit.id": id,
+                "spaceport.exhibit.title": title,
+              });
+              spanRef.current?.addEvent("exhibit_viewed", {
+                "spaceport.exhibit.id": id,
+                "spaceport.exhibit.title": title,
+                "spaceport.exhibit.number": exhibit?.number ?? 0,
+              });
+              logger.emit({
+                severityNumber: SeverityNumber.INFO,
+                body: `Exhibit viewed: ${title}`,
+                attributes: { "spaceport.exhibit.id": id },
+              });
+            }
+          } else {
+            // Exhibit left viewport — record dwell time
+            const start = dwellStart.current.get(id);
+            if (start) {
+              const dwell = (performance.now() - start) / 1000;
+              dwellStart.current.delete(id);
+              exhibitDwellHistogram.record(dwell, {
+                "spaceport.exhibit.id": id,
+              });
+            }
+          }
         }
         updateActive();
       },
       { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.1, 0.5, 1] },
     );
 
-    // Observe all exhibit sections
     for (const exhibit of exhibits) {
       const el = document.getElementById(exhibit.id);
       if (el) observer.observe(el);
     }
 
-    return () => observer.disconnect();
-  }, [updateActive]);
+    return () => {
+      observer.disconnect();
+      // Flush remaining dwell times on unmount
+      for (const [id, start] of dwellStart.current) {
+        const dwell = (performance.now() - start) / 1000;
+        exhibitDwellHistogram.record(dwell, {
+          "spaceport.exhibit.id": id,
+        });
+      }
+      dwellStart.current.clear();
+    };
+  }, [updateActive, spanRef]);
 
   // Enable snap-scrolling on the document while this page is mounted
   useEffect(() => {

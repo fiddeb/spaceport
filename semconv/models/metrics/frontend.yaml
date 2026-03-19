@@ -1,0 +1,56 @@
+groups:
+  - id: metric.spaceport.frontend.page_views
+    type: metric
+    metric_name: spaceport.frontend.page_views
+    brief: Page views counted by page name.
+    instrument: counter
+    unit: "{view}"
+    stability: development
+    attributes:
+      - id: page.name
+        type: string
+        stability: development
+        brief: Identifier for the page being viewed.
+        requirement_level: required
+        examples: ["departure_list", "departure_detail", "information_desk"]
+
+  - id: metric.spaceport.frontend.exhibit_views
+    type: metric
+    metric_name: spaceport.frontend.exhibit_views
+    brief: Number of times an exhibit section scrolled into the viewport.
+    instrument: counter
+    unit: "{view}"
+    stability: development
+    attributes:
+      - ref: spaceport.exhibit.id
+        requirement_level: required
+      - ref: spaceport.exhibit.title
+        requirement_level: recommended
+
+  - id: metric.spaceport.frontend.exhibit_dwell_time
+    type: metric
+    metric_name: spaceport.frontend.exhibit_dwell_time
+    brief: Time an exhibit remained visible in the viewport.
+    instrument: histogram
+    unit: "s"
+    stability: development
+    attributes:
+      - ref: spaceport.exhibit.id
+        requirement_level: required
+
+  - id: metric.spaceport.frontend.bookings
+    type: metric
+    metric_name: spaceport.frontend.bookings
+    brief: Booking attempts made from the frontend.
+    instrument: counter
+    unit: "{booking}"
+    stability: development
+    attributes:
+      - id: outcome
+        type: string
+        stability: development
+        brief: Whether the booking succeeded or failed.
+        requirement_level: required
+        examples: ["success", "failure"]
+      - ref: spaceport.seat.class
+        requirement_level: recommended
