@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { exhibits } from "@/data/informationDesk";
+import { exhibits, pageConfig } from "@/data/informationDesk";
 import { ExhibitNav } from "@/components/information/ExhibitNav";
 import { ExhibitPanel } from "@/components/information/ExhibitPanel";
 import { useSpan } from "@/hooks/useSpan";
@@ -155,19 +155,22 @@ export function InformationDeskPage() {
       {/* Page header — also a snap section */}
       <header className="flex min-h-[calc(100vh-3.5rem)] snap-start flex-col justify-center py-16">
         <p className="mb-2 font-mono text-xs tracking-widest text-primary/60 uppercase">
-          Information Desk
+          {pageConfig.label}
         </p>
         <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-          Traveller's Guide to{" "}
-          <span className="text-primary">Observability</span>
+          {pageConfig.title.split(/\*(.*?)\*/).map((part, i) =>
+            i % 2 === 1 ? (
+              <span key={i} className="text-primary">{part}</span>
+            ) : (
+              <span key={i}>{part}</span>
+            ),
+          )}
         </h1>
         <p className="mt-4 max-w-[60ch] text-lg text-muted-foreground">
-          Everything you need to understand OpenTelemetry, semantic conventions,
-          and modern observability — from first principles to hands-on
-          experimentation.
+          {pageConfig.subtitle}
         </p>
         <p className="mt-8 font-mono text-xs text-muted-foreground/50">
-          Scroll to begin &darr;
+          {pageConfig.scrollHint}
         </p>
       </header>
 
@@ -206,7 +209,7 @@ export function InformationDeskPage() {
 
           {/* Footer marker */}
           <div className="flex min-h-[40vh] snap-start items-center justify-center border-t border-border text-sm text-muted-foreground">
-            End of exhibits — More content added each release
+            {pageConfig.footer}
           </div>
         </div>
       </div>

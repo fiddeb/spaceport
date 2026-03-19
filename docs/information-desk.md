@@ -8,6 +8,22 @@ The Information Desk is a presentation-style page where each **exhibit** is a se
 frontend/src/data/informationDesk.ts
 ```
 
+## Page config
+
+The `pageConfig` object controls all page-level text. Edit it to rebrand for your own demo:
+
+```ts
+export const pageConfig = {
+  label: "Information Desk",                    // small label above the title
+  title: "Traveller's Guide to *Observability*", // *word* = highlighted
+  subtitle: "Your subtitle here.",
+  scrollHint: "Scroll to begin ↓",
+  footer: "End of exhibits — More content added each release",
+};
+```
+
+Wrap a word in `*asterisks*` in the title to render it in the primary colour.
+
 ## Data model
 
 ```ts

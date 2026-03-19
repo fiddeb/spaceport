@@ -46,7 +46,26 @@ export interface InfoExhibit {
 }
 
 // ---------------------------------------------------------------------------
-// Content — edit freely, the rendering adapts automatically.
+// Page-level config — customise for your own fork / demo.
+// ---------------------------------------------------------------------------
+
+export const pageConfig = {
+  /** Small label above the title */
+  label: "Information Desk",
+  /** Main heading. Wrap a word in *asterisks* to highlight it. */
+  title: "Traveller's Guide to *Observability*",
+  /** Subtitle shown below the heading */
+  subtitle:
+    "A kickstart to understand OpenTelemetry, semantic conventions, " +
+    "and modern observability \u2014 from first principles to hands-on experimentation.",
+  /** Hint shown below the subtitle */
+  scrollHint: "Scroll to begin \u2193",
+  /** Text at the bottom after the last exhibit */
+  footer: "End of exhibits \u2014 More content added each release",
+};
+
+// ---------------------------------------------------------------------------
+// Exhibits — edit freely, the rendering adapts automatically.
 // ---------------------------------------------------------------------------
 
 export const exhibits: InfoExhibit[] = [
