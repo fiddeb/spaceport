@@ -23,6 +23,7 @@ createRoot(document.getElementById("root")!).render(
           <Routes>
             <Route element={<LandingLayout />}>
               <Route path="/" element={<LandingPage />} />
+              <Route path="/information" element={<InformationDeskPage />} />
             </Route>
             <Route element={<App />}>
               <Route path="/departures" element={<DepartureListPage />} />
@@ -30,7 +31,6 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/book/:id" element={<BookingFormPage />} />
               <Route path="/confirmation/:bookingId" element={<ConfirmationPage />} />
               <Route path="/currencies" element={<CurrenciesPage />} />
-              <Route path="/information" element={<InformationDeskPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

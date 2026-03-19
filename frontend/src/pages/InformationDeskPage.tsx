@@ -67,7 +67,7 @@ export function InformationDeskPage() {
   }, []);
 
   return (
-    <div className="flex flex-col">
+    <div className="mx-auto flex max-w-7xl flex-col px-6 pt-14">
       {/* Page header — also a snap section */}
       <header className="flex min-h-[calc(100vh-3.5rem)] snap-start flex-col justify-center py-16">
         <p className="mb-2 font-mono text-xs tracking-widest text-primary/60 uppercase">

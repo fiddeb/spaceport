@@ -209,7 +209,7 @@ export const exhibits: InfoExhibit[] = [
       {
         label: "ObservabilityStack on GitHub",
         url: "https://github.com/fiddeb/observabilitystack",
-        description: "Full local lab setup with ArgoCD, Grafana, Loki, Prometheus, and Tempo.",
+        description: "Full local lab setup with ArgoCD, Grafana, Loki, Prometheus, Tempo and Spaceport demo.",
       },
       {
         label: "Spaceport on GitHub",
