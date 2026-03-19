@@ -1,0 +1,24 @@
+groups:
+  - id: span.spaceport.user.view_information_desk
+    type: span
+    span_kind: internal
+    brief: >
+      Tracks a user session on the Information Desk page, from mount to
+      unmount. Child exhibit_viewed events are added as the user scrolls.
+    stability: development
+    attributes:
+      - ref: spaceport.exhibit.count
+        requirement_level: required
+
+  - id: event.spaceport.exhibit_viewed
+    type: event
+    name: exhibit_viewed
+    brief: Fired when an exhibit section first scrolls into the viewport.
+    stability: development
+    attributes:
+      - ref: spaceport.exhibit.id
+        requirement_level: required
+      - ref: spaceport.exhibit.title
+        requirement_level: recommended
+      - ref: spaceport.exhibit.number
+        requirement_level: recommended

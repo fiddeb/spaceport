@@ -44,13 +44,14 @@ export function Hero() {
             Four destinations. Twelve routes weekly. Zero gravity surcharge.
           </p>
 
-          <Button
-            asChild
-            size="lg"
-            className="animate-in fade-in slide-in-from-bottom-4 fill-mode-both h-12 px-8 text-base delay-400 duration-700"
-          >
-            <Link to="/departures">Browse Departures</Link>
-          </Button>
+          <div className="animate-in fade-in slide-in-from-bottom-4 fill-mode-both flex flex-wrap items-center justify-center gap-4 delay-400 duration-700">
+            <Button asChild size="lg" className="h-12 px-8 text-base">
+              <Link to="/departures">Browse Departures</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="h-12 px-8 text-base border-primary/30 text-primary hover:bg-primary/10">
+              <Link to="/information">Information Desk</Link>
+            </Button>
+          </div>
         </div>
       </div>
 

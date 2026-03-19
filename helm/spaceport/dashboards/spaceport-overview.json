@@ -77,6 +77,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "reqps",
+          "color": { "mode": "fixed", "fixedColor": "#00b6d9" },
           "custom": {
             "fillOpacity": 20
           }
@@ -105,17 +106,19 @@
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
+          "color": { "mode": "thresholds" },
           "custom": {
-            "fillOpacity": 10
+            "fillOpacity": 10,
+            "thresholdsStyle": { "mode": "area" }
           },
           "thresholds": {
             "steps": [
               {
-                "color": "green",
+                "color": "#0091b6",
                 "value": null
               },
               {
-                "color": "red",
+                "color": "#ff6366",
                 "value": 5
               }
             ]
@@ -152,7 +155,11 @@
           "custom": {
             "fillOpacity": 10
           }
-        }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "P50" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#54e9fc" } }] },
+          { "matcher": { "id": "byName", "options": "P99" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#007493" } }] }
+        ]
       }
     },
     {
@@ -188,6 +195,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "reqps",
+          "color": { "mode": "fixed", "fixedColor": "#0091b6" },
           "custom": {
             "fillOpacity": 20
           }
@@ -216,17 +224,19 @@
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
+          "color": { "mode": "thresholds" },
           "custom": {
-            "fillOpacity": 10
+            "fillOpacity": 10,
+            "thresholdsStyle": { "mode": "area" }
           },
           "thresholds": {
             "steps": [
               {
-                "color": "green",
+                "color": "#0091b6",
                 "value": null
               },
               {
-                "color": "red",
+                "color": "#ff6366",
                 "value": 5
               }
             ]
@@ -263,7 +273,11 @@
           "custom": {
             "fillOpacity": 10
           }
-        }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "P50" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#54e9fc" } }] },
+          { "matcher": { "id": "byName", "options": "P99" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#007493" } }] }
+        ]
       }
     },
     {
@@ -299,6 +313,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "reqps",
+          "color": { "mode": "fixed", "fixedColor": "#54e9fc" },
           "custom": {
             "fillOpacity": 20
           }
@@ -327,17 +342,19 @@
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
+          "color": { "mode": "thresholds" },
           "custom": {
-            "fillOpacity": 10
+            "fillOpacity": 10,
+            "thresholdsStyle": { "mode": "area" }
           },
           "thresholds": {
             "steps": [
               {
-                "color": "green",
+                "color": "#0091b6",
                 "value": null
               },
               {
-                "color": "red",
+                "color": "#ff6366",
                 "value": 5
               }
             ]
@@ -370,7 +387,11 @@
           "custom": {
             "fillOpacity": 10
           }
-        }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "success" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#00b6d9" } }] },
+          { "matcher": { "id": "byName", "options": "failure" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#ff6366" } }] }
+        ]
       }
     },
     {
@@ -402,7 +423,17 @@
           "expr": "sum({__name__=\"spaceport.booking.count\"})",
           "legendFormat": "total"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "#00b6d9" },
+          "thresholds": {
+            "steps": [
+              { "color": "#005e77", "value": null }
+            ]
+          }
+        }
+      }
     },
     {
       "title": "Pricing Failures",
@@ -425,17 +456,19 @@
       ],
       "fieldConfig": {
         "defaults": {
+          "color": { "mode": "thresholds" },
           "custom": {
-            "fillOpacity": 20
+            "fillOpacity": 20,
+            "thresholdsStyle": { "mode": "area" }
           },
           "thresholds": {
             "steps": [
               {
-                "color": "green",
+                "color": "#0091b6",
                 "value": null
               },
               {
-                "color": "red",
+                "color": "#ff6366",
                 "value": 0.1
               }
             ]
@@ -465,6 +498,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "ms",
+          "color": { "mode": "fixed", "fixedColor": "#007493" },
           "custom": {
             "fillOpacity": 10
           }

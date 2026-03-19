@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 export function CurrenciesPage() {
   const { currencies, refreshRates } = useCurrency();
   const [refreshing, setRefreshing] = useState(false);
+  const navigate = useNavigate();
 
   function handleRefresh() {
     setRefreshing(true);
@@ -17,11 +19,16 @@ export function CurrenciesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Currencies</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            All rates are relative to UNC (Universal Neural Credits)
-          </p>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label="Go back">
+            <span className="text-lg">&larr;</span>
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Currencies</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              All rates are relative to UNC (Universal Neural Credits)
+            </p>
+          </div>
         </div>
         <Button onClick={handleRefresh} disabled={refreshing} variant="outline">
           {refreshing ? (
