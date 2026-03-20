@@ -77,7 +77,7 @@ short
       "targets": [
         {
           "datasource": {{ ds() }},
-          "expr": "sum(rate({{ mn_count(metric) }}[2m]))",
+          "expr": "sum(rate({{ mn_count(metric) }}[$__rate_interval]))",
           "legendFormat": "req/s",
           "refId": "A"
         }
@@ -94,7 +94,7 @@ short
       "targets": [
         {
           "datasource": {{ ds() }},
-          "expr": "(sum(rate({{ mn_count_error(metric) }}[2m])) or vector(0)) / sum(rate({{ mn_count(metric) }}[2m])) * 100",
+          "expr": "(sum(rate({{ mn_count_error(metric) }}[$__rate_interval])) or vector(0)) / sum(rate({{ mn_count(metric) }}[$__rate_interval])) * 100",
           "legendFormat": "error %",
           "refId": "A"
         }
@@ -151,26 +151,26 @@ short
 {%- if metric.instrument == "histogram" %}
         {
           "datasource": {{ ds() }},
-          "expr": "histogram_quantile(0.50, sum(rate({{ mn_bucket(metric) }}[2m])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate({{ mn_bucket(metric) }}[$__rate_interval])) by (le))",
           "legendFormat": "p50",
           "refId": "A"
         },
         {
           "datasource": {{ ds() }},
-          "expr": "histogram_quantile(0.95, sum(rate({{ mn_bucket(metric) }}[2m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate({{ mn_bucket(metric) }}[$__rate_interval])) by (le))",
           "legendFormat": "p95",
           "refId": "B"
         },
         {
           "datasource": {{ ds() }},
-          "expr": "histogram_quantile(0.99, sum(rate({{ mn_bucket(metric) }}[2m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate({{ mn_bucket(metric) }}[$__rate_interval])) by (le))",
           "legendFormat": "p99",
           "refId": "C"
         }
 {%- elif metric.instrument == "counter" %}
         {
           "datasource": {{ ds() }},
-          "expr": "sum(rate({{ mn(metric) }}[2m]))",
+          "expr": "sum(rate({{ mn(metric) }}[$__rate_interval]))",
           "legendFormat": "total rate",
           "refId": "A"
         }
@@ -178,7 +178,7 @@ short
 {%- for attr in metric.attributes | required | attribute_sort %}
         ,{
           "datasource": {{ ds() }},
-          "expr": "sum by (\"{{ attr.name }}\") (rate({{ mn(metric) }}[2m]))",
+          "expr": "sum by (\"{{ attr.name }}\") (rate({{ mn(metric) }}[$__rate_interval]))",
           "legendFormat": "{% raw %}{{{% endraw %}{{ attr.name }}{% raw %}}}{% endraw %}",
           "refId": "{{ 'BCDEFGH'[loop.index0] }}"
         }

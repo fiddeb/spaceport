@@ -4,12 +4,10 @@ import { ExhibitNav } from "@/components/information/ExhibitNav";
 import { ExhibitPanel } from "@/components/information/ExhibitPanel";
 import { useSpan } from "@/hooks/useSpan";
 import {
-  tracer,
   logger,
   meter,
   SeverityNumber,
 } from "@/instrumentation";
-import { SpanStatusCode } from "@opentelemetry/api";
 
 // Metrics — reuse the existing page_views counter, add exhibit-specific ones
 const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {

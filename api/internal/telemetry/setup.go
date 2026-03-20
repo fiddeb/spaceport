@@ -57,6 +57,15 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 	mp := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)),
 		sdkmetric.WithResource(res),
+		// Go SDK default histogram boundaries are ms-scale (0, 5, 10, …, 10 000)
+		// but http.server.request.duration records in seconds, so override with
+		// seconds-scale boundaries matching the OTel HTTP semantic conventions.
+		sdkmetric.WithView(sdkmetric.NewView(
+			sdkmetric.Instrument{Name: "http.server.request.duration"},
+			sdkmetric.Stream{Aggregation: sdkmetric.AggregationExplicitBucketHistogram{
+				Boundaries: []float64{0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10},
+			}},
+		)),
 	)
 	otel.SetMeterProvider(mp)
 
