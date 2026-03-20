@@ -70,7 +70,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "sum(rate({__name__=\"http.server.request.duration_count\"}[2m]))",
+          "expr": "sum(rate({__name__=\"http.server.request.duration_count\"}[$__rate_interval]))",
           "legendFormat": "req/s",
           "refId": "A"
         }
@@ -95,7 +95,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "(sum(rate({__name__=\"http.server.request.duration_count\", \"http.response.status_code\"=~\"5..\"}[2m])) or vector(0)) / sum(rate({__name__=\"http.server.request.duration_count\"}[2m])) * 100",
+          "expr": "(sum(rate({__name__=\"http.server.request.duration_count\", \"http.response.status_code\"=~\"5..\"}[$__rate_interval])) or vector(0)) / sum(rate({__name__=\"http.server.request.duration_count\"}[$__rate_interval])) * 100",
           "legendFormat": "error %",
           "refId": "A"
         }
@@ -132,19 +132,19 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.50, sum(rate({__name__=\"http.server.request.duration_bucket\"}[2m])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate({__name__=\"http.server.request.duration_bucket\"}[$__rate_interval])) by (le))",
           "legendFormat": "p50",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.95, sum(rate({__name__=\"http.server.request.duration_bucket\"}[2m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate({__name__=\"http.server.request.duration_bucket\"}[$__rate_interval])) by (le))",
           "legendFormat": "p95",
           "refId": "B"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.99, sum(rate({__name__=\"http.server.request.duration_bucket\"}[2m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate({__name__=\"http.server.request.duration_bucket\"}[$__rate_interval])) by (le))",
           "legendFormat": "p99",
           "refId": "C"
         }
@@ -224,13 +224,13 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "sum(rate({__name__=\"spaceport.booking.count\"}[2m]))",
+          "expr": "sum(rate({__name__=\"spaceport.booking.count\"}[$__rate_interval]))",
           "legendFormat": "total rate",
           "refId": "A"
         }
         ,{
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "sum by (\"spaceport.booking.status\") (rate({__name__=\"spaceport.booking.count\"}[2m]))",
+          "expr": "sum by (\"spaceport.booking.status\") (rate({__name__=\"spaceport.booking.count\"}[$__rate_interval]))",
           "legendFormat": "{{spaceport.booking.status}}",
           "refId": "B"
         }
@@ -281,12 +281,12 @@
     },
     {
       "type": "timeseries",
-      "title": "Duration of price calculation requests from the API to the pricing service.",
-      "description": "Metric: `spaceport.pricing.request.duration`\nInstrument: histogram\nUnit: ms",
+      "title": "Booking attempts made from the frontend.",
+      "description": "Metric: `spaceport.frontend.bookings`\nInstrument: counter\nUnit: {booking}",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "fieldConfig": {
         "defaults": {
-          "unit": "ms"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -310,19 +310,197 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.50, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[2m])) by (le))",
+          "expr": "sum(rate({__name__=\"spaceport.frontend.bookings\"}[$__rate_interval]))",
+          "legendFormat": "total rate",
+          "refId": "A"
+        }
+        ,{
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum by (\"outcome\") (rate({__name__=\"spaceport.frontend.bookings\"}[$__rate_interval]))",
+          "legendFormat": "{{outcome}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Time an exhibit remained visible in the viewport.",
+      "description": "Metric: `spaceport.frontend.exhibit_dwell_time`\nInstrument: histogram\nUnit: s",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 50
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max"]
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "histogram_quantile(0.50, sum(rate({__name__=\"spaceport.frontend.exhibit_dwell_time_bucket\"}[$__rate_interval])) by (le))",
           "legendFormat": "p50",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.95, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[2m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate({__name__=\"spaceport.frontend.exhibit_dwell_time_bucket\"}[$__rate_interval])) by (le))",
           "legendFormat": "p95",
           "refId": "B"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.99, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[2m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate({__name__=\"spaceport.frontend.exhibit_dwell_time_bucket\"}[$__rate_interval])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Number of times an exhibit section scrolled into the viewport.",
+      "description": "Metric: `spaceport.frontend.exhibit_views`\nInstrument: counter\nUnit: {view}",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 58
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max"]
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate({__name__=\"spaceport.frontend.exhibit_views\"}[$__rate_interval]))",
+          "legendFormat": "total rate",
+          "refId": "A"
+        }
+        ,{
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum by (\"spaceport.exhibit.id\") (rate({__name__=\"spaceport.frontend.exhibit_views\"}[$__rate_interval]))",
+          "legendFormat": "{{spaceport.exhibit.id}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Page views counted by page name.",
+      "description": "Metric: `spaceport.frontend.page_views`\nInstrument: counter\nUnit: {view}",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 66
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max"]
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate({__name__=\"spaceport.frontend.page_views\"}[$__rate_interval]))",
+          "legendFormat": "total rate",
+          "refId": "A"
+        }
+        ,{
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum by (\"page.name\") (rate({__name__=\"spaceport.frontend.page_views\"}[$__rate_interval]))",
+          "legendFormat": "{{page.name}}",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Duration of price calculation requests from the API to the pricing service.",
+      "description": "Metric: `spaceport.pricing.request.duration`\nInstrument: histogram\nUnit: ms",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 74
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max"]
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "histogram_quantile(0.50, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[$__rate_interval])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "histogram_quantile(0.95, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[$__rate_interval])) by (le))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "histogram_quantile(0.99, sum(rate({__name__=\"spaceport.pricing.request.duration_bucket\"}[$__rate_interval])) by (le))",
           "legendFormat": "p99",
           "refId": "C"
         }
