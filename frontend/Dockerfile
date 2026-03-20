@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 COPY . .
-ARG VITE_SPACEPORT_ENV=docker
+ARG VITE_SPACEPORT_ENV=kubernetes
 ENV VITE_SPACEPORT_ENV=$VITE_SPACEPORT_ENV
 RUN npm run build
 
