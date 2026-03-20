@@ -4,10 +4,12 @@ import { ExhibitNav } from "@/components/information/ExhibitNav";
 import { ExhibitPanel } from "@/components/information/ExhibitPanel";
 import { useSpan } from "@/hooks/useSpan";
 import {
+  tracer,
   logger,
   meter,
   SeverityNumber,
 } from "@/instrumentation";
+import type { Span } from "@opentelemetry/api";
 
 // Metrics — reuse the existing page_views counter, add exhibit-specific ones
 const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {
@@ -36,6 +38,8 @@ export function InformationDeskPage() {
   const seenExhibits = useRef(new Set<string>());
   // Track dwell time per exhibit
   const dwellStart = useRef<Map<string, number>>(new Map());
+  // Active exhibit spans — linked to the page span, ended when exhibit leaves viewport
+  const exhibitSpans = useRef<Map<string, Span>>(new Map());
 
   // Record page view once on mount
   useEffect(() => {
@@ -85,6 +89,27 @@ export function InformationDeskPage() {
               dwellStart.current.set(id, performance.now());
             }
 
+            // Start a linked span for this exhibit view
+            if (!exhibitSpans.current.has(id)) {
+              const exhibit = exhibits.find((e) => e.id === id);
+              const title = exhibit?.title ?? id;
+              const pageSpanCtx = spanRef.current?.spanContext();
+
+              const exhibitSpan = tracer.startSpan("exhibit.view", {
+                attributes: {
+                  "spaceport.exhibit.id": id,
+                  "spaceport.exhibit.title": title,
+                  "spaceport.exhibit.number": exhibit?.number ?? 0,
+                },
+                // Link back to the page session span — shows relation
+                // without making this a child span
+                links: pageSpanCtx
+                  ? [{ context: pageSpanCtx }]
+                  : [],
+              });
+              exhibitSpans.current.set(id, exhibitSpan);
+            }
+
             if (!seenExhibits.current.has(id)) {
               seenExhibits.current.add(id);
               const exhibit = exhibits.find((e) => e.id === id);
@@ -106,7 +131,13 @@ export function InformationDeskPage() {
               });
             }
           } else {
-            // Exhibit left viewport — record dwell time
+            // Exhibit left viewport — end the linked span and record dwell time
+            const exhibitSpan = exhibitSpans.current.get(id);
+            if (exhibitSpan) {
+              exhibitSpan.end();
+              exhibitSpans.current.delete(id);
+            }
+
             const start = dwellStart.current.get(id);
             if (start) {
               const dwell = (performance.now() - start) / 1000;
@@ -129,6 +160,11 @@ export function InformationDeskPage() {
 
     return () => {
       observer.disconnect();
+      // End any still-active exhibit spans
+      for (const [, span] of exhibitSpans.current) {
+        span.end();
+      }
+      exhibitSpans.current.clear();
       // Flush remaining dwell times on unmount
       for (const [id, start] of dwellStart.current) {
         const dwell = (performance.now() - start) / 1000;
