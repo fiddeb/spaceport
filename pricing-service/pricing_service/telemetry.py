@@ -13,6 +13,7 @@ from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics.view import ExplicitBucketHistogramAggregation, View
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -36,8 +37,20 @@ def setup_telemetry() -> None:
     trace.set_tracer_provider(tracer_provider)
 
     # Metrics
+    # Default SDK buckets are ms-scale (0, 5, 10, …, 10 000) but
+    # http.server.request.duration records in seconds — override to match.
+    http_duration_view = View(
+        instrument_name="http.server.request.duration",
+        aggregation=ExplicitBucketHistogramAggregation(
+            boundaries=(0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0),
+        ),
+    )
     metric_reader = PeriodicExportingMetricReader(OTLPMetricExporter(), export_interval_millis=10000)
-    meter_provider = MeterProvider(resource=resource, metric_readers=[metric_reader])
+    meter_provider = MeterProvider(
+        resource=resource,
+        metric_readers=[metric_reader],
+        views=[http_duration_view],
+    )
     metrics.set_meter_provider(meter_provider)
 
     # Logs
