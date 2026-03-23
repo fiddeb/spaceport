@@ -2,6 +2,8 @@
 
 from opentelemetry import trace
 
+from .semconv.span import start_spaceport_pricing_recommend_server
+
 tracer = trace.get_tracer(__name__)
 
 DESTINATIONS = {
@@ -31,8 +33,10 @@ DEFAULT_REASON = "A popular destination among space travellers"
 
 
 def get_recommendations(departure_id: int) -> list[dict]:
-    with tracer.start_as_current_span("pricing.recommend") as span:
-        span.set_attribute("spaceport.departure.id", departure_id)
+    with start_spaceport_pricing_recommend_server(
+        tracer,
+        spaceport_departure_id=str(departure_id),
+    ) as span:
 
         # Pick 2-3 recommendations excluding self
         candidates = [did for did in DESTINATIONS if did != departure_id]

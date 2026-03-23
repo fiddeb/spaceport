@@ -6,11 +6,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { useSpan, SpanStatusCode } from "@/hooks/useSpan";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { logger, meter, SeverityNumber, tracedFetch } from "@/instrumentation";
-
-const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {
-  description: "Page views by page name",
-});
+import { logger, pageViewCounter, SeverityNumber, tracedFetch } from "@/instrumentation";
+import {
+  SPACEPORT_DEPARTURE_ID,
+  SPACEPORT_DEPARTURE_DESTINATION,
+} from "@/semconv/attribute";
 
 interface Departure {
   id: number;
@@ -49,16 +49,16 @@ export function DepartureDetailPage() {
   const { convert } = useCurrency();
 
   const { spanRef, contextRef, endSpan } = useSpan("user.view_departure", {
-    "spaceport.departure.id": id ?? "",
-    "spaceport.departure.destination": data?.departure.destination ?? "",
+    [SPACEPORT_DEPARTURE_ID]: id ?? "",
+    [SPACEPORT_DEPARTURE_DESTINATION]: data?.departure.destination ?? "",
   });
 
   useEffect(() => {
-    pageViewCounter.add(1, { "page.name": "departure_detail" });
+    pageViewCounter.add(1, "departure_detail");
     logger.emit({
       severityNumber: SeverityNumber.INFO,
       body: `User viewing departure ${id}`,
-      attributes: { "spaceport.departure.id": id ?? "" },
+      attributes: { [SPACEPORT_DEPARTURE_ID]: id ?? "" },
     });
   }, [id]);
 
@@ -78,13 +78,13 @@ export function DepartureDetailPage() {
           spanRef.current.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
           spanRef.current.addEvent("fetch_departure_failed", {
             "error.message": err.message,
-            "spaceport.departure.id": id ?? "",
+            [SPACEPORT_DEPARTURE_ID]: id ?? "",
           });
         }
         logger.emit({
           severityNumber: SeverityNumber.ERROR,
           body: `Failed to load departure ${id}: ${err.message}`,
-          attributes: { "spaceport.departure.id": id ?? "" },
+          attributes: { [SPACEPORT_DEPARTURE_ID]: id ?? "" },
         });
         setError(err.message);
         setLoading(false);

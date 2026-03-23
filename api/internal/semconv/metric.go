@@ -224,6 +224,181 @@ func (m SpaceportDepartureActive) Add(
     ))
 }
 
+// An instrument for recording `spaceport.frontend.bookings`
+type SpaceportFrontendBookings struct {
+    inst metric.Float64Counter
+}
+
+// Construct a new instrument for measuring `spaceport.frontend.bookings`
+func NewSpaceportFrontendBookings(m metric.Meter) (SpaceportFrontendBookings, error) {
+    i, err := m.Float64Counter(
+        "spaceport.frontend.bookings",
+        metric.WithDescription("Booking attempts made from the frontend."),
+        metric.WithUnit("{booking}"),
+    )
+    if err != nil {
+        return SpaceportFrontendBookings{}, err
+    }
+    return SpaceportFrontendBookings{i}, nil
+}
+
+func spaceportFrontendBookingsAttrToAttrs(in []OptionalAttr) []attribute.KeyValue {
+	out := make([]attribute.KeyValue, len(in))
+	for i, a := range in {
+		out[i] = a.attr()
+	}
+	return out
+}
+// Adds an increment to the existing count.
+func (m SpaceportFrontendBookings) Add(
+    ctx context.Context,
+    inc float64,
+    // Whether the booking succeeded or failed.
+    outcome string,
+    optAttrs ...OptionalAttr,
+) {
+    m.inst.Add(ctx, inc, metric.WithAttributes(
+        append(spaceportFrontendBookingsAttrToAttrs(optAttrs),
+        attribute.String("outcome", outcome),
+        )...,
+    ))
+}
+
+// An instrument for recording `spaceport.frontend.exhibit_dwell_time`
+type SpaceportFrontendExhibitDwellTime struct {
+    inst metric.Float64Histogram
+}
+
+// Construct a new instrument for measuring
+// `spaceport.frontend.exhibit_dwell_time`
+func NewSpaceportFrontendExhibitDwellTime(m metric.Meter) (SpaceportFrontendExhibitDwellTime, error) {
+    i, err := m.Float64Histogram(
+        "spaceport.frontend.exhibit_dwell_time",
+        metric.WithDescription("Time an exhibit remained visible in the viewport."),
+        metric.WithUnit("s"),
+    )
+    if err != nil {
+        return SpaceportFrontendExhibitDwellTime{}, err
+    }
+    return SpaceportFrontendExhibitDwellTime{i}, nil
+}
+// Records a value in the histogram.
+func (m SpaceportFrontendExhibitDwellTime) Record(
+    ctx context.Context,
+    value float64,
+    // URL-safe slug identifying the exhibit section.
+    spaceportExhibitId string,
+) {
+    m.inst.Record(ctx, value, metric.WithAttributes(
+        attribute.String("spaceport.exhibit.id", spaceportExhibitId),
+    ))
+}
+
+// An instrument for recording `spaceport.frontend.exhibit_views`
+type SpaceportFrontendExhibitViews struct {
+    inst metric.Float64Counter
+}
+
+// Construct a new instrument for measuring `spaceport.frontend.exhibit_views`
+func NewSpaceportFrontendExhibitViews(m metric.Meter) (SpaceportFrontendExhibitViews, error) {
+    i, err := m.Float64Counter(
+        "spaceport.frontend.exhibit_views",
+        metric.WithDescription("Number of times an exhibit section scrolled into the viewport."),
+        metric.WithUnit("{view}"),
+    )
+    if err != nil {
+        return SpaceportFrontendExhibitViews{}, err
+    }
+    return SpaceportFrontendExhibitViews{i}, nil
+}
+
+func spaceportFrontendExhibitViewsAttrToAttrs(in []OptionalAttr) []attribute.KeyValue {
+	out := make([]attribute.KeyValue, len(in))
+	for i, a := range in {
+		out[i] = a.attr()
+	}
+	return out
+}
+// Adds an increment to the existing count.
+func (m SpaceportFrontendExhibitViews) Add(
+    ctx context.Context,
+    inc float64,
+    // URL-safe slug identifying the exhibit section.
+    spaceportExhibitId string,
+    optAttrs ...OptionalAttr,
+) {
+    m.inst.Add(ctx, inc, metric.WithAttributes(
+        append(spaceportFrontendExhibitViewsAttrToAttrs(optAttrs),
+        attribute.String("spaceport.exhibit.id", spaceportExhibitId),
+        )...,
+    ))
+}
+
+// An instrument for recording `spaceport.frontend.page_views`
+type SpaceportFrontendPageViews struct {
+    inst metric.Float64Counter
+}
+
+// Construct a new instrument for measuring `spaceport.frontend.page_views`
+func NewSpaceportFrontendPageViews(m metric.Meter) (SpaceportFrontendPageViews, error) {
+    i, err := m.Float64Counter(
+        "spaceport.frontend.page_views",
+        metric.WithDescription("Page views counted by page name."),
+        metric.WithUnit("{view}"),
+    )
+    if err != nil {
+        return SpaceportFrontendPageViews{}, err
+    }
+    return SpaceportFrontendPageViews{i}, nil
+}
+// Adds an increment to the existing count.
+func (m SpaceportFrontendPageViews) Add(
+    ctx context.Context,
+    inc float64,
+    // Identifier for the page being viewed.
+    pageName string,
+) {
+    m.inst.Add(ctx, inc, metric.WithAttributes(
+        attribute.String("page.name", pageName),
+    ))
+}
+
+// An instrument for recording `spaceport.pricing.failures.count`
+type SpaceportPricingFailuresCount struct {
+    inst metric.Float64Counter
+}
+
+// Construct a new instrument for measuring `spaceport.pricing.failures.count`
+func NewSpaceportPricingFailuresCount(m metric.Meter) (SpaceportPricingFailuresCount, error) {
+    i, err := m.Float64Counter(
+        "spaceport.pricing.failures.count",
+        metric.WithDescription("Number of pricing service call failures from the API."),
+        metric.WithUnit("{failure}"),
+    )
+    if err != nil {
+        return SpaceportPricingFailuresCount{}, err
+    }
+    return SpaceportPricingFailuresCount{i}, nil
+}
+
+func spaceportPricingFailuresCountAttrToAttrs(in []OptionalAttr) []attribute.KeyValue {
+	out := make([]attribute.KeyValue, len(in))
+	for i, a := range in {
+		out[i] = a.attr()
+	}
+	return out
+}
+// Adds an increment to the existing count.
+func (m SpaceportPricingFailuresCount) Add(
+    ctx context.Context,
+    inc float64,
+    optAttrs ...OptionalAttr,
+) {
+    m.inst.Add(ctx, inc, metric.WithAttributes(
+        spaceportPricingFailuresCountAttrToAttrs(optAttrs)...,
+    ))
+}
+
 // An instrument for recording `spaceport.pricing.request.duration`
 type SpaceportPricingRequestDuration struct {
     inst metric.Float64Histogram
@@ -287,6 +462,10 @@ func NetworkProtocolVersion(networkProtocolVersion string) OptionalAttr {
 
 func SpaceportDepartureDestination(spaceportDepartureDestination string) OptionalAttr {
 	return attr{attribute.String("spaceport.departure.destination", spaceportDepartureDestination)}
+}
+
+func SpaceportExhibitTitle(spaceportExhibitTitle string) OptionalAttr {
+	return attr{attribute.String("spaceport.exhibit.title", spaceportExhibitTitle)}
 }
 
 func SpaceportPricingDisplayCurrency(spaceportPricingDisplayCurrency string) OptionalAttr {

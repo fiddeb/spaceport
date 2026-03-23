@@ -12,6 +12,12 @@ import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
 import { MeterProvider, PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
 import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-http";
 import { logs, SeverityNumber } from "@opentelemetry/api-logs";
+import {
+  SpaceportFrontendPageViews,
+  SpaceportFrontendBookings,
+  SpaceportFrontendExhibitViews,
+  SpaceportFrontendExhibitDwellTime,
+} from "@/semconv/metric";
 
 const serviceVersion = import.meta.env.VITE_SERVICE_VERSION || "0.0.0";
 
@@ -72,6 +78,12 @@ export const tracer = trace.getTracer("spaceport-frontend", serviceVersion);
 export const logger = logs.getLogger("spaceport-frontend", serviceVersion);
 export const meter = metrics.getMeter("spaceport-frontend", serviceVersion);
 export { SeverityNumber };
+
+// --- Semconv metric instruments (instantiated once, reused across pages) ---
+export const pageViewCounter = new SpaceportFrontendPageViews(meter);
+export const bookingCounter = new SpaceportFrontendBookings(meter);
+export const exhibitViewCounter = new SpaceportFrontendExhibitViews(meter);
+export const exhibitDwellHistogram = new SpaceportFrontendExhibitDwellTime(meter);
 
 /**
  * Fetch with W3C trace context propagation.

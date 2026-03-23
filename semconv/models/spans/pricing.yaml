@@ -36,3 +36,40 @@ groups:
       - ref: spaceport.recommendations.error
         requirement_level:
           conditionally_required: if the recommendations service call failed
+
+  - id: span.spaceport.pricing.calculate.server
+    type: span
+    span_kind: server
+    brief: Server-side price calculation in the pricing service.
+    stability: development
+    attributes:
+      - ref: spaceport.departure.id
+        requirement_level: required
+      - ref: spaceport.seat.class
+        requirement_level: required
+      - ref: spaceport.pricing.total
+        requirement_level: recommended
+      - ref: spaceport.pricing.promo_applied
+        requirement_level: recommended
+      - ref: spaceport.pricing.base_currency
+        requirement_level: recommended
+      - ref: spaceport.pricing.display_currency
+        requirement_level: recommended
+
+  - id: span.spaceport.pricing.recommend.server
+    type: span
+    span_kind: server
+    brief: Server-side recommendation generation in the pricing service.
+    stability: development
+    attributes:
+      - ref: spaceport.departure.id
+        requirement_level: required
+
+  - id: span.spaceport.api.call_recommendation_service.client
+    type: span
+    span_kind: client
+    brief: Outbound call from the API to the recommendation service.
+    stability: development
+    attributes:
+      - ref: spaceport.departure.id
+        requirement_level: recommended

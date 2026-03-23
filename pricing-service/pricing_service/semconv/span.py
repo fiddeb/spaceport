@@ -13,6 +13,34 @@ from opentelemetry.trace import SpanKind, Tracer
 
 from . import attribute
 
+SPAN_SPACEPORT_API_CALL_RECOMMENDATION_SERVICE_CLIENT_NAME: str = "spaceport.api.call_recommendation_service.client"
+
+
+def start_spaceport_api_call_recommendation_service_client(
+    tracer: Tracer,
+) -> tuple:
+    """Outbound call from the API to the recommendation service."""
+    attrs: dict[str, str | int | float | bool] = {}
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_API_CALL_RECOMMENDATION_SERVICE_CLIENT_NAME,
+        kind=SpanKind.CLIENT,
+        attributes=attrs,
+    )
+
+SPAN_SPACEPORT_APP_LOAD_CURRENCIES_NAME: str = "spaceport.app.load_currencies"
+
+
+def start_spaceport_app_load_currencies(
+    tracer: Tracer,
+) -> tuple:
+    """Loading available currencies from the API on app startup."""
+    attrs: dict[str, str | int | float | bool] = {}
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_APP_LOAD_CURRENCIES_NAME,
+        kind=SpanKind.INTERNAL,
+        attributes=attrs,
+    )
+
 SPAN_SPACEPORT_BOOKING_CREATE_SERVER_NAME: str = "spaceport.booking.create.server"
 
 
@@ -29,7 +57,7 @@ def start_spaceport_booking_create_server(
     attrs[attribute.SPACEPORT_BOOKING_STATUS] = spaceport_booking_status
     attrs[attribute.SPACEPORT_DEPARTURE_ID] = spaceport_departure_id
     attrs[attribute.SPACEPORT_SEAT_CLASS] = spaceport_seat_class
-    return tracer.start_span(
+    return tracer.start_as_current_span(
         name=SPAN_SPACEPORT_BOOKING_CREATE_SERVER_NAME,
         kind=SpanKind.SERVER,
         attributes=attrs,
@@ -43,7 +71,7 @@ def start_spaceport_booking_list_server(
 ) -> tuple:
     """Handles a request to list all bookings from the API."""
     attrs: dict[str, str | int | float | bool] = {}
-    return tracer.start_span(
+    return tracer.start_as_current_span(
         name=SPAN_SPACEPORT_BOOKING_LIST_SERVER_NAME,
         kind=SpanKind.SERVER,
         attributes=attrs,
@@ -57,9 +85,25 @@ def start_spaceport_departure_list_server(
 ) -> tuple:
     """Handles a request to list available departures from the API."""
     attrs: dict[str, str | int | float | bool] = {}
-    return tracer.start_span(
+    return tracer.start_as_current_span(
         name=SPAN_SPACEPORT_DEPARTURE_LIST_SERVER_NAME,
         kind=SpanKind.SERVER,
+        attributes=attrs,
+    )
+
+SPAN_SPACEPORT_EXHIBIT_VIEW_NAME: str = "spaceport.exhibit.view"
+
+
+def start_spaceport_exhibit_view(
+    tracer: Tracer,
+    spaceport_exhibit_id: str,
+) -> tuple:
+    """Tracks a single exhibit visible in the viewport, linked to the page span."""
+    attrs: dict[str, str | int | float | bool] = {}
+    attrs[attribute.SPACEPORT_EXHIBIT_ID] = spaceport_exhibit_id
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_EXHIBIT_VIEW_NAME,
+        kind=SpanKind.INTERNAL,
         attributes=attrs,
     )
 
@@ -73,8 +117,125 @@ def start_spaceport_pricing_calculate_client(
     """Outbound call from the API to the pricing service to calculate a fare."""
     attrs: dict[str, str | int | float | bool] = {}
     attrs[attribute.SPACEPORT_SEAT_CLASS] = spaceport_seat_class
-    return tracer.start_span(
+    return tracer.start_as_current_span(
         name=SPAN_SPACEPORT_PRICING_CALCULATE_CLIENT_NAME,
         kind=SpanKind.CLIENT,
+        attributes=attrs,
+    )
+
+SPAN_SPACEPORT_PRICING_CALCULATE_SERVER_NAME: str = "spaceport.pricing.calculate.server"
+
+
+def start_spaceport_pricing_calculate_server(
+    tracer: Tracer,
+    spaceport_departure_id: str,
+    spaceport_seat_class: str,
+) -> tuple:
+    """Server-side price calculation in the pricing service."""
+    attrs: dict[str, str | int | float | bool] = {}
+    attrs[attribute.SPACEPORT_DEPARTURE_ID] = spaceport_departure_id
+    attrs[attribute.SPACEPORT_SEAT_CLASS] = spaceport_seat_class
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_PRICING_CALCULATE_SERVER_NAME,
+        kind=SpanKind.SERVER,
+        attributes=attrs,
+    )
+
+SPAN_SPACEPORT_PRICING_RECOMMEND_SERVER_NAME: str = "spaceport.pricing.recommend.server"
+
+
+def start_spaceport_pricing_recommend_server(
+    tracer: Tracer,
+    spaceport_departure_id: str,
+) -> tuple:
+    """Server-side recommendation generation in the pricing service."""
+    attrs: dict[str, str | int | float | bool] = {}
+    attrs[attribute.SPACEPORT_DEPARTURE_ID] = spaceport_departure_id
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_PRICING_RECOMMEND_SERVER_NAME,
+        kind=SpanKind.SERVER,
+        attributes=attrs,
+    )
+
+SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_NAME: str = "spaceport.user.browse_departures"
+
+
+def start_spaceport_user_browse_departures(
+    tracer: Tracer,
+) -> tuple:
+    """Tracks a user browsing the departure list page."""
+    attrs: dict[str, str | int | float | bool] = {}
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_NAME,
+        kind=SpanKind.INTERNAL,
+        attributes=attrs,
+    )
+
+SPAN_SPACEPORT_USER_CHANGE_CURRENCY_NAME: str = "spaceport.user.change_currency"
+
+
+def start_spaceport_user_change_currency(
+    tracer: Tracer,
+    spaceport_pricing_base_currency: str,
+    spaceport_pricing_display_currency: str,
+) -> tuple:
+    """User switches the display currency in the frontend."""
+    attrs: dict[str, str | int | float | bool] = {}
+    attrs[attribute.SPACEPORT_PRICING_BASE_CURRENCY] = spaceport_pricing_base_currency
+    attrs[attribute.SPACEPORT_PRICING_DISPLAY_CURRENCY] = spaceport_pricing_display_currency
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_USER_CHANGE_CURRENCY_NAME,
+        kind=SpanKind.INTERNAL,
+        attributes=attrs,
+    )
+
+SPAN_SPACEPORT_USER_PLACE_BOOKING_NAME: str = "spaceport.user.place_booking"
+
+
+def start_spaceport_user_place_booking(
+    tracer: Tracer,
+    spaceport_departure_id: str,
+    spaceport_seat_class: str,
+) -> tuple:
+    """Tracks a user submitting a booking from the frontend."""
+    attrs: dict[str, str | int | float | bool] = {}
+    attrs[attribute.SPACEPORT_DEPARTURE_ID] = spaceport_departure_id
+    attrs[attribute.SPACEPORT_SEAT_CLASS] = spaceport_seat_class
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_USER_PLACE_BOOKING_NAME,
+        kind=SpanKind.INTERNAL,
+        attributes=attrs,
+    )
+
+SPAN_SPACEPORT_USER_VIEW_DEPARTURE_NAME: str = "spaceport.user.view_departure"
+
+
+def start_spaceport_user_view_departure(
+    tracer: Tracer,
+    spaceport_departure_id: str,
+) -> tuple:
+    """Tracks a user viewing a specific departure detail page."""
+    attrs: dict[str, str | int | float | bool] = {}
+    attrs[attribute.SPACEPORT_DEPARTURE_ID] = spaceport_departure_id
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_USER_VIEW_DEPARTURE_NAME,
+        kind=SpanKind.INTERNAL,
+        attributes=attrs,
+    )
+
+SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME: str = "spaceport.user.view_information_desk"
+
+
+def start_spaceport_user_view_information_desk(
+    tracer: Tracer,
+    spaceport_exhibit_count: int,
+) -> tuple:
+    """Tracks a user session on the Information Desk page, from mount to unmount. Child exhibit_viewed events are added as the user scrolls.
+"""
+    attrs: dict[str, str | int | float | bool] = {}
+    attrs[attribute.SPACEPORT_EXHIBIT_COUNT] = spaceport_exhibit_count
+    return tracer.start_as_current_span(
+        name=SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME,
+        kind=SpanKind.INTERNAL,
         attributes=attrs,
     )

@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/metric"
 
 	"github.com/fiddeb/spaceport/api/internal/semconv"
 )
@@ -12,7 +11,7 @@ var (
 	BookingActive        semconv.SpaceportBookingActive
 	DepartureActive      semconv.SpaceportDepartureActive
 	PricingReqDuration   semconv.SpaceportPricingRequestDuration
-	PricingFailuresCount metric.Int64Counter
+	PricingFailuresCount semconv.SpaceportPricingFailuresCount
 )
 
 func init() {
@@ -22,9 +21,5 @@ func init() {
 	BookingActive, _ = semconv.NewSpaceportBookingActive(meter)
 	DepartureActive, _ = semconv.NewSpaceportDepartureActive(meter)
 	PricingReqDuration, _ = semconv.NewSpaceportPricingRequestDuration(meter)
-
-	PricingFailuresCount, _ = meter.Int64Counter("spaceport.pricing.failures.count",
-		metric.WithDescription("Number of pricing service call failures"),
-		metric.WithUnit("{failure}"),
-	)
+	PricingFailuresCount, _ = semconv.NewSpaceportPricingFailuresCount(meter)
 }

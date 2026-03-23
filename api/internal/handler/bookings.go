@@ -13,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/codes"
-	otelmetric "go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/fiddeb/spaceport/api/internal/metrics"
@@ -70,7 +69,7 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 		h.Logger.ErrorContext(ctx, "pricing call failed", "error", err, "booking_id", bookingID)
 		span.SetStatus(codes.Error, err.Error())
 		metrics.PricingFailuresCount.Add(ctx, 1,
-			otelmetric.WithAttributes(semconv.AttrSpaceportSeatClass(req.SeatClass)),
+			semconv.SpaceportSeatClass(req.SeatClass),
 		)
 
 		h.insertBooking(ctx, bookingID, req, 0, currency, "failed", err.Error())

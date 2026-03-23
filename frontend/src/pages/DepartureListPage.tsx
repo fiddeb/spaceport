@@ -5,11 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useSpan, SpanStatusCode } from "@/hooks/useSpan";
-import { logger, meter, SeverityNumber, tracedFetch } from "@/instrumentation";
-
-const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {
-  description: "Page views by page name",
-});
+import { logger, pageViewCounter, SeverityNumber, tracedFetch } from "@/instrumentation";
 
 interface Departure {
   id: number;
@@ -28,7 +24,7 @@ export function DepartureListPage() {
   const { spanRef, contextRef, endSpan } = useSpan("user.browse_departures");
 
   useEffect(() => {
-    pageViewCounter.add(1, { "page.name": "departure_list" });
+    pageViewCounter.add(1, "departure_list");
     logger.emit({ severityNumber: SeverityNumber.INFO, body: "User viewing departure list" });
   }, []);
 

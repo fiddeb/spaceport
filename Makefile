@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help dev build push deploy test lint generate generate-go generate-python generate-grafana docs link-chart load-test
+.PHONY: help dev build push deploy test lint generate generate-go generate-python generate-typescript generate-grafana docs link-chart load-test
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) \
@@ -30,13 +30,16 @@ test: ## Run Playwright smoke tests (requires app running at PLAYWRIGHT_BASE_URL
 lint: ## Validate the Weaver semantic convention registry
 	weaver registry check -r semconv/models/ -p semconv/policies/
 
-generate: generate-go generate-python generate-grafana ## Generate code from the Weaver semantic convention registry
+generate: generate-go generate-python generate-typescript generate-grafana ## Generate code from the Weaver semantic convention registry
 
 generate-go: ## Generate Go semconv code
 	weaver registry generate go api/internal/semconv -r semconv/models/ -t semconv/templates/registry
 
 generate-python: ## Generate Python semconv code
 	weaver registry generate python pricing-service/pricing_service/semconv -r semconv/models/ -t semconv/templates/registry
+
+generate-typescript: ## Generate TypeScript semconv code
+	weaver registry generate typescript frontend/src/semconv -r semconv/models/ -t semconv/templates/registry
 
 generate-grafana: ## Generate Grafana dashboard from the Weaver registry
 	weaver registry generate grafana docs/grafana -r semconv/models/ -t semconv/templates/registry

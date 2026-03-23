@@ -9,6 +9,10 @@ import {
 import type { ReactNode } from "react";
 import { tracer, tracedFetch } from "@/instrumentation";
 import { trace, context } from "@opentelemetry/api";
+import {
+  startSpaceportAppLoadCurrencies,
+  startSpaceportUserChangeCurrency,
+} from "@/semconv/span";
 import { Spinner } from "@/components/ui/spinner";
 
 interface Currency {
@@ -37,7 +41,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   const prevCurrency = useRef(selectedCurrency);
 
   useEffect(() => {
-    const span = tracer.startSpan("app.load_currencies");
+    const span = startSpaceportAppLoadCurrencies(tracer);
     const ctx = trace.setSpan(context.active(), span);
     tracedFetch("/api/currencies", undefined, ctx)
       .then((r) => r.json())
@@ -63,12 +67,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       prevCurrency.current = code;
 
       if (prev !== code) {
-        const span = tracer.startSpan("user.change_currency", {
-          attributes: {
-            "spaceport.pricing.base_currency": "UNC",
-            "spaceport.pricing.display_currency": code,
-          },
-        });
+        const span = startSpaceportUserChangeCurrency(tracer, "UNC", code);
         span.addEvent("exchange_completed");
         span.end();
       }

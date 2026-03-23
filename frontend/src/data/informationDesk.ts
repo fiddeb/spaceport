@@ -58,6 +58,9 @@ export const pageConfig = {
   subtitle:
     "What observability is, why telemetry quality matters, " +
     "and what this demo actually shows you \u2014 in about ten minutes.",
+  /** Cover image shown in the header hero section */
+  coverImage: "/info/cover.png",
+  coverImageAlt: "Spaceport observability overview",
   /** Hint shown below the subtitle */
   scrollHint: "Scroll to begin \u2193",
   /** Closing slide shown after the last exhibit */
@@ -114,6 +117,7 @@ export const exhibits: InfoExhibit[] = [
     id: "why-observability",
     number: 2,
     title: "Why Do We Need It?",
+    image: "/info/complex.png",
     intro:
       "The need for observability has grown directly from the increasing complexity of our software architecture. In modern microservice systems with hundreds of services and thousands of connections, no single person can hold the full system in their head. We cannot debug these systems locally on a laptop \u2014 we must be able to observe them in production.",
     slideTitle: "Complexity Demands a New Approach",
