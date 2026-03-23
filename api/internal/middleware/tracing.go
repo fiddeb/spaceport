@@ -41,7 +41,7 @@ func Tracing() gin.HandlerFunc {
 			semconv.AttrHttpResponseStatusCodeKey.Int(status),
 			semconv.AttrUrlPathKey.String(c.Request.URL.Path),
 		)
-		if status >= 500 {
+		if status >= 400 {
 			span.SetStatus(codes.Error, fmt.Sprintf("HTTP %d", status))
 		}
 	}

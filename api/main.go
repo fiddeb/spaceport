@@ -85,11 +85,11 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(middleware.Tracing())
 	r.Use(middleware.HTTPMetrics())
-	r.Use(cors.New(cors.Config{
+	r.Use(middleware.InstrumentedCORS(cors.Config{
 		AllowOrigins: []string{frontendOrigin},
 		AllowMethods: []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "traceparent", "tracestate"},
-	}))
+	}, logger))
 
 	api := r.Group("/api")
 	api.GET("/departures", depHandler.ListDepartures)
