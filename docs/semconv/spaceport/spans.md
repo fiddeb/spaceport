@@ -184,3 +184,28 @@ Outbound call from the API to the pricing service to calculate a fare.
 
 
 
+
+## Span `span.spaceport.user.view_information_desk`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+Tracks a user session on the Information Desk page, from mount to unmount. Child exhibit_viewed events are added as the user scrolls.
+
+**Span kind** SHOULD be `INTERNAL`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.user.view_information_desk` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.exhibit.count`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | int | Total number of exhibits available in the presentation. | `7` |
+
+
+
+
