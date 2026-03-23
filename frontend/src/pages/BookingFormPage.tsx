@@ -13,13 +13,15 @@ import {
 } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { tracer, logger, meter, SeverityNumber, tracedFetch } from "@/instrumentation";
+import { tracer, logger, bookingCounter, SeverityNumber, tracedFetch } from "@/instrumentation";
 import { SpanStatusCode, trace, context } from "@opentelemetry/api";
 import { useCurrency } from "@/contexts/CurrencyContext";
-
-const bookingCounter = meter.createCounter("spaceport.frontend.bookings", {
-  description: "Booking attempts by outcome",
-});
+import {
+  SPACEPORT_BOOKING_ID,
+  SPACEPORT_DEPARTURE_ID,
+  SPACEPORT_SEAT_CLASS,
+} from "@/semconv/attribute";
+import { startSpaceportUserPlaceBooking } from "@/semconv/span";
 
 type BookingRequestError = Error & {
   httpStatus?: number;
@@ -51,12 +53,7 @@ export function BookingFormPage() {
     setError(null);
     setSubmitting(true);
 
-    const span = tracer.startSpan("user.place_booking", {
-      attributes: {
-        "spaceport.departure.id": id ?? "",
-        "spaceport.seat.class": seatClass,
-      },
-    });
+    const span = startSpaceportUserPlaceBooking(tracer, id ?? "", seatClass);
     const ctx = trace.setSpan(context.active(), span);
 
     try {
@@ -93,19 +90,19 @@ export function BookingFormPage() {
 
       const data = await resp.json();
       span.addEvent("booking_completed", {
-        "spaceport.booking.id": data.booking_id,
+        [SPACEPORT_BOOKING_ID]: data.booking_id,
       });
       span.end();
 
       const okSpanCtx = span.spanContext();
-      bookingCounter.add(1, { outcome: "success", "spaceport.seat.class": seatClass });
+      bookingCounter.add(1, "success", { spaceport_seat_class: seatClass });
       logger.emit({
         severityNumber: SeverityNumber.INFO,
         body: `Booking created: ${data.booking_id}`,
         attributes: {
-          "spaceport.booking.id": data.booking_id,
-          "spaceport.departure.id": id ?? "",
-          "spaceport.seat.class": seatClass,
+          [SPACEPORT_BOOKING_ID]: data.booking_id,
+          [SPACEPORT_DEPARTURE_ID]: id ?? "",
+          [SPACEPORT_SEAT_CLASS]: seatClass,
           "spaceport.booking.currency": data.currency,
           "spaceport.booking.total_price": data.total_price,
           "trace_id": okSpanCtx.traceId,
@@ -140,20 +137,20 @@ export function BookingFormPage() {
       });
       span.end();
 
-      bookingCounter.add(1, { outcome: "failure", "spaceport.seat.class": seatClass });
+      bookingCounter.add(1, "failure", { spaceport_seat_class: seatClass });
       const errSpanCtx = span.spanContext();
       logger.emit({
         severityNumber: SeverityNumber.ERROR,
         body: `Booking failed: ${message}`,
         attributes: {
-          "spaceport.departure.id": id ?? "",
-          "spaceport.seat.class": seatClass,
+          [SPACEPORT_DEPARTURE_ID]: id ?? "",
+          [SPACEPORT_SEAT_CLASS]: seatClass,
           "spaceport.booking.currency": selectedCurrency,
           "spaceport.passenger.name": passengerName,
           ...(httpStatus && { "http.response.status_code": httpStatus }),
           ...(errorDetail && { "http.response.error": errorDetail }),
           ...(rawBody && { "http.response.body": rawBody }),
-          ...(serverBookingId && { "spaceport.booking.id": serverBookingId }),
+          ...(serverBookingId && { [SPACEPORT_BOOKING_ID]: serverBookingId }),
           "error.type": err instanceof Error ? err.name : "Unknown",
           "trace_id": errSpanCtx.traceId,
           "span_id": errSpanCtx.spanId,

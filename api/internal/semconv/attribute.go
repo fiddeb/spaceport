@@ -206,6 +206,12 @@ const AttrSpaceportDepartureDestinationKey = attribute.Key("spaceport.departure.
 // Unique identifier for the departure.
 const AttrSpaceportDepartureIdKey = attribute.Key("spaceport.departure.id")
 
+// URL-safe slug identifying the exhibit section.
+const AttrSpaceportExhibitIdKey = attribute.Key("spaceport.exhibit.id")
+
+// Human-readable title of the exhibit.
+const AttrSpaceportExhibitTitleKey = attribute.Key("spaceport.exhibit.title")
+
 // The base currency used for pricing. Always "UNC".
 const AttrSpaceportPricingBaseCurrencyKey = attribute.Key("spaceport.pricing.base_currency")
 
@@ -282,6 +288,12 @@ const AttrUrlTemplateKey = attribute.Key("url.template")
 // last part of the domain name. For example, the top level domain for
 // example.com is `com`.
 const AttrUrlTopLevelDomainKey = attribute.Key("url.top_level_domain")
+
+// Total number of exhibits available in the presentation.
+const AttrSpaceportExhibitCountKey = attribute.Key("spaceport.exhibit.count")
+
+// Display order number of the exhibit (1-based).
+const AttrSpaceportExhibitNumberKey = attribute.Key("spaceport.exhibit.number")
 
 // --- Attribute value helpers ---
 
@@ -580,6 +592,16 @@ func AttrSpaceportDepartureId(val string) attribute.KeyValue {
 	return AttrSpaceportDepartureIdKey.String(val)
 }
 
+// URL-safe slug identifying the exhibit section.
+func AttrSpaceportExhibitId(val string) attribute.KeyValue {
+	return AttrSpaceportExhibitIdKey.String(val)
+}
+
+// Human-readable title of the exhibit.
+func AttrSpaceportExhibitTitle(val string) attribute.KeyValue {
+	return AttrSpaceportExhibitTitleKey.String(val)
+}
+
 // The base currency used for pricing. Always "UNC".
 func AttrSpaceportPricingBaseCurrency(val string) attribute.KeyValue {
 	return AttrSpaceportPricingBaseCurrencyKey.String(val)
@@ -695,6 +717,16 @@ func AttrUrlTemplate(val string) attribute.KeyValue {
 // example.com is `com`.
 func AttrUrlTopLevelDomain(val string) attribute.KeyValue {
 	return AttrUrlTopLevelDomainKey.String(val)
+}
+
+// Total number of exhibits available in the presentation.
+func AttrSpaceportExhibitCount(val int) attribute.KeyValue {
+	return AttrSpaceportExhibitCountKey.Int(val)
+}
+
+// Display order number of the exhibit (1-based).
+func AttrSpaceportExhibitNumber(val int) attribute.KeyValue {
+	return AttrSpaceportExhibitNumberKey.Int(val)
 }
 
 // --- Enum values ---

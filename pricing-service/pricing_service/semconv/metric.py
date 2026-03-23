@@ -180,6 +180,138 @@ class SpaceportDepartureActive:
         self._inst.add(value, attributes=attrs)
 
 
+class SpaceportFrontendBookings:
+    """Booking attempts made from the frontend."""
+
+    name = "spaceport.frontend.bookings"
+    unit = "{booking}"
+    description = "Booking attempts made from the frontend."
+
+    def __init__(self, meter: Meter) -> None:
+        self._inst = meter.create_counter(
+            name=self.name,
+            description=self.description,
+            unit=self.unit,
+        )
+
+    def add(
+        self,
+        value: float,
+        outcome: str,
+        spaceport_seat_class: Optional[str] = None,
+    ) -> None:
+        attrs: dict[str, str | int | float | bool | Sequence] = {
+            attribute.OUTCOME: outcome,
+        }
+        if spaceport_seat_class is not None:
+            attrs[attribute.SPACEPORT_SEAT_CLASS] = spaceport_seat_class
+        self._inst.add(value, attributes=attrs)
+
+
+class SpaceportFrontendExhibit_dwell_time:
+    """Time an exhibit remained visible in the viewport."""
+
+    name = "spaceport.frontend.exhibit_dwell_time"
+    unit = "s"
+    description = "Time an exhibit remained visible in the viewport."
+
+    def __init__(self, meter: Meter) -> None:
+        self._inst = meter.create_histogram(
+            name=self.name,
+            description=self.description,
+            unit=self.unit,
+        )
+
+    def record(
+        self,
+        value: float,
+        spaceport_exhibit_id: str,
+    ) -> None:
+        attrs: dict[str, str | int | float | bool | Sequence] = {
+            attribute.SPACEPORT_EXHIBIT_ID: spaceport_exhibit_id,
+        }
+        self._inst.record(value, attributes=attrs)
+
+
+class SpaceportFrontendExhibit_views:
+    """Number of times an exhibit section scrolled into the viewport."""
+
+    name = "spaceport.frontend.exhibit_views"
+    unit = "{view}"
+    description = "Number of times an exhibit section scrolled into the viewport."
+
+    def __init__(self, meter: Meter) -> None:
+        self._inst = meter.create_counter(
+            name=self.name,
+            description=self.description,
+            unit=self.unit,
+        )
+
+    def add(
+        self,
+        value: float,
+        spaceport_exhibit_id: str,
+        spaceport_exhibit_title: Optional[str] = None,
+    ) -> None:
+        attrs: dict[str, str | int | float | bool | Sequence] = {
+            attribute.SPACEPORT_EXHIBIT_ID: spaceport_exhibit_id,
+        }
+        if spaceport_exhibit_title is not None:
+            attrs[attribute.SPACEPORT_EXHIBIT_TITLE] = spaceport_exhibit_title
+        self._inst.add(value, attributes=attrs)
+
+
+class SpaceportFrontendPage_views:
+    """Page views counted by page name."""
+
+    name = "spaceport.frontend.page_views"
+    unit = "{view}"
+    description = "Page views counted by page name."
+
+    def __init__(self, meter: Meter) -> None:
+        self._inst = meter.create_counter(
+            name=self.name,
+            description=self.description,
+            unit=self.unit,
+        )
+
+    def add(
+        self,
+        value: float,
+        page_name: str,
+    ) -> None:
+        attrs: dict[str, str | int | float | bool | Sequence] = {
+            attribute.PAGE_NAME: page_name,
+        }
+        self._inst.add(value, attributes=attrs)
+
+
+class SpaceportPricingFailuresCount:
+    """Number of pricing service call failures from the API."""
+
+    name = "spaceport.pricing.failures.count"
+    unit = "{failure}"
+    description = "Number of pricing service call failures from the API."
+
+    def __init__(self, meter: Meter) -> None:
+        self._inst = meter.create_counter(
+            name=self.name,
+            description=self.description,
+            unit=self.unit,
+        )
+
+    def add(
+        self,
+        value: float,
+        spaceport_seat_class: Optional[str] = None,
+    ) -> None:
+        attrs: dict[str, str | int | float | bool | Sequence] = {
+        }
+        if spaceport_seat_class is not None:
+            attrs[attribute.SPACEPORT_SEAT_CLASS] = spaceport_seat_class
+        self._inst.add(value, attributes=attrs)
+
+
 class SpaceportPricingRequestDuration:
     """Duration of price calculation requests from the API to the pricing service."""
 

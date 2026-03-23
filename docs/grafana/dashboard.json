@@ -459,6 +459,43 @@
     },
     {
       "type": "timeseries",
+      "title": "Number of pricing service call failures from the API.",
+      "description": "Metric: `spaceport.pricing.failures.count`\nInstrument: counter\nUnit: {failure}",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 74
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": ["mean", "max"]
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(rate({__name__=\"spaceport.pricing.failures.count\"}[$__rate_interval]))",
+          "legendFormat": "total rate",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
       "title": "Duration of price calculation requests from the API to the pricing service.",
       "description": "Metric: `spaceport.pricing.request.duration`\nInstrument: histogram\nUnit: ms",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
@@ -472,7 +509,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 74
+        "y": 82
       },
       "options": {
         "tooltip": {

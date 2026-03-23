@@ -16,6 +16,7 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from pricing_service.logging_config import setup_logging
 from pricing_service.pricing import SEAT_CLASSES, calculate_price
 from pricing_service.recommendations import get_recommendations
+from pricing_service.semconv import attribute
 from pricing_service.telemetry import setup_telemetry
 
 # --- OTel + logging init (before app creation) ---
@@ -88,7 +89,7 @@ async def price(
     currency: Optional[str] = Query(None),
 ) -> dict:
     span = trace.get_current_span()
-    span.set_attribute("spaceport.departure.id", departure_id)
+    span.set_attribute(attribute.SPACEPORT_DEPARTURE_ID, departure_id)
     await _apply_chaos(span)
 
     # Validate currency if provided
@@ -112,7 +113,7 @@ async def price(
 @app.get("/recommendations/{departure_id}")
 async def recommendations(departure_id: int) -> dict:
     span = trace.get_current_span()
-    span.set_attribute("spaceport.departure.id", departure_id)
+    span.set_attribute(attribute.SPACEPORT_DEPARTURE_ID, departure_id)
     await _apply_chaos(span)
 
     # Baseline latency

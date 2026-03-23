@@ -6,23 +6,23 @@ import { useSpan } from "@/hooks/useSpan";
 import {
   tracer,
   logger,
-  meter,
+  pageViewCounter,
+  exhibitViewCounter,
+  exhibitDwellHistogram,
   SeverityNumber,
 } from "@/instrumentation";
+import {
+  SPACEPORT_EXHIBIT_ID,
+  SPACEPORT_EXHIBIT_TITLE,
+  SPACEPORT_EXHIBIT_NUMBER,
+} from "@/semconv/attribute";
+import {
+  SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME,
+  SPAN_SPACEPORT_EXHIBIT_VIEW_NAME,
+} from "@/semconv/span";
 import type { Span } from "@opentelemetry/api";
 
-// Metrics — reuse the existing page_views counter, add exhibit-specific ones
-const pageViewCounter = meter.createCounter("spaceport.frontend.page_views", {
-  description: "Page views by page name",
-});
-const exhibitViewCounter = meter.createCounter(
-  "spaceport.frontend.exhibit_views",
-  { description: "Exhibits scrolled into view" },
-);
-const exhibitDwellHistogram = meter.createHistogram(
-  "spaceport.frontend.exhibit_dwell_time",
-  { description: "Seconds an exhibit was in the viewport", unit: "s" },
-);
+// Metrics — instantiated once in instrumentation.ts, imported here
 
 export function InformationDeskPage() {
   const [activeId, setActiveId] = useState<string | null>(
@@ -30,7 +30,7 @@ export function InformationDeskPage() {
   );
 
   // --- Telemetry: page-level span ---
-  const { spanRef } = useSpan("user.view_information_desk", {
+  const { spanRef } = useSpan(SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME, {
     "spaceport.exhibit.count": exhibits.length,
   });
 
@@ -43,7 +43,7 @@ export function InformationDeskPage() {
 
   // Record page view once on mount
   useEffect(() => {
-    pageViewCounter.add(1, { "page.name": "information_desk" });
+    pageViewCounter.add(1, "information_desk");
     logger.emit({
       severityNumber: SeverityNumber.INFO,
       body: "User viewing information desk",
@@ -95,11 +95,11 @@ export function InformationDeskPage() {
               const title = exhibit?.title ?? id;
               const pageSpanCtx = spanRef.current?.spanContext();
 
-              const exhibitSpan = tracer.startSpan("exhibit.view", {
+              const exhibitSpan = tracer.startSpan(SPAN_SPACEPORT_EXHIBIT_VIEW_NAME, {
                 attributes: {
-                  "spaceport.exhibit.id": id,
-                  "spaceport.exhibit.title": title,
-                  "spaceport.exhibit.number": exhibit?.number ?? 0,
+                  [SPACEPORT_EXHIBIT_ID]: id,
+                  [SPACEPORT_EXHIBIT_TITLE]: title,
+                  [SPACEPORT_EXHIBIT_NUMBER]: exhibit?.number ?? 0,
                 },
                 // Link back to the page session span — shows relation
                 // without making this a child span
@@ -115,19 +115,16 @@ export function InformationDeskPage() {
               const exhibit = exhibits.find((e) => e.id === id);
               const title = exhibit?.title ?? id;
 
-              exhibitViewCounter.add(1, {
-                "spaceport.exhibit.id": id,
-                "spaceport.exhibit.title": title,
-              });
+              exhibitViewCounter.add(1, id, { spaceport_exhibit_title: title });
               spanRef.current?.addEvent("exhibit_viewed", {
-                "spaceport.exhibit.id": id,
-                "spaceport.exhibit.title": title,
-                "spaceport.exhibit.number": exhibit?.number ?? 0,
+                [SPACEPORT_EXHIBIT_ID]: id,
+                [SPACEPORT_EXHIBIT_TITLE]: title,
+                [SPACEPORT_EXHIBIT_NUMBER]: exhibit?.number ?? 0,
               });
               logger.emit({
                 severityNumber: SeverityNumber.INFO,
                 body: `Exhibit viewed: ${title}`,
-                attributes: { "spaceport.exhibit.id": id },
+                attributes: { [SPACEPORT_EXHIBIT_ID]: id },
               });
             }
           } else {
@@ -142,9 +139,7 @@ export function InformationDeskPage() {
             if (start) {
               const dwell = (performance.now() - start) / 1000;
               dwellStart.current.delete(id);
-              exhibitDwellHistogram.record(dwell, {
-                "spaceport.exhibit.id": id,
-              });
+              exhibitDwellHistogram.record(dwell, id);
             }
           }
         }
@@ -168,9 +163,7 @@ export function InformationDeskPage() {
       // Flush remaining dwell times on unmount
       for (const [id, start] of dwellStart.current) {
         const dwell = (performance.now() - start) / 1000;
-        exhibitDwellHistogram.record(dwell, {
-          "spaceport.exhibit.id": id,
-        });
+        exhibitDwellHistogram.record(dwell, id);
       }
       dwellStart.current.clear();
     };

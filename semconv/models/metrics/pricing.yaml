@@ -26,3 +26,14 @@ groups:
     attributes:
       - ref: spaceport.departure.destination
         requirement_level: recommended
+
+  - id: metric.spaceport.pricing.failures.count
+    type: metric
+    metric_name: spaceport.pricing.failures.count
+    brief: Number of pricing service call failures from the API.
+    instrument: counter
+    unit: "{failure}"
+    stability: development
+    attributes:
+      - ref: spaceport.seat.class
+        requirement_level: recommended

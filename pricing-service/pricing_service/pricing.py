@@ -4,6 +4,9 @@ import hashlib
 
 from opentelemetry import trace
 
+from .semconv import attribute
+from .semconv.span import start_spaceport_pricing_calculate_server
+
 tracer = trace.get_tracer(__name__)
 
 BASE_PRICES = {
@@ -30,7 +33,11 @@ def _promo_applied(departure_id: int) -> bool:
 def calculate_price(
     departure_id: int, seat_class: str, currency: str = "UNC", rate: float = 1.0
 ) -> dict:
-    with tracer.start_as_current_span("pricing.calculate") as span:
+    with start_spaceport_pricing_calculate_server(
+        tracer,
+        spaceport_departure_id=str(departure_id),
+        spaceport_seat_class=seat_class,
+    ) as span:
         base = BASE_PRICES[seat_class]
         factor = _destination_factor(departure_id)
         base_price = round(base * factor, 2)
@@ -40,12 +47,10 @@ def calculate_price(
         total_unc = round(base_price * 0.85, 2) if promo_applied else base_price
         total_price = round(total_unc * rate, 2)
 
-        span.set_attribute("spaceport.departure.id", departure_id)
-        span.set_attribute("spaceport.seat.class", seat_class)
-        span.set_attribute("spaceport.pricing.total", total_price)
-        span.set_attribute("spaceport.pricing.promo_applied", promo_applied)
-        span.set_attribute("spaceport.pricing.base_currency", "UNC")
-        span.set_attribute("spaceport.pricing.display_currency", currency)
+        span.set_attribute(attribute.SPACEPORT_PRICING_TOTAL, total_price)
+        span.set_attribute(attribute.SPACEPORT_PRICING_PROMO_APPLIED, promo_applied)
+        span.set_attribute(attribute.SPACEPORT_PRICING_BASE_CURRENCY, "UNC")
+        span.set_attribute(attribute.SPACEPORT_PRICING_DISPLAY_CURRENCY, currency)
 
         return {
             "seat_class": seat_class,

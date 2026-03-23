@@ -1,0 +1,71 @@
+templates:
+  - pattern: metric.ts.j2
+    filter: >
+      .groups
+      | map(select(.type == "metric" and .instrument != "gauge"))
+      | . as $metrics
+      | {
+          metrics: $metrics,
+          unique_optional_attrs: (
+            $metrics
+            | map(.attributes // [])
+            | flatten
+            | map(select(.requirement_level != "required"))
+            | unique_by(.name)
+          )
+        }
+    application_mode: single
+    file_name: metric.ts
+  - pattern: attribute.ts.j2
+    filter: >
+      .groups
+      | map(select(.type == "attribute_group"))
+      | map(.attributes // [])
+      | flatten
+      | map(select(.name | (startswith("spaceport.") or startswith("http.") or startswith("url."))))
+      | sort_by(.name)
+      | { attributes: . }
+    application_mode: single
+    file_name: attribute.ts
+  - pattern: span.ts.j2
+    filter: >
+      .groups
+      | map(select(.type == "span"))
+      | { spans: . }
+    application_mode: single
+    file_name: span.ts
+comment_formats:
+  typescript:
+    format: markdown
+    prefix: "// "
+    indent_first_level_list_items: true
+    shortcut_reference_link: true
+    trim: true
+    word_wrap:
+      line_length: 80
+default_comment_format: typescript
+text_maps:
+  attribute_type_value:
+    string: string
+    string[]: string[]
+    int: number
+    int[]: number[]
+    double: number
+    double[]: number[]
+    boolean: boolean
+    boolean[]: boolean[]
+  metric_type_interface:
+    counter: Counter
+    updowncounter: UpDownCounter
+    histogram: Histogram
+    gauge: ObservableGauge
+  metric_type_create:
+    counter: createCounter
+    updowncounter: createUpDownCounter
+    histogram: createHistogram
+    gauge: createObservableGauge
+  metric_type_method:
+    counter: add
+    updowncounter: add
+    histogram: record
+    gauge: observe

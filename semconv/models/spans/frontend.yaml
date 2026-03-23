@@ -22,3 +22,67 @@ groups:
         requirement_level: recommended
       - ref: spaceport.exhibit.number
         requirement_level: recommended
+
+  - id: span.spaceport.user.browse_departures
+    type: span
+    span_kind: internal
+    brief: Tracks a user browsing the departure list page.
+    stability: development
+    attributes:
+      - ref: spaceport.departure.destination
+        requirement_level: opt_in
+
+  - id: span.spaceport.user.view_departure
+    type: span
+    span_kind: internal
+    brief: Tracks a user viewing a specific departure detail page.
+    stability: development
+    attributes:
+      - ref: spaceport.departure.id
+        requirement_level: required
+      - ref: spaceport.departure.destination
+        requirement_level: recommended
+
+  - id: span.spaceport.user.place_booking
+    type: span
+    span_kind: internal
+    brief: Tracks a user submitting a booking from the frontend.
+    stability: development
+    attributes:
+      - ref: spaceport.departure.id
+        requirement_level: required
+      - ref: spaceport.seat.class
+        requirement_level: required
+
+  - id: span.spaceport.exhibit.view
+    type: span
+    span_kind: internal
+    brief: Tracks a single exhibit visible in the viewport, linked to the page span.
+    stability: development
+    attributes:
+      - ref: spaceport.exhibit.id
+        requirement_level: required
+      - ref: spaceport.exhibit.title
+        requirement_level: recommended
+      - ref: spaceport.exhibit.number
+        requirement_level: recommended
+
+  - id: span.spaceport.app.load_currencies
+    type: span
+    span_kind: internal
+    brief: Loading available currencies from the API on app startup.
+    stability: development
+    attributes:
+      - ref: spaceport.pricing.display_currency
+        requirement_level: opt_in
+
+  - id: span.spaceport.user.change_currency
+    type: span
+    span_kind: internal
+    brief: User switches the display currency in the frontend.
+    stability: development
+    attributes:
+      - ref: spaceport.pricing.base_currency
+        requirement_level: required
+      - ref: spaceport.pricing.display_currency
+        requirement_level: required

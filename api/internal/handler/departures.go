@@ -166,7 +166,7 @@ func (h *DepartureHandler) callPricingService(ctx context.Context, departureID s
 }
 
 func (h *DepartureHandler) callRecommendationService(ctx context.Context, departureID string) (any, error) {
-	ctx, span := tracer.Start(ctx, "api.call_recommendation_service")
+	ctx, span := semconv.StartSpaceportApiCallRecommendationServiceClient(ctx, tracer)
 	defer span.End()
 
 	url := fmt.Sprintf("%s/recommendations/%s", h.PricingURL, departureID)

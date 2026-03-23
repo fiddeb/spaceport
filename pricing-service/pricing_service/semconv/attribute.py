@@ -132,6 +132,12 @@ SPACEPORT_DEPARTURE_DESTINATION: str = "spaceport.departure.destination"
 # Unique identifier for the departure.
 SPACEPORT_DEPARTURE_ID: str = "spaceport.departure.id"
 
+# URL-safe slug identifying the exhibit section.
+SPACEPORT_EXHIBIT_ID: str = "spaceport.exhibit.id"
+
+# Human-readable title of the exhibit.
+SPACEPORT_EXHIBIT_TITLE: str = "spaceport.exhibit.title"
+
 # The base currency used for pricing. Always "UNC".
 SPACEPORT_PRICING_BASE_CURRENCY: str = "spaceport.pricing.base_currency"
 
@@ -208,6 +214,12 @@ URL_TEMPLATE: str = "url.template"
 # last part of the domain name. For example, the top level domain for
 # example.com is `com`.
 URL_TOP_LEVEL_DOMAIN: str = "url.top_level_domain"
+
+# Total number of exhibits available in the presentation.
+SPACEPORT_EXHIBIT_COUNT: str = "spaceport.exhibit.count"
+
+# Display order number of the exhibit (1-based).
+SPACEPORT_EXHIBIT_NUMBER: str = "spaceport.exhibit.number"
 
 # --- Enum values ---
 
