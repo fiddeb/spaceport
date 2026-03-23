@@ -196,6 +196,16 @@ export function InformationDeskPage() {
         <p className="mt-4 max-w-[60ch] text-lg text-muted-foreground">
           {pageConfig.subtitle}
         </p>
+        {/* Cover image */}
+        {pageConfig.coverImage && (
+          <div className="mt-8 max-w-2xl overflow-hidden border border-border">
+            <img
+              src={pageConfig.coverImage}
+              alt={pageConfig.coverImageAlt ?? ""}
+              className="w-full object-cover"
+            />
+          </div>
+        )}
         <p className="mt-8 font-mono text-xs text-muted-foreground/50">
           {pageConfig.scrollHint}
         </p>
