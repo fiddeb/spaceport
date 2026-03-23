@@ -302,8 +302,6 @@ export class SpaceportFrontendExhibitDwellTime {
   record(
     value: number,
     spaceport_exhibit_id: string,
-    options?: {
-    },
   ): void {
     const attrs: Record<string, string | number | boolean> = {
       "spaceport.exhibit.id": spaceport_exhibit_id,
@@ -376,8 +374,6 @@ export class SpaceportFrontendPageViews {
   add(
     value: number,
     page_name: string,
-    options?: {
-    },
   ): void {
     const attrs: Record<string, string | number | boolean> = {
       "page.name": page_name,
