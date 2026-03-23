@@ -99,6 +99,20 @@ func main() {
 	api.POST("/bookings", bookHandler.CreateBooking)
 	api.GET("/health", healthHandler.Health)
 
+	// Chaos injection endpoints (not under /api — matches pricing-service pattern)
+	r.POST("/chaos/simulate-cors-block", func(c *gin.Context) {
+		var body struct {
+			Count int `json:"count"`
+		}
+		if err := c.ShouldBindJSON(&body); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		middleware.SetCORSBlock(body.Count)
+		logger.Info("CORS block injection set", "count", body.Count)
+		c.JSON(http.StatusOK, gin.H{"cors_block_count": body.Count})
+	})
+
 	addr := envOr("SPACEPORT_ADDR", ":8080")
 	srv := &http.Server{Addr: addr, Handler: r}
 

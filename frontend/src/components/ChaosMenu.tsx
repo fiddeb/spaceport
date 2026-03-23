@@ -28,6 +28,22 @@ export function ChaosMenu() {
     setTimeout(() => setStatus(null), successMsg ? 4000 : 2000);
   }
 
+  async function triggerApi(endpoint: string, body: object, label: string, successMsg?: string) {
+    setStatus(`${label}…`);
+    try {
+      const resp = await fetch(`/api-chaos/${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      setStatus(successMsg ?? `${label} ✓`);
+    } catch {
+      setStatus(`${label} failed`);
+    }
+    setTimeout(() => setStatus(null), successMsg ? 4000 : 2000);
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -50,6 +66,14 @@ export function ChaosMenu() {
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => trigger("simulate-latency", { count: 5, latency_ms: 2000 }, "2s latency ×5")}>
           2s latency — next 5 requests
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>CORS Injection</DropdownMenuLabel>
+        <DropdownMenuItem onSelect={() => triggerApi("simulate-cors-block", { count: 1 }, "CORS block ×1", "Next API request will be rejected with 403 Forbidden")}>
+          Block next request (CORS 403)
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => triggerApi("simulate-cors-block", { count: 3 }, "CORS block ×3", "Next 3 API requests will be rejected with 403 Forbidden")}>
+          Block next 3 requests (CORS 403)
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
