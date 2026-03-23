@@ -50,11 +50,13 @@ export class {{ class_name }} {
 {%- for a in metric.attributes | required | attribute_sort %}
     {{ ts_var(a.name) }}: {% if a.type is mapping %}string{% else %}{{ a.type | map_text("attribute_type_value") }}{% endif %},
 {%- endfor %}
+{%- if metric.attributes | not_required | list | length > 0 %}
     options?: {
 {%- for a in metric.attributes | not_required | attribute_sort %}
       {{ ts_var(a.name) }}?: {% if a.type is mapping %}string{% else %}{{ a.type | map_text("attribute_type_value") }}{% endif %};
 {%- endfor %}
     },
+{%- endif %}
   ): void {
     const attrs: Record<string, string | number | boolean> = {
 {%- for a in metric.attributes | required | attribute_sort %}
