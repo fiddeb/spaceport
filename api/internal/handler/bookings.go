@@ -66,7 +66,11 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 
 	totalPrice, currency, err := h.callPricing(ctx, req)
 	if err != nil {
-		h.Logger.ErrorContext(ctx, "pricing call failed", "error", err, "booking_id", bookingID)
+		h.Logger.ErrorContext(ctx, "pricing call failed",
+			"error", err,
+			"booking_id", bookingID,
+			"pricing_url", h.PricingURL,
+		)
 		span.SetStatus(codes.Error, err.Error())
 		metrics.PricingFailuresCount.Add(ctx, 1,
 			semconv.SpaceportSeatClass(req.SeatClass),
@@ -119,9 +123,15 @@ func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (f
 	params.Set("currency", currency)
 	url := fmt.Sprintf("%s/price/%d?%s", h.PricingURL, req.DepartureID, params.Encode())
 
+	span.SetAttributes(
+		semconv.AttrUrlFullKey.String(url),
+		semconv.AttrServerAddressKey.String(h.PricingURL),
+	)
+
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
+		span.SetAttributes(semconv.AttrErrorType("request_build_error"))
 		return 0, currency, err
 	}
 	injectTrace(ctx, httpReq)
@@ -133,13 +143,19 @@ func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (f
 
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
-		return 0, currency, err
+		span.SetAttributes(semconv.AttrErrorType("connection_error"))
+		return 0, currency, fmt.Errorf("GET %s: %w", url, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		span.SetStatus(codes.Error, fmt.Sprintf("pricing returned %d", resp.StatusCode))
-		return 0, currency, fmt.Errorf("pricing service returned %d", resp.StatusCode)
+		msg := fmt.Sprintf("GET %s returned HTTP %d", url, resp.StatusCode)
+		span.SetStatus(codes.Error, msg)
+		span.SetAttributes(
+			semconv.AttrErrorType(fmt.Sprintf("%d", resp.StatusCode)),
+			semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode),
+		)
+		return 0, currency, fmt.Errorf("%s", msg)
 	}
 
 	var result struct {

@@ -66,6 +66,15 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 				Boundaries: []float64{0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10},
 			}},
 		)),
+		// spaceport.pricing.request.duration records in ms; default SDK buckets
+		// have wide gaps (1000–2500, 2500–5000) that cause P99 interpolation
+		// errors with typical chaos-injected latencies of 2–3 s.
+		sdkmetric.WithView(sdkmetric.NewView(
+			sdkmetric.Instrument{Name: "spaceport.pricing.request.duration"},
+			sdkmetric.Stream{Aggregation: sdkmetric.AggregationExplicitBucketHistogram{
+				Boundaries: []float64{5, 10, 25, 50, 100, 250, 500, 1000, 2000, 3000, 5000, 10000},
+			}},
+		)),
 	)
 	otel.SetMeterProvider(mp)
 

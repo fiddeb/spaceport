@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -85,11 +86,11 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(middleware.Tracing())
 	r.Use(middleware.HTTPMetrics())
-	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{frontendOrigin},
+	r.Use(middleware.InstrumentedCORS(cors.Config{
+		AllowOrigins: localhostOrigins(frontendOrigin),
 		AllowMethods: []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "traceparent", "tracestate"},
-	}))
+	}, logger))
 
 	api := r.Group("/api")
 	api.GET("/departures", depHandler.ListDepartures)
@@ -97,6 +98,20 @@ func main() {
 	api.GET("/currencies", depHandler.GetCurrencies)
 	api.POST("/bookings", bookHandler.CreateBooking)
 	api.GET("/health", healthHandler.Health)
+
+	// Chaos injection endpoints (not under /api — matches pricing-service pattern)
+	r.POST("/chaos/simulate-cors-block", func(c *gin.Context) {
+		var body struct {
+			Count int `json:"count"`
+		}
+		if err := c.ShouldBindJSON(&body); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		middleware.SetCORSBlock(body.Count)
+		logger.Info("CORS block injection set", "count", body.Count)
+		c.JSON(http.StatusOK, gin.H{"cors_block_count": body.Count})
+	})
 
 	addr := envOr("SPACEPORT_ADDR", ":8080")
 	srv := &http.Server{Addr: addr, Handler: r}
@@ -113,6 +128,19 @@ func main() {
 	shutCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	_ = srv.Shutdown(shutCtx)
+}
+
+// localhostOrigins returns both localhost and 127.0.0.1 variants of the given
+// origin so that either form works in a browser.
+func localhostOrigins(origin string) []string {
+	origins := []string{origin}
+	switch {
+	case strings.Contains(origin, "://localhost"):
+		origins = append(origins, strings.Replace(origin, "://localhost", "://127.0.0.1", 1))
+	case strings.Contains(origin, "://127.0.0.1"):
+		origins = append(origins, strings.Replace(origin, "://127.0.0.1", "://localhost", 1))
+	}
+	return origins
 }
 
 func envOr(key, fallback string) string {

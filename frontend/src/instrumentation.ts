@@ -9,7 +9,7 @@ import { W3CTraceContextPropagator } from "@opentelemetry/core";
 import { propagation, trace, metrics, context as otelContext, ROOT_CONTEXT } from "@opentelemetry/api";
 import { LoggerProvider, BatchLogRecordProcessor } from "@opentelemetry/sdk-logs";
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
-import { MeterProvider, PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
+import { MeterProvider, PeriodicExportingMetricReader, AggregationType } from "@opentelemetry/sdk-metrics";
 import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-http";
 import { logs, SeverityNumber } from "@opentelemetry/api-logs";
 import {
@@ -70,6 +70,16 @@ const meterProvider = new MeterProvider({
     exporter: metricExporter,
     exportIntervalMillis: 15000,
   })],
+  // Default SDK buckets are ms-scale (0, 5, 10, …, 10 000) — wrong for
+  // seconds-scale histograms. Override exhibit dwell time with sensible
+  // boundaries for viewport dwell (typically 1–30 s).
+  views: [{
+    instrumentName: "spaceport.frontend.exhibit_dwell_time",
+    aggregation: {
+      type: AggregationType.EXPLICIT_BUCKET_HISTOGRAM,
+      options: { boundaries: [0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60] },
+    },
+  }],
 });
 metrics.setGlobalMeterProvider(meterProvider);
 
