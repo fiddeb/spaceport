@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -86,7 +87,7 @@ func main() {
 	r.Use(middleware.Tracing())
 	r.Use(middleware.HTTPMetrics())
 	r.Use(middleware.InstrumentedCORS(cors.Config{
-		AllowOrigins: []string{frontendOrigin},
+		AllowOrigins: localhostOrigins(frontendOrigin),
 		AllowMethods: []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "traceparent", "tracestate"},
 	}, logger))
@@ -113,6 +114,19 @@ func main() {
 	shutCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	_ = srv.Shutdown(shutCtx)
+}
+
+// localhostOrigins returns both localhost and 127.0.0.1 variants of the given
+// origin so that either form works in a browser.
+func localhostOrigins(origin string) []string {
+	origins := []string{origin}
+	switch {
+	case strings.Contains(origin, "://localhost"):
+		origins = append(origins, strings.Replace(origin, "://localhost", "://127.0.0.1", 1))
+	case strings.Contains(origin, "://127.0.0.1"):
+		origins = append(origins, strings.Replace(origin, "://127.0.0.1", "://localhost", 1))
+	}
+	return origins
 }
 
 func envOr(key, fallback string) string {
