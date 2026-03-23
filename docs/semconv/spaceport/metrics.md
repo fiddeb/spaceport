@@ -89,6 +89,94 @@
 
 
 
+## Metric `spaceport.frontend.bookings`
+
+| Name | Instrument Type | Unit (UCUM) | Description | Stability | Entity Associations |
+| -------- | --------------- | ----------- | -------------- | --------- | ------ |
+| `spaceport.frontend.bookings` | Counter | `{booking}` | Booking attempts made from the frontend. | ![Development](https://img.shields.io/badge/-development-blue) | |
+
+
+### `spaceport.frontend.bookings` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`outcome`](/.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | Whether the booking succeeded or failed. | `success`; `failure` |
+| [`spaceport.seat.class`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | The seat class selected for the booking. | `economy-cryosleep`; `business-warp`; `first-class-nebula` |
+
+---
+
+`spaceport.seat.class` has the following list of well-known values. If one of them applies, then the respective value MUST be used; otherwise, a custom value MAY be used.
+
+| Value | Description | Stability |
+| --- | --- | --- |
+| `business-warp` | Business class with warp-lounge access. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `economy-cryosleep` | Economy class with cryosleep pod. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `first-class-nebula` | First class nebula suite. | ![Development](https://img.shields.io/badge/-development-blue) |
+
+
+
+
+
+## Metric `spaceport.frontend.exhibit_dwell_time`
+
+| Name | Instrument Type | Unit (UCUM) | Description | Stability | Entity Associations |
+| -------- | --------------- | ----------- | -------------- | --------- | ------ |
+| `spaceport.frontend.exhibit_dwell_time` | Histogram | `s` | Time an exhibit remained visible in the viewport. | ![Development](https://img.shields.io/badge/-development-blue) | |
+
+
+### `spaceport.frontend.exhibit_dwell_time` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.exhibit.id`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | URL-safe slug identifying the exhibit section. | `strategic-case`; `core-signals`; `semconv-weaver` |
+
+
+
+
+
+## Metric `spaceport.frontend.exhibit_views`
+
+| Name | Instrument Type | Unit (UCUM) | Description | Stability | Entity Associations |
+| -------- | --------------- | ----------- | -------------- | --------- | ------ |
+| `spaceport.frontend.exhibit_views` | Counter | `{view}` | Number of times an exhibit section scrolled into the viewport. | ![Development](https://img.shields.io/badge/-development-blue) | |
+
+
+### `spaceport.frontend.exhibit_views` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.exhibit.id`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | URL-safe slug identifying the exhibit section. | `strategic-case`; `core-signals`; `semconv-weaver` |
+| [`spaceport.exhibit.title`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | Human-readable title of the exhibit. | `The Strategic Case for OpenTelemetry`; `Core Signals` |
+
+
+
+
+
+## Metric `spaceport.frontend.page_views`
+
+| Name | Instrument Type | Unit (UCUM) | Description | Stability | Entity Associations |
+| -------- | --------------- | ----------- | -------------- | --------- | ------ |
+| `spaceport.frontend.page_views` | Counter | `{view}` | Page views counted by page name. | ![Development](https://img.shields.io/badge/-development-blue) | |
+
+
+### `spaceport.frontend.page_views` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`page.name`](/.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | Identifier for the page being viewed. | `departure_list`; `departure_detail`; `information_desk` |
+
+
+
+
+
 ## Metric `spaceport.pricing.request.duration`
 
 | Name | Instrument Type | Unit (UCUM) | Description | Stability | Entity Associations |

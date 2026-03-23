@@ -6,6 +6,7 @@
 - [Spaceport Booking Attributes](#spaceport-booking-attributes)
 - [Spaceport Chaos Attributes](#spaceport-chaos-attributes)
 - [Spaceport Departure Attributes](#spaceport-departure-attributes)
+- [Spaceport Exhibit Attributes](#spaceport-exhibit-attributes)
 - [Spaceport Pricing Attributes](#spaceport-pricing-attributes)
 - [Spaceport Seat Attributes](#spaceport-seat-attributes)
 
@@ -52,6 +53,19 @@ Attributes describing a spaceport departure.
 | <a id="spaceport-departure-destination" href="#spaceport-departure-destination">`spaceport.departure.destination`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | Destination of the departure (e.g. planet, station, or sector name). | `Mars Colony Alpha`; `Kepler-442b`; `Deep Space Station 9` |
 | <a id="spaceport-departure-id" href="#spaceport-departure-id">`spaceport.departure.id`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | Unique identifier for the departure. | `DEP-2350-ALPHA`; `DEP-0042` |
 | <a id="spaceport-recommendations-error" href="#spaceport-recommendations-error">`spaceport.recommendations.error`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | Error message returned by the recommendations service on failure. | `recommendations unavailable`; `service timeout` |
+
+## Spaceport Exhibit Attributes
+
+Attributes describing an Information Desk exhibit.
+
+**Attributes:**
+
+| Key | Stability | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- |
+| <a id="spaceport-exhibit-count" href="#spaceport-exhibit-count">`spaceport.exhibit.count`</a> | ![Development](https://img.shields.io/badge/-development-blue) | int | Total number of exhibits available in the presentation. | `7` |
+| <a id="spaceport-exhibit-id" href="#spaceport-exhibit-id">`spaceport.exhibit.id`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | URL-safe slug identifying the exhibit section. | `strategic-case`; `core-signals`; `semconv-weaver` |
+| <a id="spaceport-exhibit-number" href="#spaceport-exhibit-number">`spaceport.exhibit.number`</a> | ![Development](https://img.shields.io/badge/-development-blue) | int | Display order number of the exhibit (1-based). | `1`; `3`; `7` |
+| <a id="spaceport-exhibit-title" href="#spaceport-exhibit-title">`spaceport.exhibit.title`</a> | ![Development](https://img.shields.io/badge/-development-blue) | string | Human-readable title of the exhibit. | `The Strategic Case for OpenTelemetry`; `Core Signals` |
 
 ## Spaceport Pricing Attributes
 

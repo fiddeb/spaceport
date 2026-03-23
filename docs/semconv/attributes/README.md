@@ -31,8 +31,12 @@ All registered attributes are listed by namespace in this registry.
 
 Currently, the following namespaces exist:
 
+- [Error](error.md)
 - [HTTP](http.md)
+- [Network](network.md)
+- [Server](server.md)
 - [Spaceport](spaceport.md)
 - [URL](url.md)
+- [User Agent](user-agent.md)
 
 [developers recommendations]: ../../general/naming.md#recommendations-for-application-developers
