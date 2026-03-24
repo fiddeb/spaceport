@@ -52,10 +52,16 @@ groups:
             - id: coin
               value: "COIN"
               stability: development
+              deprecated:
+                reason: obsoleted
+                note: "Removed, use UNC instead."
               brief: Space Coin
             - id: tkn
               value: "TKN"
               stability: development
+              deprecated:
+                reason: obsoleted
+                note: "Removed, use UNC instead."
               brief: Token
         stability: development
         brief: The currency in which the price is displayed to the user.
