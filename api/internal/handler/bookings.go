@@ -51,7 +51,7 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 	}
 
 	span.SetAttributes(
-		semconv.AttrSpaceportDepartureIdKey.Int(req.DepartureID),
+		semconv.AttrSpaceportDepartureId(fmt.Sprintf("%d", req.DepartureID)),
 		semconv.AttrSpaceportSeatClass(req.SeatClass),
 	)
 
@@ -59,17 +59,16 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 	span.SetAttributes(semconv.AttrSpaceportBookingId(bookingID))
 
 	h.Logger.InfoContext(ctx, "processing booking",
-		"booking_id", bookingID,
-		"departure_id", req.DepartureID,
-		"seat_class", req.SeatClass,
+		string(semconv.AttrSpaceportBookingIdKey), bookingID,
+		string(semconv.AttrSpaceportDepartureIdKey), fmt.Sprintf("%d", req.DepartureID),
+		string(semconv.AttrSpaceportSeatClassKey), req.SeatClass,
 	)
 
 	totalPrice, currency, err := h.callPricing(ctx, req)
 	if err != nil {
 		h.Logger.ErrorContext(ctx, "pricing call failed",
 			"error", err,
-			"booking_id", bookingID,
-			"pricing_url", h.PricingURL,
+			string(semconv.AttrSpaceportBookingIdKey), bookingID,
 		)
 		span.SetStatus(codes.Error, err.Error())
 		metrics.PricingFailuresCount.Add(ctx, 1,
@@ -100,7 +99,10 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 	)
 	metrics.BookingActive.Add(ctx, 1)
 
-	h.Logger.InfoContext(ctx, "booking confirmed", "booking_id", bookingID, "total_price", totalPrice)
+	h.Logger.InfoContext(ctx, "booking confirmed",
+		string(semconv.AttrSpaceportBookingIdKey), bookingID,
+		string(semconv.AttrSpaceportPricingTotalKey), totalPrice,
+	)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"booking_id":  bookingID,

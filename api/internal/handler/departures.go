@@ -80,7 +80,7 @@ func (h *DepartureHandler) ListDepartures(c *gin.Context) {
 func (h *DepartureHandler) GetDeparture(c *gin.Context) {
 	ctx := c.Request.Context()
 	id := c.Param("id")
-	h.Logger.InfoContext(ctx, "getting departure detail", "departure_id", id)
+	h.Logger.InfoContext(ctx, "getting departure detail", string(semconv.AttrSpaceportDepartureIdKey), id)
 
 	var d Departure
 	var classes string

@@ -89,7 +89,7 @@ async def price(
     currency: Optional[str] = Query(None),
 ) -> dict:
     span = trace.get_current_span()
-    span.set_attribute(attribute.SPACEPORT_DEPARTURE_ID, departure_id)
+    span.set_attribute(attribute.SPACEPORT_DEPARTURE_ID, str(departure_id))
     await _apply_chaos(span)
 
     # Validate currency if provided
@@ -113,7 +113,7 @@ async def price(
 @app.get("/recommendations/{departure_id}")
 async def recommendations(departure_id: int) -> dict:
     span = trace.get_current_span()
-    span.set_attribute(attribute.SPACEPORT_DEPARTURE_ID, departure_id)
+    span.set_attribute(attribute.SPACEPORT_DEPARTURE_ID, str(departure_id))
     await _apply_chaos(span)
 
     # Baseline latency
