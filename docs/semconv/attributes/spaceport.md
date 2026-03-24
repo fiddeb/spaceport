@@ -88,12 +88,10 @@ Attributes describing pricing information for a booking.
 | Value | Description | Stability |
 | --- | --- | --- |
 | `BZD` | Breen Dilithium | ![Development](https://img.shields.io/badge/-development-blue) |
-| `COIN` | Space Coin | ![Development](https://img.shields.io/badge/-development-blue) |
 | `LAT` | Latinum | ![Development](https://img.shields.io/badge/-development-blue) |
 | `NIN` | Ningi | ![Development](https://img.shields.io/badge/-development-blue) |
 | `QUA` | Quatloos | ![Development](https://img.shields.io/badge/-development-blue) |
 | `REP` | Republic Credits | ![Development](https://img.shields.io/badge/-development-blue) |
-| `TKN` | Token | ![Development](https://img.shields.io/badge/-development-blue) |
 | `UNC` | Universal Nano Credits | ![Development](https://img.shields.io/badge/-development-blue) |
 
 ## Spaceport Seat Attributes

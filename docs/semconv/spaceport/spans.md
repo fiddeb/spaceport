@@ -54,12 +54,10 @@ Loading available currencies from the API on app startup.
 | Value | Description | Stability |
 | --- | --- | --- |
 | `BZD` | Breen Dilithium | ![Development](https://img.shields.io/badge/-development-blue) |
-| `COIN` | Space Coin | ![Development](https://img.shields.io/badge/-development-blue) |
 | `LAT` | Latinum | ![Development](https://img.shields.io/badge/-development-blue) |
 | `NIN` | Ningi | ![Development](https://img.shields.io/badge/-development-blue) |
 | `QUA` | Quatloos | ![Development](https://img.shields.io/badge/-development-blue) |
 | `REP` | Republic Credits | ![Development](https://img.shields.io/badge/-development-blue) |
-| `TKN` | Token | ![Development](https://img.shields.io/badge/-development-blue) |
 | `UNC` | Universal Nano Credits | ![Development](https://img.shields.io/badge/-development-blue) |
 
 
@@ -110,12 +108,10 @@ Handles an incoming booking creation request in the API.
 | Value | Description | Stability |
 | --- | --- | --- |
 | `BZD` | Breen Dilithium | ![Development](https://img.shields.io/badge/-development-blue) |
-| `COIN` | Space Coin | ![Development](https://img.shields.io/badge/-development-blue) |
 | `LAT` | Latinum | ![Development](https://img.shields.io/badge/-development-blue) |
 | `NIN` | Ningi | ![Development](https://img.shields.io/badge/-development-blue) |
 | `QUA` | Quatloos | ![Development](https://img.shields.io/badge/-development-blue) |
 | `REP` | Republic Credits | ![Development](https://img.shields.io/badge/-development-blue) |
-| `TKN` | Token | ![Development](https://img.shields.io/badge/-development-blue) |
 | `UNC` | Universal Nano Credits | ![Development](https://img.shields.io/badge/-development-blue) |
 
 ---
@@ -255,12 +251,10 @@ Outbound call from the API to the pricing service to calculate a fare.
 | Value | Description | Stability |
 | --- | --- | --- |
 | `BZD` | Breen Dilithium | ![Development](https://img.shields.io/badge/-development-blue) |
-| `COIN` | Space Coin | ![Development](https://img.shields.io/badge/-development-blue) |
 | `LAT` | Latinum | ![Development](https://img.shields.io/badge/-development-blue) |
 | `NIN` | Ningi | ![Development](https://img.shields.io/badge/-development-blue) |
 | `QUA` | Quatloos | ![Development](https://img.shields.io/badge/-development-blue) |
 | `REP` | Republic Credits | ![Development](https://img.shields.io/badge/-development-blue) |
-| `TKN` | Token | ![Development](https://img.shields.io/badge/-development-blue) |
 | `UNC` | Universal Nano Credits | ![Development](https://img.shields.io/badge/-development-blue) |
 
 ---
@@ -310,12 +304,10 @@ Server-side price calculation in the pricing service.
 | Value | Description | Stability |
 | --- | --- | --- |
 | `BZD` | Breen Dilithium | ![Development](https://img.shields.io/badge/-development-blue) |
-| `COIN` | Space Coin | ![Development](https://img.shields.io/badge/-development-blue) |
 | `LAT` | Latinum | ![Development](https://img.shields.io/badge/-development-blue) |
 | `NIN` | Ningi | ![Development](https://img.shields.io/badge/-development-blue) |
 | `QUA` | Quatloos | ![Development](https://img.shields.io/badge/-development-blue) |
 | `REP` | Republic Credits | ![Development](https://img.shields.io/badge/-development-blue) |
-| `TKN` | Token | ![Development](https://img.shields.io/badge/-development-blue) |
 | `UNC` | Universal Nano Credits | ![Development](https://img.shields.io/badge/-development-blue) |
 
 ---
@@ -411,12 +403,10 @@ User switches the display currency in the frontend.
 | Value | Description | Stability |
 | --- | --- | --- |
 | `BZD` | Breen Dilithium | ![Development](https://img.shields.io/badge/-development-blue) |
-| `COIN` | Space Coin | ![Development](https://img.shields.io/badge/-development-blue) |
 | `LAT` | Latinum | ![Development](https://img.shields.io/badge/-development-blue) |
 | `NIN` | Ningi | ![Development](https://img.shields.io/badge/-development-blue) |
 | `QUA` | Quatloos | ![Development](https://img.shields.io/badge/-development-blue) |
 | `REP` | Republic Credits | ![Development](https://img.shields.io/badge/-development-blue) |
-| `TKN` | Token | ![Development](https://img.shields.io/badge/-development-blue) |
 | `UNC` | Universal Nano Credits | ![Development](https://img.shields.io/badge/-development-blue) |
 
 
