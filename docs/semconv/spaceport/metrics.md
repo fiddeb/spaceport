@@ -177,6 +177,35 @@
 
 
 
+## Metric `spaceport.pricing.failures.count`
+
+| Name | Instrument Type | Unit (UCUM) | Description | Stability | Entity Associations |
+| -------- | --------------- | ----------- | -------------- | --------- | ------ |
+| `spaceport.pricing.failures.count` | Counter | `{failure}` | Number of pricing service call failures from the API. | ![Development](https://img.shields.io/badge/-development-blue) | |
+
+
+### `spaceport.pricing.failures.count` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.seat.class`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | The seat class selected for the booking. | `economy-cryosleep`; `business-warp`; `first-class-nebula` |
+
+---
+
+`spaceport.seat.class` has the following list of well-known values. If one of them applies, then the respective value MUST be used; otherwise, a custom value MAY be used.
+
+| Value | Description | Stability |
+| --- | --- | --- |
+| `business-warp` | Business class with warp-lounge access. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `economy-cryosleep` | Economy class with cryosleep pod. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `first-class-nebula` | First class nebula suite. | ![Development](https://img.shields.io/badge/-development-blue) |
+
+
+
+
+
 ## Metric `spaceport.pricing.request.duration`
 
 | Name | Instrument Type | Unit (UCUM) | Description | Stability | Entity Associations |

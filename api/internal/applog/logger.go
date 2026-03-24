@@ -34,10 +34,12 @@ func (h *traceHandler) WithGroup(name string) slog.Handler {
 
 // New creates an slog.Logger with JSON output and automatic trace correlation.
 // Logs are sent to both stdout (JSON) and the OTel collector via the otelslog bridge.
+// trace_id/span_id are injected into stdout JSON only; the OTel bridge already
+// embeds trace context in the OTLP log record structure.
 func New() *slog.Logger {
-	stdout := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})
+	stdout := &traceHandler{Handler: slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})}
 	otelH := otelslog.NewHandler("spaceport-api")
-	return slog.New(&traceHandler{Handler: &fanoutHandler{handlers: []slog.Handler{stdout, otelH}}})
+	return slog.New(&fanoutHandler{handlers: []slog.Handler{stdout, otelH}})
 }
 
 // fanoutHandler sends each log record to multiple handlers.

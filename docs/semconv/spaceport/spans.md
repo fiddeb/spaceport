@@ -1,6 +1,71 @@
 # Spans - spaceport
 
 
+## Span `span.spaceport.api.call_recommendation_service.client`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+Outbound call from the API to the recommendation service.
+
+**Span kind** SHOULD be `CLIENT`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.api.call_recommendation_service.client` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.departure.id`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | Unique identifier for the departure. | `DEP-2350-ALPHA`; `DEP-0042` |
+
+
+
+
+
+## Span `span.spaceport.app.load_currencies`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+Loading available currencies from the API on app startup.
+
+**Span kind** SHOULD be `INTERNAL`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.app.load_currencies` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.pricing.display_currency`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Opt-In` | string | The currency in which the price is displayed to the user. | `UNC`; `REP`; `LAT` |
+
+---
+
+`spaceport.pricing.display_currency` has the following list of well-known values. If one of them applies, then the respective value MUST be used; otherwise, a custom value MAY be used.
+
+| Value | Description | Stability |
+| --- | --- | --- |
+| `BZD` | Breen Dilithium | ![Development](https://img.shields.io/badge/-development-blue) |
+| `COIN` | Space Coin | ![Development](https://img.shields.io/badge/-development-blue) |
+| `LAT` | Latinum | ![Development](https://img.shields.io/badge/-development-blue) |
+| `NIN` | Ningi | ![Development](https://img.shields.io/badge/-development-blue) |
+| `QUA` | Quatloos | ![Development](https://img.shields.io/badge/-development-blue) |
+| `REP` | Republic Credits | ![Development](https://img.shields.io/badge/-development-blue) |
+| `TKN` | Token | ![Development](https://img.shields.io/badge/-development-blue) |
+| `UNC` | Universal Nano Credits | ![Development](https://img.shields.io/badge/-development-blue) |
+
+
+
+
+
 ## Span `span.spaceport.booking.create.server`
 
 **Status:** ![Development](https://img.shields.io/badge/-development-blue)
@@ -127,6 +192,33 @@ Handles a request to list available departures from the API.
 
 
 
+## Span `span.spaceport.exhibit.view`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+Tracks a single exhibit visible in the viewport, linked to the page span.
+
+**Span kind** SHOULD be `INTERNAL`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.exhibit.view` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.exhibit.id`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | URL-safe slug identifying the exhibit section. | `strategic-case`; `core-signals`; `semconv-weaver` |
+| [`spaceport.exhibit.number`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | int | Display order number of the exhibit (1-based). | `1`; `3`; `7` |
+| [`spaceport.exhibit.title`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | Human-readable title of the exhibit. | `The Strategic Case for OpenTelemetry`; `Core Signals` |
+
+
+
+
+
 ## Span `span.spaceport.pricing.calculate.client`
 
 **Status:** ![Development](https://img.shields.io/badge/-development-blue)
@@ -180,6 +272,214 @@ Outbound call from the API to the pricing service to calculate a fare.
 | `business-warp` | Business class with warp-lounge access. | ![Development](https://img.shields.io/badge/-development-blue) |
 | `economy-cryosleep` | Economy class with cryosleep pod. | ![Development](https://img.shields.io/badge/-development-blue) |
 | `first-class-nebula` | First class nebula suite. | ![Development](https://img.shields.io/badge/-development-blue) |
+
+
+
+
+
+## Span `span.spaceport.pricing.calculate.server`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+Server-side price calculation in the pricing service.
+
+**Span kind** SHOULD be `SERVER`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.pricing.calculate.server` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.departure.id`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | Unique identifier for the departure. | `DEP-2350-ALPHA`; `DEP-0042` |
+| [`spaceport.seat.class`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | The seat class selected for the booking. | `economy-cryosleep`; `business-warp`; `first-class-nebula` |
+| [`spaceport.pricing.base_currency`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | The base currency used for pricing. Always "UNC". | `UNC` |
+| [`spaceport.pricing.display_currency`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | The currency in which the price is displayed to the user. | `UNC`; `REP`; `LAT` |
+| [`spaceport.pricing.promo_applied`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | boolean | Whether a promotional discount was applied to the booking. | `true`; `false` |
+| [`spaceport.pricing.total`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | double | Total price of the booking in Universal Nano Credits (UNC). | `1500.0`; `42000.75` |
+
+---
+
+`spaceport.pricing.display_currency` has the following list of well-known values. If one of them applies, then the respective value MUST be used; otherwise, a custom value MAY be used.
+
+| Value | Description | Stability |
+| --- | --- | --- |
+| `BZD` | Breen Dilithium | ![Development](https://img.shields.io/badge/-development-blue) |
+| `COIN` | Space Coin | ![Development](https://img.shields.io/badge/-development-blue) |
+| `LAT` | Latinum | ![Development](https://img.shields.io/badge/-development-blue) |
+| `NIN` | Ningi | ![Development](https://img.shields.io/badge/-development-blue) |
+| `QUA` | Quatloos | ![Development](https://img.shields.io/badge/-development-blue) |
+| `REP` | Republic Credits | ![Development](https://img.shields.io/badge/-development-blue) |
+| `TKN` | Token | ![Development](https://img.shields.io/badge/-development-blue) |
+| `UNC` | Universal Nano Credits | ![Development](https://img.shields.io/badge/-development-blue) |
+
+---
+
+`spaceport.seat.class` has the following list of well-known values. If one of them applies, then the respective value MUST be used; otherwise, a custom value MAY be used.
+
+| Value | Description | Stability |
+| --- | --- | --- |
+| `business-warp` | Business class with warp-lounge access. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `economy-cryosleep` | Economy class with cryosleep pod. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `first-class-nebula` | First class nebula suite. | ![Development](https://img.shields.io/badge/-development-blue) |
+
+
+
+
+
+## Span `span.spaceport.pricing.recommend.server`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+Server-side recommendation generation in the pricing service.
+
+**Span kind** SHOULD be `SERVER`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.pricing.recommend.server` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.departure.id`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | Unique identifier for the departure. | `DEP-2350-ALPHA`; `DEP-0042` |
+
+
+
+
+
+## Span `span.spaceport.user.browse_departures`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+Tracks a user browsing the departure list page.
+
+**Span kind** SHOULD be `INTERNAL`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.user.browse_departures` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.departure.destination`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Opt-In` | string | Destination of the departure (e.g. planet, station, or sector name). | `Mars Colony Alpha`; `Kepler-442b`; `Deep Space Station 9` |
+
+
+
+
+
+## Span `span.spaceport.user.change_currency`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+User switches the display currency in the frontend.
+
+**Span kind** SHOULD be `INTERNAL`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.user.change_currency` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.pricing.base_currency`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | The base currency used for pricing. Always "UNC". | `UNC` |
+| [`spaceport.pricing.display_currency`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | The currency in which the price is displayed to the user. | `UNC`; `REP`; `LAT` |
+
+---
+
+`spaceport.pricing.display_currency` has the following list of well-known values. If one of them applies, then the respective value MUST be used; otherwise, a custom value MAY be used.
+
+| Value | Description | Stability |
+| --- | --- | --- |
+| `BZD` | Breen Dilithium | ![Development](https://img.shields.io/badge/-development-blue) |
+| `COIN` | Space Coin | ![Development](https://img.shields.io/badge/-development-blue) |
+| `LAT` | Latinum | ![Development](https://img.shields.io/badge/-development-blue) |
+| `NIN` | Ningi | ![Development](https://img.shields.io/badge/-development-blue) |
+| `QUA` | Quatloos | ![Development](https://img.shields.io/badge/-development-blue) |
+| `REP` | Republic Credits | ![Development](https://img.shields.io/badge/-development-blue) |
+| `TKN` | Token | ![Development](https://img.shields.io/badge/-development-blue) |
+| `UNC` | Universal Nano Credits | ![Development](https://img.shields.io/badge/-development-blue) |
+
+
+
+
+
+## Span `span.spaceport.user.place_booking`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+Tracks a user submitting a booking from the frontend.
+
+**Span kind** SHOULD be `INTERNAL`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.user.place_booking` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.departure.id`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | Unique identifier for the departure. | `DEP-2350-ALPHA`; `DEP-0042` |
+| [`spaceport.seat.class`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | The seat class selected for the booking. | `economy-cryosleep`; `business-warp`; `first-class-nebula` |
+
+---
+
+`spaceport.seat.class` has the following list of well-known values. If one of them applies, then the respective value MUST be used; otherwise, a custom value MAY be used.
+
+| Value | Description | Stability |
+| --- | --- | --- |
+| `business-warp` | Business class with warp-lounge access. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `economy-cryosleep` | Economy class with cryosleep pod. | ![Development](https://img.shields.io/badge/-development-blue) |
+| `first-class-nebula` | First class nebula suite. | ![Development](https://img.shields.io/badge/-development-blue) |
+
+
+
+
+
+## Span `span.spaceport.user.view_departure`
+
+**Status:** ![Development](https://img.shields.io/badge/-development-blue)
+
+Tracks a user viewing a specific departure detail page.
+
+**Span kind** SHOULD be `INTERNAL`.
+
+**Span status** SHOULD follow the [Recording Errors](/docs/general/recording-errors.md) document.
+
+
+
+
+### `span.spaceport.user.view_departure` Attributes
+
+**Attributes:**
+
+| Key | Stability | [Requirement Level](https://opentelemetry.io/docs/specs/semconv/general/attribute-requirement-level/) | Value Type | Description | Example Values |
+| --- | --- | --- | --- | --- | --- |
+| [`spaceport.departure.id`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Required` | string | Unique identifier for the departure. | `DEP-2350-ALPHA`; `DEP-0042` |
+| [`spaceport.departure.destination`](/spaceport.md) | ![Development](https://img.shields.io/badge/-development-blue) | `Recommended` | string | Destination of the departure (e.g. planet, station, or sector name). | `Mars Colony Alpha`; `Kepler-442b`; `Deep Space Station 9` |
 
 
 

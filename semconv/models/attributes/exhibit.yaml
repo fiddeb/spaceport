@@ -8,23 +8,19 @@ groups:
         type: string
         stability: development
         brief: URL-safe slug identifying the exhibit section.
-        requirement_level: recommended
         examples: ["strategic-case", "core-signals", "semconv-weaver"]
       - id: spaceport.exhibit.title
         type: string
         stability: development
         brief: Human-readable title of the exhibit.
-        requirement_level: recommended
         examples: ["The Strategic Case for OpenTelemetry", "Core Signals"]
       - id: spaceport.exhibit.number
         type: int
         stability: development
         brief: Display order number of the exhibit (1-based).
-        requirement_level: opt_in
         examples: [1, 3, 7]
       - id: spaceport.exhibit.count
         type: int
         stability: development
         brief: Total number of exhibits available in the presentation.
-        requirement_level: opt_in
         examples: [7]

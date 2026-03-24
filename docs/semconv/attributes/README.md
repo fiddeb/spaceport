@@ -31,11 +31,18 @@ All registered attributes are listed by namespace in this registry.
 
 Currently, the following namespaces exist:
 
+- [Client](client.md)
+- [Code](code.md)
+- [DB](db.md)
+- [Deployment](deployment.md)
 - [Error](error.md)
 - [HTTP](http.md)
 - [Network](network.md)
+- [OTel](otel.md)
 - [Server](server.md)
+- [Service](service.md)
 - [Spaceport](spaceport.md)
+- [Telemetry](telemetry.md)
 - [URL](url.md)
 - [User Agent](user-agent.md)
 
