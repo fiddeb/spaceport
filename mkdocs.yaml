@@ -1,0 +1,106 @@
+site_name: Spaceport
+site_description: "Interplanetary travel bookings — three services, three languages, one unified trace"
+site_author: Fredrik Frodlund
+repo_url: https://github.com/fiddeb/spaceport
+repo_name: fiddeb/spaceport
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  palette:
+    scheme: slate
+    primary: custom
+    accent: custom
+  font:
+    text: Outfit
+    code: JetBrains Mono
+  logo: img/hero.png
+  favicon: img/hero.png
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+    - toc.follow
+
+extra_css:
+  - stylesheets/spaceport.css
+
+markdown_extensions:
+  - codehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - def_list
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+hooks:
+  - docs/hooks/semconv_hide_toc.py
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Architecture: getting-started/architecture.md
+      - Quickstart: getting-started/quickstart.md
+  - Semantic Conventions:
+      - semconv/README.md
+      - Spaceport:
+          - Attributes: semconv/attributes/spaceport.md
+          - Spans: semconv/spaceport/spans.md
+          - Metrics: semconv/spaceport/metrics.md
+          - Events: semconv/spaceport/events.md
+      - HTTP:
+          - Attributes: semconv/attributes/http.md
+          - Metrics: semconv/http/metrics.md
+      - All Attributes:
+          - Overview: semconv/attributes/README.md
+          - Client: semconv/attributes/client.md
+          - Code: semconv/attributes/code.md
+          - Database: semconv/attributes/db.md
+          - Deployment: semconv/attributes/deployment.md
+          - Error: semconv/attributes/error.md
+          - Network: semconv/attributes/network.md
+          - OTel: semconv/attributes/otel.md
+          - Server: semconv/attributes/server.md
+          - Service: semconv/attributes/service.md
+          - Telemetry: semconv/attributes/telemetry.md
+          - URL: semconv/attributes/url.md
+          - User Agent: semconv/attributes/user-agent.md
+  - Presentation:
+      - Demo Script: presentation/demo-script.md
+      - Instrumentation Walk-through: presentation/instrumentation-walkthrough.md
+      - Information Desk Guide: presentation/information-desk.md
+  - Tutorials:
+      - Overview: tutorials/index.md
+      - Working with Weaver: tutorials/weaver-semconv.md
+  - Reference:
+      - Service Names: reference/service-names.md
+      - Helm Integration: reference/helm-integration.md

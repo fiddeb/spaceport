@@ -39,3 +39,4 @@ weaver/weaver
 # Generated docs
 
 .vite/
+site/
