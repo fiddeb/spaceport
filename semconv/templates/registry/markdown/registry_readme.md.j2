@@ -7,5 +7,7 @@ weight: -2
 This is an automatically generated registry of available semantic conventions.
 
 - [Attributes](attributes/README.md)
+{%- if ctx.groups | selectattr("type", "equalto", "entity") | list | length > 0 %}
 - [Entities](entities/README.md)
+{%- endif %}
 
