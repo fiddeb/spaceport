@@ -19,15 +19,6 @@ import (
 
 // Setup initialises the OTel TracerProvider, MeterProvider, and LoggerProvider with OTLP HTTP exporters.
 func Setup(ctx context.Context) (shutdown func(), err error) {
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
-		propagation.TraceContext{},
-		propagation.Baggage{},
-	))
-
-	if os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT") == "" {
-		return func() {}, nil
-	}
-
 	res, err := resource.New(ctx,
 		resource.WithAttributes(
 			semconv.ServiceName("spaceport-api"),
@@ -49,6 +40,11 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 	)
 	otel.SetTracerProvider(tp)
 
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+		propagation.TraceContext{},
+		propagation.Baggage{},
+	))
+
 	metricExp, err := otlpmetrichttp.New(ctx, otlpmetrichttp.WithInsecure())
 	if err != nil {
 		_ = tp.Shutdown(ctx)
@@ -57,24 +53,6 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 	mp := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)),
 		sdkmetric.WithResource(res),
-		// Go SDK default histogram boundaries are ms-scale (0, 5, 10, …, 10 000)
-		// but http.server.request.duration records in seconds, so override with
-		// seconds-scale boundaries matching the OTel HTTP semantic conventions.
-		sdkmetric.WithView(sdkmetric.NewView(
-			sdkmetric.Instrument{Name: "http.server.request.duration"},
-			sdkmetric.Stream{Aggregation: sdkmetric.AggregationExplicitBucketHistogram{
-				Boundaries: []float64{0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10},
-			}},
-		)),
-		// spaceport.pricing.request.duration records in ms; default SDK buckets
-		// have wide gaps (1000–2500, 2500–5000) that cause P99 interpolation
-		// errors with typical chaos-injected latencies of 2–3 s.
-		sdkmetric.WithView(sdkmetric.NewView(
-			sdkmetric.Instrument{Name: "spaceport.pricing.request.duration"},
-			sdkmetric.Stream{Aggregation: sdkmetric.AggregationExplicitBucketHistogram{
-				Boundaries: []float64{5, 10, 25, 50, 100, 250, 500, 1000, 2000, 3000, 5000, 10000},
-			}},
-		)),
 	)
 	otel.SetMeterProvider(mp)
 
