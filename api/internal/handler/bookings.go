@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/codes"
+	otelmetric "go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/fiddeb/spaceport/api/internal/metrics"
@@ -41,7 +42,7 @@ type BookingHandler struct {
 func (h *BookingHandler) CreateBooking(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	ctx, span := tracer.Start(ctx, semconv.SpanSpaceportBookingCreateServerName)
+	ctx, span := tracer.Start(ctx, semconv.SpanSpaceportBookingCreateName)
 	defer span.End()
 
 	var req BookingRequest
@@ -51,7 +52,7 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 	}
 
 	span.SetAttributes(
-		semconv.AttrSpaceportDepartureId(fmt.Sprintf("%d", req.DepartureID)),
+		semconv.AttrSpaceportDepartureIdKey.Int(req.DepartureID),
 		semconv.AttrSpaceportSeatClass(req.SeatClass),
 	)
 
@@ -59,20 +60,17 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 	span.SetAttributes(semconv.AttrSpaceportBookingId(bookingID))
 
 	h.Logger.InfoContext(ctx, "processing booking",
-		string(semconv.AttrSpaceportBookingIdKey), bookingID,
-		string(semconv.AttrSpaceportDepartureIdKey), fmt.Sprintf("%d", req.DepartureID),
-		string(semconv.AttrSpaceportSeatClassKey), req.SeatClass,
+		"booking_id", bookingID,
+		"departure_id", req.DepartureID,
+		"seat_class", req.SeatClass,
 	)
 
 	totalPrice, currency, err := h.callPricing(ctx, req)
 	if err != nil {
-		h.Logger.ErrorContext(ctx, "pricing call failed",
-			"error", err,
-			string(semconv.AttrSpaceportBookingIdKey), bookingID,
-		)
+		h.Logger.ErrorContext(ctx, "pricing call failed", "error", err, "booking_id", bookingID)
 		span.SetStatus(codes.Error, err.Error())
 		metrics.PricingFailuresCount.Add(ctx, 1,
-			semconv.SpaceportSeatClass(req.SeatClass),
+			otelmetric.WithAttributes(semconv.AttrSpaceportSeatClass(req.SeatClass)),
 		)
 
 		h.insertBooking(ctx, bookingID, req, 0, currency, "failed", err.Error())
@@ -97,12 +95,8 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 		semconv.AttrSpaceportBookingStatusConfirmed,
 		semconv.SpaceportSeatClass(req.SeatClass),
 	)
-	metrics.BookingActive.Add(ctx, 1)
 
-	h.Logger.InfoContext(ctx, "booking confirmed",
-		string(semconv.AttrSpaceportBookingIdKey), bookingID,
-		string(semconv.AttrSpaceportPricingTotalKey), totalPrice,
-	)
+	h.Logger.InfoContext(ctx, "booking confirmed", "booking_id", bookingID, "total_price", totalPrice)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"booking_id":  bookingID,
@@ -113,7 +107,7 @@ func (h *BookingHandler) CreateBooking(c *gin.Context) {
 }
 
 func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (float64, string, error) {
-	ctx, span := semconv.StartSpaceportPricingCalculateClient(ctx, tracer, req.SeatClass)
+	ctx, span := semconv.StartSpaceportPricingCalculate(ctx, tracer, req.SeatClass)
 	defer span.End()
 
 	start := time.Now()
@@ -125,15 +119,9 @@ func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (f
 	params.Set("currency", currency)
 	url := fmt.Sprintf("%s/price/%d?%s", h.PricingURL, req.DepartureID, params.Encode())
 
-	span.SetAttributes(
-		semconv.AttrUrlFullKey.String(url),
-		semconv.AttrServerAddressKey.String(h.PricingURL),
-	)
-
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
-		span.SetAttributes(semconv.AttrErrorType("request_build_error"))
 		return 0, currency, err
 	}
 	injectTrace(ctx, httpReq)
@@ -145,19 +133,13 @@ func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (f
 
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
-		span.SetAttributes(semconv.AttrErrorType("connection_error"))
-		return 0, currency, fmt.Errorf("GET %s: %w", url, err)
+		return 0, currency, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		msg := fmt.Sprintf("GET %s returned HTTP %d", url, resp.StatusCode)
-		span.SetStatus(codes.Error, msg)
-		span.SetAttributes(
-			semconv.AttrErrorType(fmt.Sprintf("%d", resp.StatusCode)),
-			semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode),
-		)
-		return 0, currency, fmt.Errorf("%s", msg)
+		span.SetStatus(codes.Error, fmt.Sprintf("pricing returned %d", resp.StatusCode))
+		return 0, currency, fmt.Errorf("pricing service returned %d", resp.StatusCode)
 	}
 
 	var result struct {

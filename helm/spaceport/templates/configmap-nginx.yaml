@@ -14,8 +14,8 @@ data:
         index index.html;
 
         location /otlp/ {
-            proxy_pass {{ .Values.otlpEndpoint }}/;
-            proxy_set_header Host $host;
+            proxy_pass http://otel-collector.k8s.test/;
+            proxy_set_header Host otel-collector.k8s.test;
         }
 
         location /chaos/ {

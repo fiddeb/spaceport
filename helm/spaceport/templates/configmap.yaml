@@ -8,7 +8,6 @@ metadata:
 data:
   OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.otlpEndpoint | quote }}
   OTEL_SERVICE_VERSION: {{ .Chart.AppVersion | quote }}
-  SPACEPORT_ENV: kubernetes
   PRICING_SERVICE_URL: {{ printf "http://%s-pricing-service:8000" (include "spaceport.fullname" .) | quote }}
   SPACEPORT_FRONTEND_ORIGIN: {{ printf "http://%s" .Values.ingress.host | quote }}
 {{- end }}
