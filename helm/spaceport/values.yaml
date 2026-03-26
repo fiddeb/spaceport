@@ -14,8 +14,7 @@ grafana:
 frontend:
   image:
     repository: ghcr.io/fiddeb/spaceport-frontend
-    # tag defaults to Chart.appVersion when empty
-    tag: ""
+    tag: "0.1.0"
     pullPolicy: IfNotPresent
   replicaCount: 1
   resources:
@@ -29,8 +28,7 @@ frontend:
 api:
   image:
     repository: ghcr.io/fiddeb/spaceport-api
-    # tag defaults to Chart.appVersion when empty
-    tag: ""
+    tag: "0.1.0"
     pullPolicy: IfNotPresent
   replicaCount: 1
   resources:
@@ -44,8 +42,7 @@ api:
 pricingService:
   image:
     repository: ghcr.io/fiddeb/spaceport-pricing-service
-    # tag defaults to Chart.appVersion when empty
-    tag: ""
+    tag: "0.1.0"
     pullPolicy: IfNotPresent
   replicaCount: 1
   resources:
