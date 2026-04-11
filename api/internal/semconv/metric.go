@@ -67,6 +67,51 @@ func (m HttpServerActiveRequests) Add(
     ))
 }
 
+// An instrument for recording `http.server.request.body.size`
+type HttpServerRequestBodySize struct {
+    inst metric.Float64Histogram
+}
+
+// Construct a new instrument for measuring `http.server.request.body.size`
+func NewHttpServerRequestBodySize(m metric.Meter) (HttpServerRequestBodySize, error) {
+    i, err := m.Float64Histogram(
+        "http.server.request.body.size",
+        metric.WithDescription("Size of HTTP server request bodies."),
+        metric.WithUnit("By"),
+    )
+    if err != nil {
+        return HttpServerRequestBodySize{}, err
+    }
+    return HttpServerRequestBodySize{i}, nil
+}
+
+func httpServerRequestBodySizeAttrToAttrs(in []OptionalAttr) []attribute.KeyValue {
+	out := make([]attribute.KeyValue, len(in))
+	for i, a := range in {
+		out[i] = a.attr()
+	}
+	return out
+}
+// Records a value in the histogram.
+func (m HttpServerRequestBodySize) Record(
+    ctx context.Context,
+    value float64,
+    // HTTP request method.
+    httpRequestMethod string,
+    // The [URI scheme] component identifying the used protocol.
+//
+// [URI scheme]: https://www.rfc-editor.org/rfc/rfc3986#section-3.1
+    urlScheme string,
+    optAttrs ...OptionalAttr,
+) {
+    m.inst.Record(ctx, value, metric.WithAttributes(
+        append(httpServerRequestBodySizeAttrToAttrs(optAttrs),
+        attribute.String("http.request.method", httpRequestMethod),
+        attribute.String("url.scheme", urlScheme),
+        )...,
+    ))
+}
+
 // An instrument for recording `http.server.request.duration`
 type HttpServerRequestDuration struct {
     inst metric.Float64Histogram
@@ -106,6 +151,51 @@ func (m HttpServerRequestDuration) Record(
 ) {
     m.inst.Record(ctx, value, metric.WithAttributes(
         append(httpServerRequestDurationAttrToAttrs(optAttrs),
+        attribute.String("http.request.method", httpRequestMethod),
+        attribute.String("url.scheme", urlScheme),
+        )...,
+    ))
+}
+
+// An instrument for recording `http.server.response.body.size`
+type HttpServerResponseBodySize struct {
+    inst metric.Float64Histogram
+}
+
+// Construct a new instrument for measuring `http.server.response.body.size`
+func NewHttpServerResponseBodySize(m metric.Meter) (HttpServerResponseBodySize, error) {
+    i, err := m.Float64Histogram(
+        "http.server.response.body.size",
+        metric.WithDescription("Size of HTTP server response bodies."),
+        metric.WithUnit("By"),
+    )
+    if err != nil {
+        return HttpServerResponseBodySize{}, err
+    }
+    return HttpServerResponseBodySize{i}, nil
+}
+
+func httpServerResponseBodySizeAttrToAttrs(in []OptionalAttr) []attribute.KeyValue {
+	out := make([]attribute.KeyValue, len(in))
+	for i, a := range in {
+		out[i] = a.attr()
+	}
+	return out
+}
+// Records a value in the histogram.
+func (m HttpServerResponseBodySize) Record(
+    ctx context.Context,
+    value float64,
+    // HTTP request method.
+    httpRequestMethod string,
+    // The [URI scheme] component identifying the used protocol.
+//
+// [URI scheme]: https://www.rfc-editor.org/rfc/rfc3986#section-3.1
+    urlScheme string,
+    optAttrs ...OptionalAttr,
+) {
+    m.inst.Record(ctx, value, metric.WithAttributes(
+        append(httpServerResponseBodySizeAttrToAttrs(optAttrs),
         attribute.String("http.request.method", httpRequestMethod),
         attribute.String("url.scheme", urlScheme),
         )...,

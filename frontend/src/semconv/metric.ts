@@ -53,6 +53,75 @@ export class HttpServerActiveRequests {
 }
 
 /**
+ * Size of HTTP server request bodies.
+ *
+ * Instrument: histogram | Unit: By
+ */
+export class HttpServerRequestBodySize {
+  static readonly name = "http.server.request.body.size";
+  static readonly unit = "By";
+  static readonly description = "Size of HTTP server request bodies.";
+
+  private readonly inst: Histogram;
+
+  constructor(meter: Meter) {
+    this.inst = meter.createHistogram(
+      HttpServerRequestBodySize.name,
+      {
+        description: HttpServerRequestBodySize.description,
+        unit: HttpServerRequestBodySize.unit,
+      },
+    );
+  }
+
+  record(
+    value: number,
+    http_request_method: string,
+    url_scheme: string,
+    options?: {
+      error_type?: string;
+      http_response_status_code?: number;
+      http_route?: string;
+      network_protocol_name?: string;
+      network_protocol_version?: string;
+      server_address?: string;
+      server_port?: number;
+      user_agent_synthetic_type?: string;
+    },
+  ): void {
+    const attrs: Record<string, string | number | boolean> = {
+      "http.request.method": http_request_method,
+      "url.scheme": url_scheme,
+    };
+    if (options?.error_type !== undefined) {
+      attrs["error.type"] = options.error_type;
+    }
+    if (options?.http_response_status_code !== undefined) {
+      attrs["http.response.status_code"] = options.http_response_status_code;
+    }
+    if (options?.http_route !== undefined) {
+      attrs["http.route"] = options.http_route;
+    }
+    if (options?.network_protocol_name !== undefined) {
+      attrs["network.protocol.name"] = options.network_protocol_name;
+    }
+    if (options?.network_protocol_version !== undefined) {
+      attrs["network.protocol.version"] = options.network_protocol_version;
+    }
+    if (options?.server_address !== undefined) {
+      attrs["server.address"] = options.server_address;
+    }
+    if (options?.server_port !== undefined) {
+      attrs["server.port"] = options.server_port;
+    }
+    if (options?.user_agent_synthetic_type !== undefined) {
+      attrs["user_agent.synthetic.type"] = options.user_agent_synthetic_type;
+    }
+    this.inst.record(value, attrs);
+  }
+}
+
+/**
  * Duration of HTTP server requests.
  *
  * Instrument: histogram | Unit: s
@@ -70,6 +139,75 @@ export class HttpServerRequestDuration {
       {
         description: HttpServerRequestDuration.description,
         unit: HttpServerRequestDuration.unit,
+      },
+    );
+  }
+
+  record(
+    value: number,
+    http_request_method: string,
+    url_scheme: string,
+    options?: {
+      error_type?: string;
+      http_response_status_code?: number;
+      http_route?: string;
+      network_protocol_name?: string;
+      network_protocol_version?: string;
+      server_address?: string;
+      server_port?: number;
+      user_agent_synthetic_type?: string;
+    },
+  ): void {
+    const attrs: Record<string, string | number | boolean> = {
+      "http.request.method": http_request_method,
+      "url.scheme": url_scheme,
+    };
+    if (options?.error_type !== undefined) {
+      attrs["error.type"] = options.error_type;
+    }
+    if (options?.http_response_status_code !== undefined) {
+      attrs["http.response.status_code"] = options.http_response_status_code;
+    }
+    if (options?.http_route !== undefined) {
+      attrs["http.route"] = options.http_route;
+    }
+    if (options?.network_protocol_name !== undefined) {
+      attrs["network.protocol.name"] = options.network_protocol_name;
+    }
+    if (options?.network_protocol_version !== undefined) {
+      attrs["network.protocol.version"] = options.network_protocol_version;
+    }
+    if (options?.server_address !== undefined) {
+      attrs["server.address"] = options.server_address;
+    }
+    if (options?.server_port !== undefined) {
+      attrs["server.port"] = options.server_port;
+    }
+    if (options?.user_agent_synthetic_type !== undefined) {
+      attrs["user_agent.synthetic.type"] = options.user_agent_synthetic_type;
+    }
+    this.inst.record(value, attrs);
+  }
+}
+
+/**
+ * Size of HTTP server response bodies.
+ *
+ * Instrument: histogram | Unit: By
+ */
+export class HttpServerResponseBodySize {
+  static readonly name = "http.server.response.body.size";
+  static readonly unit = "By";
+  static readonly description = "Size of HTTP server response bodies.";
+
+  private readonly inst: Histogram;
+
+  constructor(meter: Meter) {
+    this.inst = meter.createHistogram(
+      HttpServerResponseBodySize.name,
+      {
+        description: HttpServerResponseBodySize.description,
+        unit: HttpServerResponseBodySize.unit,
       },
     );
   }

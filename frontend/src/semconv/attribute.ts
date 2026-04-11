@@ -96,8 +96,12 @@ export const SPACEPORT_DEPARTURE_DEPARTURE_TIME = "spaceport.departure.departure
 export const SPACEPORT_DEPARTURE_DESTINATION = "spaceport.departure.destination";
 // Unique identifier for the departure.
 export const SPACEPORT_DEPARTURE_ID = "spaceport.departure.id";
+// Total number of exhibits available in the presentation.
+export const SPACEPORT_EXHIBIT_COUNT = "spaceport.exhibit.count";
 // URL-safe slug identifying the exhibit section.
 export const SPACEPORT_EXHIBIT_ID = "spaceport.exhibit.id";
+// Display order number of the exhibit (1-based).
+export const SPACEPORT_EXHIBIT_NUMBER = "spaceport.exhibit.number";
 // Human-readable title of the exhibit.
 export const SPACEPORT_EXHIBIT_TITLE = "spaceport.exhibit.title";
 // The base currency used for pricing. Always "UNC".
@@ -157,10 +161,6 @@ export const URL_TEMPLATE = "url.template";
 // last part of the domain name. For example, the top level domain for
 // example.com is `com`.
 export const URL_TOP_LEVEL_DOMAIN = "url.top_level_domain";
-// Total number of exhibits available in the presentation.
-export const SPACEPORT_EXHIBIT_COUNT = "spaceport.exhibit.count";
-// Display order number of the exhibit (1-based).
-export const SPACEPORT_EXHIBIT_NUMBER = "spaceport.exhibit.number";
 
 // --- Enum values ---
 
