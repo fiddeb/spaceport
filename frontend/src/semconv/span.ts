@@ -23,13 +23,13 @@ export function startSpaceportApiCallRecommendationServiceClient(
 }
 
 /** Span name for: Loading available currencies from the API on app startup. */
-export const SPAN_SPACEPORT_APP_LOAD_CURRENCIES_NAME = "spaceport.app.load_currencies";
+export const SPAN_SPACEPORT_APP_LOAD_CURRENCIES_INTERNAL_NAME = "spaceport.app.load_currencies.internal";
 
 // Loading available currencies from the API on app startup.
-export function startSpaceportAppLoadCurrencies(
+export function startSpaceportAppLoadCurrenciesInternal(
   tracer: Tracer,
 ): Span {
-  return tracer.startSpan(SPAN_SPACEPORT_APP_LOAD_CURRENCIES_NAME, {
+  return tracer.startSpan(SPAN_SPACEPORT_APP_LOAD_CURRENCIES_INTERNAL_NAME, {
     kind: SpanKind.INTERNAL,
     attributes: {
     },
@@ -87,14 +87,14 @@ export function startSpaceportDepartureListServer(
 }
 
 /** Span name for: Tracks a single exhibit visible in the viewport, linked to the page span. */
-export const SPAN_SPACEPORT_EXHIBIT_VIEW_NAME = "spaceport.exhibit.view";
+export const SPAN_SPACEPORT_EXHIBIT_VIEW_INTERNAL_NAME = "spaceport.exhibit.view.internal";
 
 // Tracks a single exhibit visible in the viewport, linked to the page span.
-export function startSpaceportExhibitView(
+export function startSpaceportExhibitViewInternal(
   tracer: Tracer,
   spaceport_exhibit_id: string,
 ): Span {
-  return tracer.startSpan(SPAN_SPACEPORT_EXHIBIT_VIEW_NAME, {
+  return tracer.startSpan(SPAN_SPACEPORT_EXHIBIT_VIEW_INTERNAL_NAME, {
     kind: SpanKind.INTERNAL,
     attributes: {
       "spaceport.exhibit.id": spaceport_exhibit_id,
@@ -153,13 +153,13 @@ export function startSpaceportPricingRecommendServer(
 }
 
 /** Span name for: Tracks a user browsing the departure list page. */
-export const SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_NAME = "spaceport.user.browse_departures";
+export const SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_INTERNAL_NAME = "spaceport.user.browse_departures.internal";
 
 // Tracks a user browsing the departure list page.
-export function startSpaceportUserBrowseDepartures(
+export function startSpaceportUserBrowseDeparturesInternal(
   tracer: Tracer,
 ): Span {
-  return tracer.startSpan(SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_NAME, {
+  return tracer.startSpan(SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_INTERNAL_NAME, {
     kind: SpanKind.INTERNAL,
     attributes: {
     },
@@ -167,15 +167,15 @@ export function startSpaceportUserBrowseDepartures(
 }
 
 /** Span name for: User switches the display currency in the frontend. */
-export const SPAN_SPACEPORT_USER_CHANGE_CURRENCY_NAME = "spaceport.user.change_currency";
+export const SPAN_SPACEPORT_USER_CHANGE_CURRENCY_INTERNAL_NAME = "spaceport.user.change_currency.internal";
 
 // User switches the display currency in the frontend.
-export function startSpaceportUserChangeCurrency(
+export function startSpaceportUserChangeCurrencyInternal(
   tracer: Tracer,
   spaceport_pricing_base_currency: string,
   spaceport_pricing_display_currency: string,
 ): Span {
-  return tracer.startSpan(SPAN_SPACEPORT_USER_CHANGE_CURRENCY_NAME, {
+  return tracer.startSpan(SPAN_SPACEPORT_USER_CHANGE_CURRENCY_INTERNAL_NAME, {
     kind: SpanKind.INTERNAL,
     attributes: {
       "spaceport.pricing.base_currency": spaceport_pricing_base_currency,
@@ -185,15 +185,15 @@ export function startSpaceportUserChangeCurrency(
 }
 
 /** Span name for: Tracks a user submitting a booking from the frontend. */
-export const SPAN_SPACEPORT_USER_PLACE_BOOKING_NAME = "spaceport.user.place_booking";
+export const SPAN_SPACEPORT_USER_PLACE_BOOKING_INTERNAL_NAME = "spaceport.user.place_booking.internal";
 
 // Tracks a user submitting a booking from the frontend.
-export function startSpaceportUserPlaceBooking(
+export function startSpaceportUserPlaceBookingInternal(
   tracer: Tracer,
   spaceport_departure_id: string,
   spaceport_seat_class: string,
 ): Span {
-  return tracer.startSpan(SPAN_SPACEPORT_USER_PLACE_BOOKING_NAME, {
+  return tracer.startSpan(SPAN_SPACEPORT_USER_PLACE_BOOKING_INTERNAL_NAME, {
     kind: SpanKind.INTERNAL,
     attributes: {
       "spaceport.departure.id": spaceport_departure_id,
@@ -203,14 +203,14 @@ export function startSpaceportUserPlaceBooking(
 }
 
 /** Span name for: Tracks a user viewing a specific departure detail page. */
-export const SPAN_SPACEPORT_USER_VIEW_DEPARTURE_NAME = "spaceport.user.view_departure";
+export const SPAN_SPACEPORT_USER_VIEW_DEPARTURE_INTERNAL_NAME = "spaceport.user.view_departure.internal";
 
 // Tracks a user viewing a specific departure detail page.
-export function startSpaceportUserViewDeparture(
+export function startSpaceportUserViewDepartureInternal(
   tracer: Tracer,
   spaceport_departure_id: string,
 ): Span {
-  return tracer.startSpan(SPAN_SPACEPORT_USER_VIEW_DEPARTURE_NAME, {
+  return tracer.startSpan(SPAN_SPACEPORT_USER_VIEW_DEPARTURE_INTERNAL_NAME, {
     kind: SpanKind.INTERNAL,
     attributes: {
       "spaceport.departure.id": spaceport_departure_id,
@@ -219,15 +219,15 @@ export function startSpaceportUserViewDeparture(
 }
 
 /** Span name for: Tracks a user session on the Information Desk page, from mount to unmount. Child exhibit_viewed events are added as the user scrolls.  */
-export const SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME = "spaceport.user.view_information_desk";
+export const SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_INTERNAL_NAME = "spaceport.user.view_information_desk.internal";
 
 // Tracks a user session on the Information Desk page, from mount to unmount.
 // Child exhibit_viewed events are added as the user scrolls.
-export function startSpaceportUserViewInformationDesk(
+export function startSpaceportUserViewInformationDeskInternal(
   tracer: Tracer,
   spaceport_exhibit_count: number,
 ): Span {
-  return tracer.startSpan(SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME, {
+  return tracer.startSpan(SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_INTERNAL_NAME, {
     kind: SpanKind.INTERNAL,
     attributes: {
       "spaceport.exhibit.count": spaceport_exhibit_count,

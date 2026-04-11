@@ -24,17 +24,17 @@ func StartSpaceportApiCallRecommendationServiceClient(ctx context.Context, trace
     return tracer.Start(ctx, SpanSpaceportApiCallRecommendationServiceClientName, opts...)
 }
 
-// SpanSpaceportAppLoadCurrenciesName is the span name for: Loading available currencies from the API on app startup.
-const SpanSpaceportAppLoadCurrenciesName = "spaceport.app.load_currencies"
+// SpanSpaceportAppLoadCurrenciesInternalName is the span name for: Loading available currencies from the API on app startup.
+const SpanSpaceportAppLoadCurrenciesInternalName = "spaceport.app.load_currencies.internal"
 
 // Loading available currencies from the API on app startup.
-func StartSpaceportAppLoadCurrencies(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportAppLoadCurrenciesInternal(ctx context.Context, tracer trace.Tracer,
     opts ...trace.SpanStartOption,
 ) (context.Context, trace.Span) {
     opts = append(opts,
         trace.WithSpanKind(trace.SpanKindInternal),
     )
-    return tracer.Start(ctx, SpanSpaceportAppLoadCurrenciesName, opts...)
+    return tracer.Start(ctx, SpanSpaceportAppLoadCurrenciesInternalName, opts...)
 }
 
 // SpanSpaceportBookingCreateServerName is the span name for: Handles an incoming booking creation request in the API.
@@ -86,11 +86,11 @@ func StartSpaceportDepartureListServer(ctx context.Context, tracer trace.Tracer,
     return tracer.Start(ctx, SpanSpaceportDepartureListServerName, opts...)
 }
 
-// SpanSpaceportExhibitViewName is the span name for: Tracks a single exhibit visible in the viewport, linked to the page span.
-const SpanSpaceportExhibitViewName = "spaceport.exhibit.view"
+// SpanSpaceportExhibitViewInternalName is the span name for: Tracks a single exhibit visible in the viewport, linked to the page span.
+const SpanSpaceportExhibitViewInternalName = "spaceport.exhibit.view.internal"
 
 // Tracks a single exhibit visible in the viewport, linked to the page span.
-func StartSpaceportExhibitView(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportExhibitViewInternal(ctx context.Context, tracer trace.Tracer,
     spaceportExhibitId string,
     opts ...trace.SpanStartOption,
 ) (context.Context, trace.Span) {
@@ -100,7 +100,7 @@ func StartSpaceportExhibitView(ctx context.Context, tracer trace.Tracer,
             attribute.String("spaceport.exhibit.id", spaceportExhibitId),
         ),
     )
-    return tracer.Start(ctx, SpanSpaceportExhibitViewName, opts...)
+    return tracer.Start(ctx, SpanSpaceportExhibitViewInternalName, opts...)
 }
 
 // SpanSpaceportPricingCalculateClientName is the span name for: Outbound call from the API to the pricing service to calculate a fare.
@@ -156,24 +156,24 @@ func StartSpaceportPricingRecommendServer(ctx context.Context, tracer trace.Trac
     return tracer.Start(ctx, SpanSpaceportPricingRecommendServerName, opts...)
 }
 
-// SpanSpaceportUserBrowseDeparturesName is the span name for: Tracks a user browsing the departure list page.
-const SpanSpaceportUserBrowseDeparturesName = "spaceport.user.browse_departures"
+// SpanSpaceportUserBrowseDeparturesInternalName is the span name for: Tracks a user browsing the departure list page.
+const SpanSpaceportUserBrowseDeparturesInternalName = "spaceport.user.browse_departures.internal"
 
 // Tracks a user browsing the departure list page.
-func StartSpaceportUserBrowseDepartures(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportUserBrowseDeparturesInternal(ctx context.Context, tracer trace.Tracer,
     opts ...trace.SpanStartOption,
 ) (context.Context, trace.Span) {
     opts = append(opts,
         trace.WithSpanKind(trace.SpanKindInternal),
     )
-    return tracer.Start(ctx, SpanSpaceportUserBrowseDeparturesName, opts...)
+    return tracer.Start(ctx, SpanSpaceportUserBrowseDeparturesInternalName, opts...)
 }
 
-// SpanSpaceportUserChangeCurrencyName is the span name for: User switches the display currency in the frontend.
-const SpanSpaceportUserChangeCurrencyName = "spaceport.user.change_currency"
+// SpanSpaceportUserChangeCurrencyInternalName is the span name for: User switches the display currency in the frontend.
+const SpanSpaceportUserChangeCurrencyInternalName = "spaceport.user.change_currency.internal"
 
 // User switches the display currency in the frontend.
-func StartSpaceportUserChangeCurrency(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportUserChangeCurrencyInternal(ctx context.Context, tracer trace.Tracer,
     spaceportPricingBaseCurrency string,
     spaceportPricingDisplayCurrency string,
     opts ...trace.SpanStartOption,
@@ -185,14 +185,14 @@ func StartSpaceportUserChangeCurrency(ctx context.Context, tracer trace.Tracer,
             attribute.String("spaceport.pricing.display_currency", spaceportPricingDisplayCurrency),
         ),
     )
-    return tracer.Start(ctx, SpanSpaceportUserChangeCurrencyName, opts...)
+    return tracer.Start(ctx, SpanSpaceportUserChangeCurrencyInternalName, opts...)
 }
 
-// SpanSpaceportUserPlaceBookingName is the span name for: Tracks a user submitting a booking from the frontend.
-const SpanSpaceportUserPlaceBookingName = "spaceport.user.place_booking"
+// SpanSpaceportUserPlaceBookingInternalName is the span name for: Tracks a user submitting a booking from the frontend.
+const SpanSpaceportUserPlaceBookingInternalName = "spaceport.user.place_booking.internal"
 
 // Tracks a user submitting a booking from the frontend.
-func StartSpaceportUserPlaceBooking(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportUserPlaceBookingInternal(ctx context.Context, tracer trace.Tracer,
     spaceportDepartureId string,
     spaceportSeatClass string,
     opts ...trace.SpanStartOption,
@@ -204,14 +204,14 @@ func StartSpaceportUserPlaceBooking(ctx context.Context, tracer trace.Tracer,
             attribute.String("spaceport.seat.class", spaceportSeatClass),
         ),
     )
-    return tracer.Start(ctx, SpanSpaceportUserPlaceBookingName, opts...)
+    return tracer.Start(ctx, SpanSpaceportUserPlaceBookingInternalName, opts...)
 }
 
-// SpanSpaceportUserViewDepartureName is the span name for: Tracks a user viewing a specific departure detail page.
-const SpanSpaceportUserViewDepartureName = "spaceport.user.view_departure"
+// SpanSpaceportUserViewDepartureInternalName is the span name for: Tracks a user viewing a specific departure detail page.
+const SpanSpaceportUserViewDepartureInternalName = "spaceport.user.view_departure.internal"
 
 // Tracks a user viewing a specific departure detail page.
-func StartSpaceportUserViewDeparture(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportUserViewDepartureInternal(ctx context.Context, tracer trace.Tracer,
     spaceportDepartureId string,
     opts ...trace.SpanStartOption,
 ) (context.Context, trace.Span) {
@@ -221,16 +221,16 @@ func StartSpaceportUserViewDeparture(ctx context.Context, tracer trace.Tracer,
             attribute.String("spaceport.departure.id", spaceportDepartureId),
         ),
     )
-    return tracer.Start(ctx, SpanSpaceportUserViewDepartureName, opts...)
+    return tracer.Start(ctx, SpanSpaceportUserViewDepartureInternalName, opts...)
 }
 
-// SpanSpaceportUserViewInformationDeskName is the span name for: Tracks a user session on the Information Desk page, from mount to unmount. Child exhibit_viewed events are added as the user scrolls.
+// SpanSpaceportUserViewInformationDeskInternalName is the span name for: Tracks a user session on the Information Desk page, from mount to unmount. Child exhibit_viewed events are added as the user scrolls.
 
-const SpanSpaceportUserViewInformationDeskName = "spaceport.user.view_information_desk"
+const SpanSpaceportUserViewInformationDeskInternalName = "spaceport.user.view_information_desk.internal"
 
 // Tracks a user session on the Information Desk page, from mount to unmount.
 // Child exhibit_viewed events are added as the user scrolls.
-func StartSpaceportUserViewInformationDesk(ctx context.Context, tracer trace.Tracer,
+func StartSpaceportUserViewInformationDeskInternal(ctx context.Context, tracer trace.Tracer,
     spaceportExhibitCount int,
     opts ...trace.SpanStartOption,
 ) (context.Context, trace.Span) {
@@ -240,5 +240,5 @@ func StartSpaceportUserViewInformationDesk(ctx context.Context, tracer trace.Tra
             attribute.Int("spaceport.exhibit.count", spaceportExhibitCount),
         ),
     )
-    return tracer.Start(ctx, SpanSpaceportUserViewInformationDeskName, opts...)
+    return tracer.Start(ctx, SpanSpaceportUserViewInformationDeskInternalName, opts...)
 }

@@ -21,7 +21,7 @@ import {
   SPACEPORT_DEPARTURE_ID,
   SPACEPORT_SEAT_CLASS,
 } from "@/semconv/attribute";
-import { startSpaceportUserPlaceBooking } from "@/semconv/span";
+import { startSpaceportUserPlaceBookingInternal } from "@/semconv/span";
 
 type BookingRequestError = Error & {
   httpStatus?: number;
@@ -53,7 +53,7 @@ export function BookingFormPage() {
     setError(null);
     setSubmitting(true);
 
-    const span = startSpaceportUserPlaceBooking(tracer, id ?? "", seatClass);
+    const span = startSpaceportUserPlaceBookingInternal(tracer, id ?? "", seatClass);
     const ctx = trace.setSpan(context.active(), span);
 
     try {

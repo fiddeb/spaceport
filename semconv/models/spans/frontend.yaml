@@ -1,5 +1,5 @@
 groups:
-  - id: span.spaceport.user.view_information_desk
+  - id: span.spaceport.user.view_information_desk.internal
     type: span
     span_kind: internal
     brief: >
@@ -12,7 +12,7 @@ groups:
 
   - id: event.spaceport.exhibit_viewed
     type: event
-    name: exhibit_viewed
+    name: spaceport.exhibit_viewed
     brief: Fired when an exhibit section first scrolls into the viewport.
     stability: development
     attributes:
@@ -23,7 +23,7 @@ groups:
       - ref: spaceport.exhibit.number
         requirement_level: recommended
 
-  - id: span.spaceport.user.browse_departures
+  - id: span.spaceport.user.browse_departures.internal
     type: span
     span_kind: internal
     brief: Tracks a user browsing the departure list page.
@@ -32,7 +32,7 @@ groups:
       - ref: spaceport.departure.destination
         requirement_level: opt_in
 
-  - id: span.spaceport.user.view_departure
+  - id: span.spaceport.user.view_departure.internal
     type: span
     span_kind: internal
     brief: Tracks a user viewing a specific departure detail page.
@@ -43,7 +43,7 @@ groups:
       - ref: spaceport.departure.destination
         requirement_level: recommended
 
-  - id: span.spaceport.user.place_booking
+  - id: span.spaceport.user.place_booking.internal
     type: span
     span_kind: internal
     brief: Tracks a user submitting a booking from the frontend.
@@ -54,7 +54,7 @@ groups:
       - ref: spaceport.seat.class
         requirement_level: required
 
-  - id: span.spaceport.exhibit.view
+  - id: span.spaceport.exhibit.view.internal
     type: span
     span_kind: internal
     brief: Tracks a single exhibit visible in the viewport, linked to the page span.
@@ -67,7 +67,7 @@ groups:
       - ref: spaceport.exhibit.number
         requirement_level: recommended
 
-  - id: span.spaceport.app.load_currencies
+  - id: span.spaceport.app.load_currencies.internal
     type: span
     span_kind: internal
     brief: Loading available currencies from the API on app startup.
@@ -76,7 +76,7 @@ groups:
       - ref: spaceport.pricing.display_currency
         requirement_level: opt_in
 
-  - id: span.spaceport.user.change_currency
+  - id: span.spaceport.user.change_currency.internal
     type: span
     span_kind: internal
     brief: User switches the display currency in the frontend.

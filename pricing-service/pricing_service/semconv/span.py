@@ -27,16 +27,16 @@ def start_spaceport_api_call_recommendation_service_client(
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_APP_LOAD_CURRENCIES_NAME: str = "spaceport.app.load_currencies"
+SPAN_SPACEPORT_APP_LOAD_CURRENCIES_INTERNAL_NAME: str = "spaceport.app.load_currencies.internal"
 
 
-def start_spaceport_app_load_currencies(
+def start_spaceport_app_load_currencies_internal(
     tracer: Tracer,
 ) -> tuple:
     """Loading available currencies from the API on app startup."""
     attrs: dict[str, str | int | float | bool] = {}
     return tracer.start_as_current_span(
-        name=SPAN_SPACEPORT_APP_LOAD_CURRENCIES_NAME,
+        name=SPAN_SPACEPORT_APP_LOAD_CURRENCIES_INTERNAL_NAME,
         kind=SpanKind.INTERNAL,
         attributes=attrs,
     )
@@ -91,10 +91,10 @@ def start_spaceport_departure_list_server(
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_EXHIBIT_VIEW_NAME: str = "spaceport.exhibit.view"
+SPAN_SPACEPORT_EXHIBIT_VIEW_INTERNAL_NAME: str = "spaceport.exhibit.view.internal"
 
 
-def start_spaceport_exhibit_view(
+def start_spaceport_exhibit_view_internal(
     tracer: Tracer,
     spaceport_exhibit_id: str,
 ) -> tuple:
@@ -102,7 +102,7 @@ def start_spaceport_exhibit_view(
     attrs: dict[str, str | int | float | bool] = {}
     attrs[attribute.SPACEPORT_EXHIBIT_ID] = spaceport_exhibit_id
     return tracer.start_as_current_span(
-        name=SPAN_SPACEPORT_EXHIBIT_VIEW_NAME,
+        name=SPAN_SPACEPORT_EXHIBIT_VIEW_INTERNAL_NAME,
         kind=SpanKind.INTERNAL,
         attributes=attrs,
     )
@@ -157,24 +157,24 @@ def start_spaceport_pricing_recommend_server(
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_NAME: str = "spaceport.user.browse_departures"
+SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_INTERNAL_NAME: str = "spaceport.user.browse_departures.internal"
 
 
-def start_spaceport_user_browse_departures(
+def start_spaceport_user_browse_departures_internal(
     tracer: Tracer,
 ) -> tuple:
     """Tracks a user browsing the departure list page."""
     attrs: dict[str, str | int | float | bool] = {}
     return tracer.start_as_current_span(
-        name=SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_NAME,
+        name=SPAN_SPACEPORT_USER_BROWSE_DEPARTURES_INTERNAL_NAME,
         kind=SpanKind.INTERNAL,
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_USER_CHANGE_CURRENCY_NAME: str = "spaceport.user.change_currency"
+SPAN_SPACEPORT_USER_CHANGE_CURRENCY_INTERNAL_NAME: str = "spaceport.user.change_currency.internal"
 
 
-def start_spaceport_user_change_currency(
+def start_spaceport_user_change_currency_internal(
     tracer: Tracer,
     spaceport_pricing_base_currency: str,
     spaceport_pricing_display_currency: str,
@@ -184,15 +184,15 @@ def start_spaceport_user_change_currency(
     attrs[attribute.SPACEPORT_PRICING_BASE_CURRENCY] = spaceport_pricing_base_currency
     attrs[attribute.SPACEPORT_PRICING_DISPLAY_CURRENCY] = spaceport_pricing_display_currency
     return tracer.start_as_current_span(
-        name=SPAN_SPACEPORT_USER_CHANGE_CURRENCY_NAME,
+        name=SPAN_SPACEPORT_USER_CHANGE_CURRENCY_INTERNAL_NAME,
         kind=SpanKind.INTERNAL,
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_USER_PLACE_BOOKING_NAME: str = "spaceport.user.place_booking"
+SPAN_SPACEPORT_USER_PLACE_BOOKING_INTERNAL_NAME: str = "spaceport.user.place_booking.internal"
 
 
-def start_spaceport_user_place_booking(
+def start_spaceport_user_place_booking_internal(
     tracer: Tracer,
     spaceport_departure_id: str,
     spaceport_seat_class: str,
@@ -202,15 +202,15 @@ def start_spaceport_user_place_booking(
     attrs[attribute.SPACEPORT_DEPARTURE_ID] = spaceport_departure_id
     attrs[attribute.SPACEPORT_SEAT_CLASS] = spaceport_seat_class
     return tracer.start_as_current_span(
-        name=SPAN_SPACEPORT_USER_PLACE_BOOKING_NAME,
+        name=SPAN_SPACEPORT_USER_PLACE_BOOKING_INTERNAL_NAME,
         kind=SpanKind.INTERNAL,
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_USER_VIEW_DEPARTURE_NAME: str = "spaceport.user.view_departure"
+SPAN_SPACEPORT_USER_VIEW_DEPARTURE_INTERNAL_NAME: str = "spaceport.user.view_departure.internal"
 
 
-def start_spaceport_user_view_departure(
+def start_spaceport_user_view_departure_internal(
     tracer: Tracer,
     spaceport_departure_id: str,
 ) -> tuple:
@@ -218,15 +218,15 @@ def start_spaceport_user_view_departure(
     attrs: dict[str, str | int | float | bool] = {}
     attrs[attribute.SPACEPORT_DEPARTURE_ID] = spaceport_departure_id
     return tracer.start_as_current_span(
-        name=SPAN_SPACEPORT_USER_VIEW_DEPARTURE_NAME,
+        name=SPAN_SPACEPORT_USER_VIEW_DEPARTURE_INTERNAL_NAME,
         kind=SpanKind.INTERNAL,
         attributes=attrs,
     )
 
-SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME: str = "spaceport.user.view_information_desk"
+SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_INTERNAL_NAME: str = "spaceport.user.view_information_desk.internal"
 
 
-def start_spaceport_user_view_information_desk(
+def start_spaceport_user_view_information_desk_internal(
     tracer: Tracer,
     spaceport_exhibit_count: int,
 ) -> tuple:
@@ -235,7 +235,7 @@ def start_spaceport_user_view_information_desk(
     attrs: dict[str, str | int | float | bool] = {}
     attrs[attribute.SPACEPORT_EXHIBIT_COUNT] = spaceport_exhibit_count
     return tracer.start_as_current_span(
-        name=SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME,
+        name=SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_INTERNAL_NAME,
         kind=SpanKind.INTERNAL,
         attributes=attrs,
     )

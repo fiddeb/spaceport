@@ -15,7 +15,7 @@ import {
   SPACEPORT_DEPARTURE_ID,
   SPACEPORT_SEAT_CLASS,
 } from "@/semconv/attribute";
-import { startSpaceportUserPlaceBooking } from "@/semconv/span";
+import { startSpaceportUserPlaceBookingInternal } from "@/semconv/span";
 
 const SEAT_CLASSES = ["economy-cryosleep", "business-warp", "first-class-nebula"];
 
@@ -59,7 +59,7 @@ export function ChaosMenu() {
     for (let i = 0; i < count; i++) {
       const departureId = String(((i % 4) + 1));
       const seatClass = SEAT_CLASSES[i % SEAT_CLASSES.length];
-      const span = startSpaceportUserPlaceBooking(tracer, departureId, seatClass);
+      const span = startSpaceportUserPlaceBookingInternal(tracer, departureId, seatClass);
       const ctx = trace.setSpan(context.active(), span);
 
       try {
