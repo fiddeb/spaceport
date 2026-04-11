@@ -2,14 +2,12 @@ name: Build and Push Container Images
 
 on:
   push:
-    branches: [main]
     paths:
       - "api/**"
       - "frontend/**"
       - "pricing-service/**"
       - ".github/workflows/build-images.yaml"
   pull_request:
-    branches: [main]
     paths:
       - "api/**"
       - "frontend/**"
@@ -70,7 +68,7 @@ jobs:
       - uses: docker/build-push-action@v7
         with:
           context: ./api
-          push: ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -99,7 +97,7 @@ jobs:
       - uses: docker/build-push-action@v7
         with:
           context: ./frontend
-          push: ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -128,6 +126,6 @@ jobs:
       - uses: docker/build-push-action@v7
         with:
           context: ./pricing-service
-          push: ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

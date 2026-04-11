@@ -17,8 +17,8 @@ import {
   SPACEPORT_EXHIBIT_NUMBER,
 } from "@/semconv/attribute";
 import {
-  SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME,
-  SPAN_SPACEPORT_EXHIBIT_VIEW_NAME,
+  SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_INTERNAL_NAME,
+  SPAN_SPACEPORT_EXHIBIT_VIEW_INTERNAL_NAME,
 } from "@/semconv/span";
 import type { Span } from "@opentelemetry/api";
 
@@ -30,7 +30,7 @@ export function InformationDeskPage() {
   );
 
   // --- Telemetry: page-level span ---
-  const { spanRef } = useSpan(SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_NAME, {
+  const { spanRef } = useSpan(SPAN_SPACEPORT_USER_VIEW_INFORMATION_DESK_INTERNAL_NAME, {
     "spaceport.exhibit.count": exhibits.length,
   });
 
@@ -95,7 +95,7 @@ export function InformationDeskPage() {
               const title = exhibit?.title ?? id;
               const pageSpanCtx = spanRef.current?.spanContext();
 
-              const exhibitSpan = tracer.startSpan(SPAN_SPACEPORT_EXHIBIT_VIEW_NAME, {
+              const exhibitSpan = tracer.startSpan(SPAN_SPACEPORT_EXHIBIT_VIEW_INTERNAL_NAME, {
                 attributes: {
                   [SPACEPORT_EXHIBIT_ID]: id,
                   [SPACEPORT_EXHIBIT_TITLE]: title,
