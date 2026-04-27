@@ -33,6 +33,17 @@ charts/
 # Weaver binary (installed locally for dev)
 weaver/weaver
 
+# Telemetry conformance test report
+tests/telemetry/report.txt
+tests/telemetry/.pids
+
+# Playwright test artifacts
+tests/playwright/test-results/
+
+# Weaver generated / scratch files
+weaver_report.txt
+resolved.json
+
 # OS
 .DS_Store
 

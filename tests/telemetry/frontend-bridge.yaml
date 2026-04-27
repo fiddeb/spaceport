@@ -1,0 +1,30 @@
+# OTel Collector bridge: browser SDK HTTP → Weaver gRPC.
+#
+# The browser SDK (via Vite proxy) sends OTLP/HTTP to port 80.
+# Weaver live-check only speaks gRPC. This bridges the gap.
+#
+# Used ONLY during `make telemetry-test` (Playwright frontend step).
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:80
+
+exporters:
+  otlp:
+    endpoint: host.docker.internal:14317
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [otlp]
+    metrics:
+      receivers: [otlp]
+      exporters: [otlp]
+    logs:
+      receivers: [otlp]
+      exporters: [otlp]
