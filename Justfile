@@ -9,7 +9,7 @@ help:
 
 # Start all services locally with OTel export to the collector
 dev:
-  OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector.k8s.test ./dev.sh
+  OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf ./dev.sh
 
 # Build all Docker images
 build:
@@ -72,3 +72,7 @@ link-chart:
 # Run k6 load test against the API
 load-test:
   k6 run tests/k6/booking-flow.js
+
+# Run Weaver live-check conformance test (requires weaver, k6, uv, go)
+telemetry-test:
+  bash tests/telemetry/run.sh

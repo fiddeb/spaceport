@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
@@ -23,14 +24,14 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 		resource.WithAttributes(
 			semconv.ServiceName("spaceport-api"),
 			semconv.ServiceVersion(envOr("OTEL_SERVICE_VERSION", "0.0.0")),
-			semconv.DeploymentEnvironment(envOr("SPACEPORT_ENV", "local")),
+			attribute.String("deployment.environment.name", envOr("SPACEPORT_ENV", "local")),
 		),
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	traceExp, err := otlptracehttp.New(ctx, otlptracehttp.WithInsecure())
+	traceExp, err := otlptracehttp.New(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +46,7 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 		propagation.Baggage{},
 	))
 
-	metricExp, err := otlpmetrichttp.New(ctx, otlpmetrichttp.WithInsecure())
+	metricExp, err := otlpmetrichttp.New(ctx)
 	if err != nil {
 		_ = tp.Shutdown(ctx)
 		return nil, err
@@ -56,7 +57,7 @@ func Setup(ctx context.Context) (shutdown func(), err error) {
 	)
 	otel.SetMeterProvider(mp)
 
-	logExp, err := otlploghttp.New(ctx, otlploghttp.WithInsecure())
+	logExp, err := otlploghttp.New(ctx)
 	if err != nil {
 		_ = tp.Shutdown(ctx)
 		_ = mp.Shutdown(ctx)

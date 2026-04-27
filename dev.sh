@@ -11,7 +11,8 @@ set -euo pipefail
 #         ./dev.sh stop     Kill running dev processes
 #
 # To export telemetry to a local collector:
-#   OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 ./dev.sh
+#   OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 ./dev.sh  # gRPC (default)
+#   OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf ./dev.sh  # HTTP
 # ─────────────────────────────────────────────────────────────
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
