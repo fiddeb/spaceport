@@ -1,0 +1,36 @@
+groups:
+  - id: event.spaceport.fetch_departures_failed
+    type: event
+    name: spaceport.fetch_departures_failed
+    brief: Emitted when the departure list fetch fails in the frontend.
+    stability: development
+    attributes: []
+
+  - id: event.spaceport.fetch_departure_failed
+    type: event
+    name: spaceport.fetch_departure_failed
+    brief: Emitted when a single departure detail fetch fails in the frontend.
+    stability: development
+    attributes:
+      - ref: spaceport.departure.id
+        requirement_level: required
+
+  - id: event.spaceport.exchange_completed
+    type: event
+    name: spaceport.exchange_completed
+    brief: Emitted when the user changes the display currency in the frontend.
+    stability: development
+    attributes: []
+
+  - id: event.spaceport.exception
+    type: event
+    name: spaceport.exception
+    brief: >
+      Emitted when the ErrorBoundary catches an uncaught exception.
+      Replaces Span.RecordException.
+    stability: development
+    attributes:
+      - ref: exception.type
+        requirement_level: required
+      - ref: exception.message
+        requirement_level: required

@@ -5,6 +5,7 @@ imports:
     - registry.network*     # network.protocol.version (used by http server metrics)
     - registry.server*      # server.address, server.port (used by http server metrics)
     - registry.error*       # error.type (used by http.server.request.duration)
+    - registry.exception*   # exception.type, exception.message (used by exception event)
     - registry.user_agent*  # user_agent.synthetic.type (opt_in on http server metrics)
     - registry.service*     # service.name, service.version
     - registry.telemetry*   # telemetry.sdk.language, telemetry.sdk.name, telemetry.sdk.version

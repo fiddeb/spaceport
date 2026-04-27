@@ -1,0 +1,22 @@
+groups:
+  - id: event.spaceport.chaos.failure_triggered
+    type: event
+    name: spaceport.chaos.failure_triggered
+    brief: >
+      Emitted when the chaos failure mode is active and a request is
+      rejected by the pricing service.
+    stability: development
+    attributes:
+      - ref: spaceport.chaos.failure_mode
+        requirement_level: required
+
+  - id: event.spaceport.chaos.latency_injected
+    type: event
+    name: spaceport.chaos.latency_injected
+    brief: >
+      Emitted when the chaos latency mode is active and artificial delay
+      is injected in the pricing service.
+    stability: development
+    attributes:
+      - ref: spaceport.chaos.latency_ms
+        requirement_level: required

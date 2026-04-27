@@ -1,0 +1,22 @@
+groups:
+  - id: event.spaceport.booking_completed
+    type: event
+    name: spaceport.booking_completed
+    brief: >
+      Emitted when a booking is successfully confirmed. Used by both the
+      frontend React app and the Go API service.
+    stability: development
+    attributes:
+      - ref: spaceport.booking.id
+        requirement_level: required
+
+  - id: event.spaceport.booking_failed
+    type: event
+    name: spaceport.booking_failed
+    brief: >
+      Emitted when a booking attempt fails due to a server error or
+      validation issue.
+    stability: development
+    attributes:
+      - ref: error.type
+        requirement_level: recommended
