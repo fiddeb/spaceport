@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help dev build push deploy test lint generate generate-go generate-python generate-typescript generate-grafana docs link-chart load-test
+.PHONY: help dev build push deploy test lint generate generate-go generate-python generate-typescript generate-grafana docs link-chart load-test telemetry-test
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) \
@@ -18,14 +18,19 @@ push: ## Push all Docker images to the registry
 deploy: ## Deploy to Kubernetes via Helm
 	helm upgrade --install spaceport helm/spaceport/ --set enabled=true
 
-test: ## Run Playwright smoke tests (requires app running at PLAYWRIGHT_BASE_URL, default http://localhost:5175)
-	@base_url=$${PLAYWRIGHT_BASE_URL:-http://localhost:5175}; \
+test: ## Run browser smoke tests with k6 (requires app running at FRONTEND_URL, default http://localhost:5175)
+	@base_url=$${FRONTEND_URL:-http://localhost:5175}; \
 	if ! curl -fsS "$$base_url" >/dev/null 2>&1; then \
-		echo "Playwright target not reachable at $$base_url"; \
-		echo "Start app with 'make dev' or set PLAYWRIGHT_BASE_URL"; \
+		echo "Frontend not reachable at $$base_url"; \
+		echo "Start app with 'make dev' or set FRONTEND_URL"; \
 		exit 1; \
 	fi; \
-	cd tests/playwright && PLAYWRIGHT_BASE_URL="$$base_url" npx playwright test
+	pricing_url=$${PRICING_SERVICE_URL:-http://localhost:8000}; \
+	k6 run -e FRONTEND_URL="$$base_url" tests/k6/browser/browse-departures.js && \
+	k6 run -e FRONTEND_URL="$$base_url" tests/k6/browser/view-departure.js && \
+	k6 run -e FRONTEND_URL="$$base_url" tests/k6/browser/place-booking.js && \
+	k6 run -e FRONTEND_URL="$$base_url" -e PRICING_SERVICE_URL="$$pricing_url" tests/k6/browser/error-scenario.js && \
+	k6 run -e FRONTEND_URL="$$base_url" -e PRICING_SERVICE_URL="$$pricing_url" tests/k6/browser/latency-scenario.js
 
 lint: ## Validate the Weaver semantic convention registry
 	weaver registry check -r semconv/models/ -p semconv/policies/
@@ -58,3 +63,6 @@ link-chart: ## Symlink helm/spaceport into the observabilitystack umbrella chart
 
 load-test: ## Run k6 load test against the API
 	k6 run tests/k6/booking-flow.js
+
+telemetry-test: ## Run Weaver live-check conformance test (requires weaver, k6, uv, go)
+	bash tests/telemetry/run.sh
