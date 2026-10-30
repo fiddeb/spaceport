@@ -91,6 +91,7 @@ func main() {
 		AllowMethods: []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "traceparent", "tracestate"},
 	}, logger))
+	r.Use(middleware.APIChaos())
 
 	api := r.Group("/api")
 	api.GET("/departures", depHandler.ListDepartures)
@@ -99,18 +100,42 @@ func main() {
 	api.POST("/bookings", bookHandler.CreateBooking)
 	api.GET("/health", healthHandler.Health)
 
-	// Chaos injection endpoints (not under /api — matches pricing-service pattern)
-	r.POST("/chaos/simulate-cors-block", func(c *gin.Context) {
+	setCORSBlock := func(c *gin.Context) {
 		var body struct {
 			Count int `json:"count"`
 		}
-		if err := c.ShouldBindJSON(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		if err := c.ShouldBindJSON(&body); err != nil || body.Count < 0 || body.Count > 100 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "count must be between 0 and 100"})
 			return
 		}
 		middleware.SetCORSBlock(body.Count)
 		logger.Info("CORS block injection set", "count", body.Count)
 		c.JSON(http.StatusOK, gin.H{"cors_block_count": body.Count})
+	}
+	api.POST("/chaos/simulate-cors-block", setCORSBlock)
+	r.POST("/chaos/simulate-cors-block", setCORSBlock)
+	api.POST("/chaos/simulate-failure", func(c *gin.Context) {
+		var body struct {
+			Count int `json:"count"`
+		}
+		if err := c.ShouldBindJSON(&body); err != nil || body.Count < 0 || body.Count > 100 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "count must be between 0 and 100"})
+			return
+		}
+		middleware.SetAPIFailure(body.Count)
+		c.JSON(http.StatusOK, gin.H{"failure_count": body.Count})
+	})
+	api.POST("/chaos/simulate-latency", func(c *gin.Context) {
+		var body struct {
+			Count     int `json:"count"`
+			LatencyMS int `json:"latency_ms"`
+		}
+		if err := c.ShouldBindJSON(&body); err != nil || body.Count < 0 || body.Count > 100 || body.LatencyMS < 0 || body.LatencyMS > 10000 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "count must be 0–100 and latency_ms 0–10000"})
+			return
+		}
+		middleware.SetAPILatency(body.Count, body.LatencyMS)
+		c.JSON(http.StatusOK, gin.H{"latency_count": body.Count, "latency_ms": body.LatencyMS})
 	})
 
 	addr := envOr("SPACEPORT_ADDR", ":8080")

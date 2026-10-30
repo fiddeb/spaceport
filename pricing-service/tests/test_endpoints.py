@@ -113,3 +113,17 @@ async def test_chaos_latency(client: AsyncClient):
     assert r.status_code == 200
     # Should take at least 200ms (injected) + 50ms (baseline)
     assert elapsed >= 0.2
+
+
+@pytest.mark.anyio
+async def test_chaos_applies_to_currencies_and_not_control_routes(client: AsyncClient):
+    response = await client.post("/simulate-failure", json={"count": 1})
+    assert response.status_code == 200
+    assert (await client.get("/currencies")).status_code == 500
+    assert (await client.get("/currencies")).status_code == 200
+
+
+@pytest.mark.anyio
+async def test_chaos_rejects_unbounded_settings(client: AsyncClient):
+    assert (await client.post("/simulate-failure", json={"count": -1})).status_code == 400
+    assert (await client.post("/simulate-latency", json={"count": 1, "latency_ms": 10001})).status_code == 400

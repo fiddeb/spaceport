@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 	"sync/atomic"
 
 	"github.com/gin-contrib/cors"
@@ -31,8 +32,9 @@ func InstrumentedCORS(cfg cors.Config, logger *slog.Logger) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		// Chaos: simulate CORS block if counter > 0
-		if corsBlockRemaining.Load() > 0 {
-			corsBlockRemaining.Add(-1)
+		if !strings.HasPrefix(c.Request.URL.Path, "/api/chaos/") &&
+			!strings.HasPrefix(c.Request.URL.Path, "/chaos/") &&
+			c.Request.Method != http.MethodOptions && consume(&corsBlockRemaining) {
 			origin := c.Request.Header.Get("Origin")
 			if origin == "" {
 				origin = "(no Origin header)"

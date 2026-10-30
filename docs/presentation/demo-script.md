@@ -60,7 +60,9 @@ A step-by-step guide for demonstrating the Spaceport observability stack. Each s
 3. Click the trace ID to open it.
 4. Walk through the spans:
    - **`user.place_booking`** — the browser-side span created when the user clicked "Confirm Booking"
+   - **`HTTP POST /api/bookings`** — the browser CLIENT span carrying the request context
    - **`POST /api/bookings`** — the API handler span
+   - **`pricing.calculate` CLIENT span** — the outbound API call
    - **`pricing.calculate`** — the pricing service span (child of the API span via W3C traceparent propagation)
 5. Point out the span attributes:
    - `spaceport.departure.id`
