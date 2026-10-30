@@ -13,6 +13,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/trace"
 
 	"github.com/fiddeb/spaceport/api/internal/semconv"
 )
@@ -119,7 +120,7 @@ func (h *DepartureHandler) GetDeparture(c *gin.Context) {
 }
 
 func (h *DepartureHandler) callPricingService(ctx context.Context, departureID string) (any, error) {
-	ctx, span := tracer.Start(ctx, semconv.SpanSpaceportPricingCalculateClientName)
+	ctx, span := tracer.Start(ctx, semconv.SpanSpaceportPricingCalculateClientName, trace.WithSpanKind(trace.SpanKindClient))
 	defer span.End()
 
 	url := fmt.Sprintf("%s/price/%s", h.PricingURL, departureID)
@@ -135,6 +136,7 @@ func (h *DepartureHandler) callPricingService(ctx context.Context, departureID s
 		return nil, err
 	}
 	defer resp.Body.Close()
+	span.SetAttributes(semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode))
 
 	if resp.StatusCode != http.StatusOK {
 		errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
@@ -151,22 +153,20 @@ func (h *DepartureHandler) callPricingService(ctx context.Context, departureID s
 			msg = fmt.Sprintf("pricing service returned %d", resp.StatusCode)
 		}
 		span.SetStatus(codes.Error, msg)
-		span.SetAttributes(
-			semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode),
-			semconv.AttrSpaceportPricingError(msg),
-		)
+		span.SetAttributes(semconv.AttrSpaceportPricingError(msg))
 		return nil, fmt.Errorf("%s", msg)
 	}
 
 	var result any
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		return nil, err
 	}
 	return result, nil
 }
 
 func (h *DepartureHandler) callRecommendationService(ctx context.Context, departureID string) (any, error) {
-	ctx, span := tracer.Start(ctx, "api.call_recommendation_service")
+	ctx, span := semconv.StartSpaceportApiCallRecommendationServiceClient(ctx, tracer)
 	defer span.End()
 
 	url := fmt.Sprintf("%s/recommendations/%s", h.PricingURL, departureID)
@@ -182,6 +182,7 @@ func (h *DepartureHandler) callRecommendationService(ctx context.Context, depart
 		return nil, err
 	}
 	defer resp.Body.Close()
+	span.SetAttributes(semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode))
 
 	if resp.StatusCode != http.StatusOK {
 		errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
@@ -198,15 +199,13 @@ func (h *DepartureHandler) callRecommendationService(ctx context.Context, depart
 			msg = fmt.Sprintf("recommendation service returned %d", resp.StatusCode)
 		}
 		span.SetStatus(codes.Error, msg)
-		span.SetAttributes(
-			semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode),
-			semconv.AttrSpaceportRecommendationsError(msg),
-		)
+		span.SetAttributes(semconv.AttrSpaceportRecommendationsError(msg))
 		return nil, fmt.Errorf("%s", msg)
 	}
 
 	var result any
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		return nil, err
 	}
 	return result, nil
@@ -215,11 +214,14 @@ func (h *DepartureHandler) callRecommendationService(ctx context.Context, depart
 // GetCurrencies proxies GET /currencies from the pricing service.
 func (h *DepartureHandler) GetCurrencies(c *gin.Context) {
 	ctx := c.Request.Context()
+	ctx, span := tracer.Start(ctx, "GET /currencies", trace.WithSpanKind(trace.SpanKindClient))
+	defer span.End()
 	h.Logger.InfoContext(ctx, "getting currencies")
 
 	url := fmt.Sprintf("%s/currencies", h.PricingURL)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		h.Logger.ErrorContext(ctx, "currency fetch failed", "error", err)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "pricing service unavailable"})
 		return
@@ -227,18 +229,22 @@ func (h *DepartureHandler) GetCurrencies(c *gin.Context) {
 	injectTrace(ctx, req)
 	resp, err := h.HTTPClient.Do(req)
 	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		h.Logger.ErrorContext(ctx, "currency fetch failed", "error", err)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "pricing service unavailable"})
 		return
 	}
 	defer resp.Body.Close()
+	span.SetAttributes(semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode))
 	if resp.StatusCode != http.StatusOK {
+		span.SetStatus(codes.Error, fmt.Sprintf("HTTP %d", resp.StatusCode))
 		h.Logger.ErrorContext(ctx, "currency fetch failed", "status", resp.StatusCode)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "pricing service unavailable"})
 		return
 	}
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
 	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		h.Logger.ErrorContext(ctx, "currency read failed", "error", err)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "pricing service unavailable"})
 		return

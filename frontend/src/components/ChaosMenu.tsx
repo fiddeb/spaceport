@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { tracer, logger, bookingCounter, tracedFetch, SeverityNumber } from "@/instrumentation";
+import { tracer, logger, bookingCounter, tracedFetch, setFrontendChaos, SeverityNumber } from "@/instrumentation";
 import { SpanStatusCode, trace, context } from "@opentelemetry/api";
 import {
   SPACEPORT_BOOKING_ID,
@@ -25,7 +25,7 @@ export function ChaosMenu() {
   async function trigger(endpoint: string, body: object, label: string, successMsg?: string) {
     setStatus(`${label}…`);
     try {
-      const resp = await fetch(`/chaos/${endpoint}`, {
+      const resp = await tracedFetch(`/chaos/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -41,7 +41,7 @@ export function ChaosMenu() {
   async function triggerApi(endpoint: string, body: object, label: string, successMsg?: string) {
     setStatus(`${label}…`);
     try {
-      const resp = await fetch(`/api-chaos/${endpoint}`, {
+      const resp = await tracedFetch(`/api/chaos/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -52,6 +52,12 @@ export function ChaosMenu() {
       setStatus(`${label} failed`);
     }
     setTimeout(() => setStatus(null), successMsg ? 4000 : 2000);
+  }
+
+  function triggerFrontend(mode: "failure" | "latency", count: number, delayMs = 0) {
+    setFrontendChaos(mode, count, delayMs);
+    setStatus(`${count} frontend ${mode} injection${count === 1 ? "" : "s"} armed`);
+    setTimeout(() => setStatus(null), 4000);
   }
 
   /** Fire N instrumented booking requests, recording metrics/traces/logs. */
@@ -119,7 +125,7 @@ export function ChaosMenu() {
 
   /** Raw chaos POST — no status updates, for use inside scenarios. */
   async function injectChaos(endpoint: string, body: object) {
-    const resp = await fetch(`/chaos/${endpoint}`, {
+    const resp = await tracedFetch(`/chaos/${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -147,7 +153,23 @@ export function ChaosMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Error Injection</DropdownMenuLabel>
+        <DropdownMenuLabel>Frontend</DropdownMenuLabel>
+        <DropdownMenuItem onSelect={() => triggerFrontend("failure", 1)}>
+          Fail next browser API request
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => triggerFrontend("latency", 1, 2000)}>
+          Delay next browser API request by 2s
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>API</DropdownMenuLabel>
+        <DropdownMenuItem onSelect={() => triggerApi("simulate-failure", { count: 1 }, "API failure", "Next API request will return 503")}>
+          Fail next API request
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => triggerApi("simulate-latency", { count: 1, latency_ms: 2000 }, "API latency", "Next API request will take 2s longer")}>
+          Delay next API request by 2s
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>Pricing service</DropdownMenuLabel>
         <DropdownMenuItem onSelect={() => trigger("simulate-failure", { count: 1 }, "1 failure")}>
           Fail next request
         </DropdownMenuItem>
@@ -163,7 +185,7 @@ export function ChaosMenu() {
           2s latency — next 5 requests
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>CORS Injection</DropdownMenuLabel>
+        <DropdownMenuLabel>API CORS Injection</DropdownMenuLabel>
         <DropdownMenuItem onSelect={() => triggerApi("simulate-cors-block", { count: 1 }, "CORS block ×1", "Next API request will be rejected with 403 Forbidden")}>
           Block next request (CORS 403)
         </DropdownMenuItem>

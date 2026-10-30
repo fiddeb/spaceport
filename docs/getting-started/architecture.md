@@ -46,9 +46,9 @@ All three services export **traces**, **metrics**, and **logs** via OTLP to the 
 ### Trace propagation
 
 1. **Browser** starts a trace span for each user interaction
-2. The frontend injects `traceparent` headers on API calls
-3. **API** picks up the context, creates child spans for handler logic and DB queries
-4. API calls to **pricing-service** carry the same trace context
+2. Each browser API call gets a CLIENT span; its `traceparent` identifies that span as the parent of the API request
+3. **API** picks up the context, creates SERVER spans for requests and child spans for handler logic and SQLite queries
+4. API calls to **pricing-service** get CLIENT spans and propagate their context to the Python SERVER spans
 5. All spans arrive at the collector and flow into Tempo
 
 ### Semantic conventions
@@ -57,11 +57,14 @@ Custom `spaceport.*` attributes are not hardcoded strings — they're defined in
 
 ## Chaos injection
 
-The pricing service exposes endpoints to inject failures and artificial latency:
+The Chaos menu can inject failures and artificial latency at each service boundary:
 
-- Inject errors into the next N pricing requests
-- Add configurable latency to simulate solar storm interference
-- Watch the impact propagate through distributed traces and dashboards
+- **Frontend:** fail or delay the next browser API request; the browser CLIENT span records the injection
+- **API:** return 503 or delay the next application request; health and chaos controls remain available
+- **Pricing service:** return 500 or delay the next price, recommendation, or currency request
+- **API CORS:** reject the next application request with 403
+
+Use the menu on a departures page, then make a request and inspect the trace in Tempo. Failure and latency counters are bounded to 100 requests; injected delays are limited to 10 seconds.
 
 ## Deployment models
 

@@ -222,7 +222,7 @@ export const exhibits: InfoExhibit[] = [
       },
       {
         label: "Chaos engineering with observable feedback",
-        text: "The chaos menu injects failures and latency into the pricing service. Spans get chaos events, error counters spike, and dashboards react in real-time \u2014 showing how observability catches problems the moment they happen.",
+        text: "The chaos menu injects failures and latency into the browser, API, and pricing service. Spans show where the problem started, while error counters and dashboards react in real time.",
       },
       {
         label: "Backend-agnostic by design",

@@ -135,6 +135,7 @@ func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (f
 		return 0, currency, err
 	}
 	defer resp.Body.Close()
+	span.SetAttributes(semconv.AttrHttpResponseStatusCodeKey.Int(resp.StatusCode))
 
 	if resp.StatusCode != http.StatusOK {
 		span.SetStatus(codes.Error, fmt.Sprintf("pricing returned %d", resp.StatusCode))
@@ -149,6 +150,7 @@ func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (f
 		} `json:"prices"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		return 0, currency, err
 	}
 
@@ -158,7 +160,9 @@ func (h *BookingHandler) callPricing(ctx context.Context, req BookingRequest) (f
 		}
 	}
 
-	return 0, currency, fmt.Errorf("seat class %q not found in pricing response", req.SeatClass)
+	err = fmt.Errorf("seat class %q not found in pricing response", req.SeatClass)
+	span.SetStatus(codes.Error, err.Error())
+	return 0, currency, err
 }
 
 func (h *BookingHandler) insertBooking(ctx context.Context, bookingID string, req BookingRequest, totalPrice float64, currency, status, errorReason string) {

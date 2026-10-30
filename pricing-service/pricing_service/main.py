@@ -7,10 +7,9 @@ import random
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Query, Request
-from opentelemetry import context as otel_context, trace
-from opentelemetry.propagate import extract
-from opentelemetry.trace import SpanKind, StatusCode
+from fastapi import FastAPI, HTTPException, Query
+from opentelemetry import trace
+from opentelemetry.trace import StatusCode
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 from pricing_service.logging_config import setup_logging
@@ -49,26 +48,23 @@ _FAILURE_MESSAGES = [
 ]
 
 
-async def _apply_chaos(span: trace.Span) -> Optional[dict]:
-    """Apply chaos injection if active. Returns error response dict or None."""
+async def _apply_chaos(span: trace.Span) -> None:
+    """Apply the next failure or delay to an application request."""
     global _failure_count, _latency_count
 
     if _failure_count > 0:
         _failure_count -= 1
         msg = random.choice(_FAILURE_MESSAGES)
-        span.add_event("chaos.failure_triggered", {"spaceport.chaos.failure_mode": msg})
+        span.add_event("chaos.failure_triggered", {attribute.SPACEPORT_CHAOS_FAILURE_MODE: msg})
         span.set_status(StatusCode.ERROR, msg)
         logger.error("Chaos failure triggered: %s", msg)
         raise HTTPException(status_code=500, detail=msg)
 
     if _latency_count > 0:
         _latency_count -= 1
-        span.add_event("chaos.latency_injected", {"spaceport.chaos.latency_ms": _latency_ms})
+        span.add_event("chaos.latency_injected", {attribute.SPACEPORT_CHAOS_LATENCY_MS: _latency_ms})
         logger.warning("Chaos latency injected: %dms", _latency_ms)
         await asyncio.sleep(_latency_ms / 1000.0)
-
-    return None
-
 
 # --- Endpoints ---
 
@@ -80,6 +76,7 @@ async def health() -> dict:
 
 @app.get("/currencies")
 async def currencies() -> dict:
+    await _apply_chaos(trace.get_current_span())
     return _currency_catalog
 
 
@@ -127,7 +124,10 @@ async def recommendations(departure_id: int) -> dict:
 @app.post("/simulate-failure")
 async def simulate_failure(body: dict) -> dict:
     global _failure_count
-    _failure_count = int(body["count"])
+    count = body.get("count")
+    if type(count) is not int or not 0 <= count <= 100:
+        raise HTTPException(status_code=400, detail="count must be between 0 and 100")
+    _failure_count = count
     logger.info("Failure injection set: count=%d", _failure_count)
     return {"failure_count": _failure_count}
 
@@ -135,7 +135,11 @@ async def simulate_failure(body: dict) -> dict:
 @app.post("/simulate-latency")
 async def simulate_latency(body: dict) -> dict:
     global _latency_count, _latency_ms
-    _latency_count = int(body["count"])
-    _latency_ms = int(body["latency_ms"])
+    count = body.get("count")
+    latency_ms = body.get("latency_ms")
+    if type(count) is not int or not 0 <= count <= 100 or type(latency_ms) is not int or not 0 <= latency_ms <= 10000:
+        raise HTTPException(status_code=400, detail="count must be 0–100 and latency_ms 0–10000")
+    _latency_count = count
+    _latency_ms = latency_ms
     logger.info("Latency injection set: count=%d latency_ms=%d", _latency_count, _latency_ms)
     return {"latency_count": _latency_count, "latency_ms": _latency_ms}
